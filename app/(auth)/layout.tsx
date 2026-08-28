@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono, Inter } from "next/font/google";
-import { cn } from "@/lib/utils";
+import Image from "next/image";
+import logo from "@/public/logo/black/warrior-face.png"
 
 const inter = Inter({subsets:['latin'],variable:'--font-sans'});
 
@@ -21,11 +22,15 @@ export const metadata: Metadata = {
 
 export default function AuthLayout({ children }: LayoutProps<"/">) {
   return (
-    <html
-      lang="en"
-      className={cn("h-full", "antialiased", geistSans.variable, geistMono.variable, "font-sans", inter.variable)}
-    >
-      <body className="min-h-full flex flex-col">{children}</body>
-    </html>
+    <div className="min-h-screen flex flex-col items-center justify-center bg-gray-50 gap-5">
+      <div className="flex size-20 items-center justify-center">
+        <Image 
+          src={logo} 
+          alt={"KOA Warrior Face Logo"} 
+          className="drop-shadow-2xl"
+        />
+      </div>
+      {children}
+    </div>
   );
 }
