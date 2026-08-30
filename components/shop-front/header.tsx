@@ -20,11 +20,7 @@ export function Header() {
     if (!isHomepage) return
 
     const handleScroll = () => {
-      if (window.scrollY > 20) {
-        setIsScrolled(true)
-      } else {
-        setIsScrolled(false)
-      }
+      setIsScrolled(window.scrollY > 20)
     }
 
     window.addEventListener('scroll', handleScroll)
@@ -78,17 +74,17 @@ export function Header() {
           {/* Logo Section - Positioned Absolutely */}
           <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 z-10">
             <Link href="/" className="flex items-center shrink-0">
-              
-              <div className="w-25 h-17 relative">
+              <div className="w-25 h-15 relative">
                 <Image
                   src={logo}
                   alt="KOA Logo"
                   fill
-                  className={`object-contain transition-all duration-300 ${!isSolidActive && 'invert brightness-0'}`} 
+                  sizes="(max-width: 768px) 100px, 100px"
+                  priority
+                  className={`object-contain transition-all duration-300 ${!isSolidActive ? 'invert brightness-0' : ''}`}
                 />
               </div>
             </Link>
-            
           </div>
 
           {/* Right Section */}
@@ -107,24 +103,41 @@ export function Header() {
               className={`relative transition duration-300 ${isSolidActive ? 'hover:bg-muted' : 'hover:bg-white/10'}`}
             >
               <ShoppingCart className={`w-5 h-5 transition-colors duration-300 ${isSolidActive ? 'text-foreground' : 'text-white'}`} />
-              {/* {cartCount > 0 && (
-                <span className="absolute -top-1 -right-1 flex h-4 min-w-4 items-center justify-center rounded-full bg-primary px-1 text-[10px] font-medium text-primary-foreground">
-                  {cartCount}
-                </span>
-              )} */}
             </Button>
 
-            <div className={`p-2 rounded-lg transition duration-300 ${isSolidActive ? 'hover:bg-muted' : 'hover:bg-white/10'}`}>
+            <div className="flex items-center gap-2">
               <Show when="signed-out">
-                <SignInButton />
+                <SignInButton>
+                  <button 
+                    // Added 'border' to the base classes so the width is always present
+                    className={`border rounded-full font-medium text-sm sm:text-base h-10 sm:h-10 px-4 sm:px-4 cursor-pointer transition duration-300 ${
+                      isSolidActive 
+                        ? 'text-foreground border-neutral-900 hover:bg-muted' 
+                        // Added 'border-transparent' to the inactive state
+                        : 'text-white border-transparent hover:bg-white/10'
+                    }`}
+                  >
+                    Sign In
+                  </button>
+                </SignInButton>
+
                 <SignUpButton>
-                  <button className="bg-[#6c47ff] text-white rounded-full font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 cursor-pointer">
+                  <button 
+                    className={`border border-transparent rounded-full font-medium text-sm sm:text-base h-10 sm:h-10 px-4 sm:px-4 cursor-pointer transition duration-300 ${
+                      isSolidActive 
+                        ? 'bg-foreground text-background hover:bg-foreground/90' 
+                        : 'bg-white text-black hover:bg-white/90'
+                    }`}
+                  >
                     Sign Up
                   </button>
                 </SignUpButton>
               </Show>
+
               <Show when="signed-in">
-                 <UserButton />
+                <div className={`p-1 rounded-full transition duration-300 ${isSolidActive ? 'hover:bg-muted' : 'hover:bg-white/10'}`}>
+                  <UserButton />
+                </div>
               </Show>
             </div>
           </div>

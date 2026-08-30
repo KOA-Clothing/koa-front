@@ -1,5 +1,6 @@
 import Footer from "@/components/shop-front/footer";
 import { Header } from "@/components/shop-front/header";
+import { Hero } from "@/components/shop-front/hero";
 import { Show, SignInButton, SignUpButton, UserButton } from "@clerk/nextjs";
 import type { Metadata } from "next";
 
@@ -11,7 +12,8 @@ export const metadata: Metadata = {
 export default function ShopFrontLayout({ children }: LayoutProps<"/">) {
   return (
     <div className="min-h-screen flex flex-col items-center justify-start bg-gray-50"> 
-      <Header />  
+      <Header />
+      <Hero />  
       <div className="border border-red-500 flex flex-col max-w-7xl w-7xl">
         {children}
       </div> 
