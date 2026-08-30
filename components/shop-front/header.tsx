@@ -8,6 +8,8 @@ import { usePathname } from 'next/navigation'
 import { Button } from '@/components/ui/button'
 import logo from "@/public/logo/black/warrior-face.png"
 import { Show, SignInButton, SignUpButton, UserButton } from '@clerk/nextjs'
+import NavItem from './nav-item'
+import AuthSection from './auth-section'
 
 export function Header() {
   const pathname = usePathname();
@@ -45,27 +47,10 @@ export function Header() {
         <div className="flex items-center justify-between h-20">
           
           {/* Desktop Navigation */}
-          <nav className="hidden md:flex items-center gap-8">
-            <Link 
-              href="/search" 
-              className={`text-sm font-medium transition duration-300 ${isSolidActive ? 'text-foreground hover:text-primary' : 'text-white hover:text-white/70'}`}
-            >
-              Shop
-            </Link>
-            
-            <Link 
-              href="/collections" 
-              className={`text-sm font-medium transition duration-300 ${isSolidActive ? 'text-foreground hover:text-primary' : 'text-white hover:text-white/70'}`}
-            >
-              Collections
-            </Link>
-            
-            <Link 
-              href="/about" 
-              className={`text-sm font-medium transition duration-300 ${isSolidActive ? 'text-foreground hover:text-primary' : 'text-white hover:text-white/70'}`}
-            >
-              About
-            </Link>
+          <nav className="hidden md:flex items-center gap-5">
+            <NavItem href={'/search'} text={'Shop'} isSolidActive={isSolidActive} />
+            <NavItem href={'/collections'} text={'Collections'} isSolidActive={isSolidActive} />
+            <NavItem href={'/about'} text={'About'} isSolidActive={isSolidActive} />
           </nav>
 
           {/* Spacer block to keep flex alignment working on mobile/desktop without layout collapse */}
@@ -105,41 +90,7 @@ export function Header() {
               <ShoppingCart className={`w-5 h-5 transition-colors duration-300 ${isSolidActive ? 'text-foreground' : 'text-white'}`} />
             </Button>
 
-            <div className="flex items-center gap-2">
-              <Show when="signed-out">
-                <SignInButton>
-                  <button 
-                    // Added 'border' to the base classes so the width is always present
-                    className={`border rounded-full font-medium text-sm sm:text-base h-10 sm:h-10 px-4 sm:px-4 cursor-pointer transition duration-300 ${
-                      isSolidActive 
-                        ? 'text-foreground border-neutral-900 hover:bg-muted' 
-                        // Added 'border-transparent' to the inactive state
-                        : 'text-white border-transparent hover:bg-white/10'
-                    }`}
-                  >
-                    Sign In
-                  </button>
-                </SignInButton>
-
-                <SignUpButton>
-                  <button 
-                    className={`border border-transparent rounded-full font-medium text-sm sm:text-base h-10 sm:h-10 px-4 sm:px-4 cursor-pointer transition duration-300 ${
-                      isSolidActive 
-                        ? 'bg-foreground text-background hover:bg-foreground/90' 
-                        : 'bg-white text-black hover:bg-white/90'
-                    }`}
-                  >
-                    Sign Up
-                  </button>
-                </SignUpButton>
-              </Show>
-
-              <Show when="signed-in">
-                <div className={`p-1 rounded-full transition duration-300 ${isSolidActive ? 'hover:bg-muted' : 'hover:bg-white/10'}`}>
-                  <UserButton />
-                </div>
-              </Show>
-            </div>
+            <AuthSection isSolidActive={isSolidActive} />
           </div>
         </div>
       </div>
