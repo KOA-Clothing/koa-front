@@ -1,3 +1,6 @@
+import AdminHeader from "@/components/admin/admin-header";
+import { AppSidebar } from "@/components/admin/sidebar/app-sidebar";
+import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
@@ -7,8 +10,16 @@ export const metadata: Metadata = {
 
 export default function AdminLayout({ children }: LayoutProps<"/">) {
   return (
-    <div className="min-h-screen flex flex-col items-center justify-start bg-gray-50">
-      {children}
-    </div>
+    <SidebarProvider>
+      <div className="min-h-screen flex w-full bg-gray-50">
+        <AppSidebar />
+        <main className="flex-1 flex flex-col min-w-0">
+          <AdminHeader />
+          <div className="flex-1 p-6">
+            {children}
+          </div>
+        </main>
+      </div>
+    </SidebarProvider>
   );
 }
