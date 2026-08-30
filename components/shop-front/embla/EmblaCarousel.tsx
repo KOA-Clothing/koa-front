@@ -6,8 +6,8 @@ import { EmblaOptionsType } from 'embla-carousel'
 import useEmblaCarousel from 'embla-carousel-react'
 import Autoplay from 'embla-carousel-autoplay'
 import Fade from 'embla-carousel-fade'
-import { usePrevNextButtons } from './EmblaCarouselArrowButtons'
 import { DotButton, useDotButton } from './EmblaCarouselDotButton'
+import { usePrevNextButtons } from './EmblaCarouselArrowButtons'
 
 type PropType = {
   slides: string[]

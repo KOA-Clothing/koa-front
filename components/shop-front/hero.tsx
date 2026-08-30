@@ -3,7 +3,7 @@
 import BlurText from '@/components/BlurText'
 import ShinyText from '@/components/ShinyText';
 import TextType from '@/components/TextType';
-import EmblaCarousel from './EmblaCarousel';
+import EmblaCarousel from './embla/EmblaCarousel';
 import { EmblaOptionsType } from 'embla-carousel';
 
 // Extracted outside the component to prevent re-instantiation on renders
