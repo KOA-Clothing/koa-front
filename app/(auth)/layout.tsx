@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import logo from "@/public/logo/black/warrior-face.png";
-import AnimatedAuthWrapper from "@/components/shop-front/AnimatedAuthWrapper";
+import AnimatedAuthWrapper from "@/components/auth/AnimatedAuthWrapper";
 
 // Type definition placeholder assuming you have this defined elsewhere
 interface LayoutProps {
