@@ -1,5 +1,6 @@
 'use client'
 
+import { API_ROUTES } from "@/configs/api-routes";
 import { useAxiosClient } from "@/hooks/use-api-client";
 import { useQuery } from "@tanstack/react-query";
 
@@ -9,7 +10,7 @@ export default function Admin() {
   const { data, isLoading, isError, error } = useQuery({
     queryKey: ["admin-profile"],
     queryFn: async () => {
-      const response = await fetchClient("api/v1/auth/me");
+      const response = await fetchClient(API_ROUTES.USERS.ME);
       return response.data; 
     },
   });
