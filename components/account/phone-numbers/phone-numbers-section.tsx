@@ -3,20 +3,23 @@
 import { Plus } from "lucide-react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "../../ui/card";
 import { Button } from "../../ui/button";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { PhoneNumberDto } from "@/types/phone-number";
-import PhoneNumberCard from "./phone-number-card"; // Adjust path as needed
+import PhoneNumberCard from "./phone-number-card";
 
-interface PhoneNumberSectionProps {
-  initialPhones?: PhoneNumberDto[];
-  onPhonesChange?: (phones: PhoneNumberDto[]) => void;
+interface Props {
+  phoneNumbers?: PhoneNumberDto[];
+  onChange?: (phones: PhoneNumberDto[]) => void;
 }
 
-export default function PhoneNumberSection({ 
-  initialPhones = [], 
-  onPhonesChange 
-}: PhoneNumberSectionProps) {
-  const [phones, setPhones] = useState<PhoneNumberDto[]>(initialPhones);
+export default function PhoneNumberSection(props: Props) {
+  const [phones, setPhones] = useState<PhoneNumberDto[]>(props.phoneNumbers ?? []);
+
+  useEffect(() => {
+    if (props.phoneNumbers) {
+      setPhones(props.phoneNumbers);
+    }
+  }, [props.phoneNumbers]);
 
   const addPhone = () => {
     const now = new Date().toISOString();
@@ -36,21 +39,21 @@ export default function PhoneNumberSection({
 
     const updated = [...phones, newPhone];
     setPhones(updated);
-    if (onPhonesChange) onPhonesChange(updated);
+    if (props.onChange) props.onChange(updated);
   };
 
-  const removePhone = (id: string) => {
+  const hanldeRemove = (id: string) => {
     const updated = phones.filter((p) => p.id !== id);
     setPhones(updated);
-    if (onPhonesChange) onPhonesChange(updated);
+    if (props.onChange) props.onChange(updated);
   };
 
-  const handlePhoneChange = (id: string, newNumber: string) => {
+  const handleChange = (id: string, newNumber: string) => {
     const updated = phones.map((p) => 
       p.id === id ? { ...p, phoneNo: newNumber } : p
     );
     setPhones(updated);
-    if (onPhonesChange) onPhonesChange(updated);
+    if (props.onChange) props.onChange(updated);
   };
 
   return (
@@ -66,8 +69,8 @@ export default function PhoneNumberSection({
             <PhoneNumberCard 
               key={phone.id}
               phone={phone}
-              onRemove={removePhone}
-              onChange={handlePhoneChange}
+              onRemove={hanldeRemove}
+              onChange={handleChange}
             />
           ))}
         </div>

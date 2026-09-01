@@ -10,14 +10,14 @@ import { Label } from "../../ui/label";
 import { useState, ChangeEvent } from "react";
 import { BasicProfileDto } from "@/types/user";
 
-interface ProfileSectionProps {
-  initialProfile?: BasicProfileDto;
+interface Props {
+  profile?: BasicProfileDto;
   onSave?: (profile: BasicProfileDto) => void;
 }
 
-export default function ProfileSection({ initialProfile, onSave }: ProfileSectionProps) {
+export default function ProfileSection(props : Props) {
   const [profile, setProfile] = useState<BasicProfileDto>(
-    initialProfile ?? {
+    props.profile ?? {
       id: "",
       firstName: "",
       lastName: "",
@@ -28,17 +28,17 @@ export default function ProfileSection({ initialProfile, onSave }: ProfileSectio
     }
   );
 
-  const handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {
-    const { id, value } = e.target;
+  const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
     setProfile((prev) => ({
       ...prev,
-      [id]: value,
+      [name]: value,
     }));
   };
 
   const handleSave = () => {
-    if (onSave) {
-      onSave(profile);
+    if (props.onSave) {
+      props.onSave(profile);
     }
   };
 
@@ -56,7 +56,7 @@ export default function ProfileSection({ initialProfile, onSave }: ProfileSectio
       <CardContent className="flex flex-col gap-6">
         <div className="flex items-center gap-4">
           <Avatar className="size-16">
-            <AvatarImage src={profile.profileImageUrl} alt="Profile Photo" />
+            <AvatarImage src={profile.profileImageUrl ?? undefined} alt="Profile Photo" />
             <AvatarFallback className="text-lg bg-muted">
               {initials}
             </AvatarFallback>
@@ -78,8 +78,9 @@ export default function ProfileSection({ initialProfile, onSave }: ProfileSectio
             <Label htmlFor="firstName">First name</Label>
             <Input
               id="firstName"
+              name="firstName"
               value={profile.firstName || ""}
-              onChange={handleInputChange}
+              onChange={handleChange}
             />
           </div>
           
@@ -87,8 +88,9 @@ export default function ProfileSection({ initialProfile, onSave }: ProfileSectio
             <Label htmlFor="lastName">Last name</Label>
             <Input
               id="lastName"
+              name="lastName"
               value={profile.lastName || ""}
-              onChange={handleInputChange}
+              onChange={handleChange}
             />
           </div>
           
@@ -96,9 +98,10 @@ export default function ProfileSection({ initialProfile, onSave }: ProfileSectio
             <Label htmlFor="email">Email address</Label>
             <Input
               id="email"
+              name="email"
               type="email"
               value={profile.email || ""}
-              onChange={handleInputChange}
+              onChange={handleChange}
             />
           </div>
         </div>

@@ -8,7 +8,7 @@ export const UserProfileDtoSchema = z.object({
   email: z.email(),
   firstName: z.string(),
   lastName: z.string(),
-  profileImageUrl: z.url(),
+  profileImageUrl: z.string().url().or(z.string().length(0)).nullable().optional(),
   addresses: z.array(AddressDtoSchema),
   phoneNumbers: z.array(PhoneNumberDtoSchema),
   createdAt: z.iso.datetime({ offset: true }),

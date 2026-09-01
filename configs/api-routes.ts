@@ -2,7 +2,7 @@
 
 export const API_ROUTES = {
   USERS: {
-    ME: "/api/v1/users/me",
+    PROFILE: "/api/v1/users/profile",
   },
   ADDRESSES: {
     BASE: "/api/v1/addresses",

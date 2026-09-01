@@ -4,16 +4,22 @@ import { Plus } from "lucide-react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "../../ui/card";
 import { Button } from "../../ui/button";
 import { AddressDto } from "@/types/address";
-import { useState } from "react";
-import AddressCard from "./address-card"; // Adjust path as needed
+import { useState, useEffect } from "react";
+import AddressCard from "./address-card";
 
-interface AddressSectionProps {
-  initialAddresses?: AddressDto[];
-  onAddressesChange?: (addresses: AddressDto[]) => void;
+interface Props {
+  addresses?: AddressDto[];
+  onChange?: (addresses: AddressDto[]) => void;
 }
 
-export default function AddressSection({ initialAddresses = [], onAddressesChange }: AddressSectionProps) {
-  const [addresses, setAddresses] = useState<AddressDto[]>(initialAddresses);
+export default function AddressSection(props: Props) {
+  const [addresses, setAddresses] = useState<AddressDto[]>(props.addresses ?? []);
+
+  useEffect(() => {
+    if (props.addresses) {
+      setAddresses(props.addresses);
+    }
+  }, [props.addresses]);
 
   const addAddress = () => {
     const now = new Date().toISOString();
@@ -36,13 +42,13 @@ export default function AddressSection({ initialAddresses = [], onAddressesChang
 
     const updated = [...addresses, newAddress];
     setAddresses(updated);
-    if (onAddressesChange) onAddressesChange(updated);
+    if (props.onChange) props.onChange(updated);
   };
 
-  const removeAddress = (id: string) => {
+  const hanldeRemove = (id: string) => {
     const updated = addresses.filter((a) => a.id !== id);
     setAddresses(updated);
-    if (onAddressesChange) onAddressesChange(updated);
+    if (props.onChange) props.onChange(updated);
   };
 
   return (
@@ -58,7 +64,7 @@ export default function AddressSection({ initialAddresses = [], onAddressesChang
             <AddressCard 
               key={address.id} 
               address={address} 
-              onRemove={removeAddress} 
+              onRemove={hanldeRemove} 
             />
           ))}
         </div>

@@ -10,7 +10,7 @@ export default function Admin() {
   const { data, isLoading, isError, error } = useQuery({
     queryKey: ["admin-profile"],
     queryFn: async () => {
-      const response = await fetchClient(API_ROUTES.USERS.ME);
+      const response = await fetchClient(API_ROUTES.USERS.PROFILE);
       return response.data; 
     },
   });
