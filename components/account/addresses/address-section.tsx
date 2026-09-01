@@ -6,6 +6,7 @@ import { Button } from "../../ui/button";
 import { AddressDto } from "@/types/address";
 import { useState, useEffect } from "react";
 import AddressCard from "./address-card";
+import CreateAddressModal from "./create-address-modal";
 
 interface Props {
   addresses?: AddressDto[];
@@ -14,6 +15,7 @@ interface Props {
 
 export default function AddressSection(props: Props) {
   const [addresses, setAddresses] = useState<AddressDto[]>(props.addresses ?? []);
+  const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
 
   useEffect(() => {
     if (props.addresses) {
@@ -21,34 +23,8 @@ export default function AddressSection(props: Props) {
     }
   }, [props.addresses]);
 
-  const addAddress = () => {
-    const now = new Date().toISOString();
-    
-    const newAddress: AddressDto = {
-      id: crypto.randomUUID(),
-      label: "New Address",
-      houseNo: "",
-      addressLine1: "Enter address line 1",
-      addressLine2: "",
-      city: "City",
-      province: "Province",
-      zipcode: "00000",
-      country: "Country",
-      type: "Shipping",
-      isDefault: addresses.length === 0,
-      createdAt: now,
-      updatedAt: now,
-    };
-
-    const updated = [...addresses, newAddress];
-    setAddresses(updated);
-    if (props.onChange) props.onChange(updated);
-  };
-
   const hanldeRemove = (id: string) => {
-    const updated = addresses.filter((a) => a.id !== id);
-    setAddresses(updated);
-    if (props.onChange) props.onChange(updated);
+    console.log("deleted: ", id)
   };
 
   return (
@@ -70,12 +46,22 @@ export default function AddressSection(props: Props) {
         </div>
 
         <div className="flex justify-start mt-2">
-          <Button variant="outline" size="sm" className="gap-2" onClick={addAddress}>
+          <Button
+            variant="outline"
+            size="sm"
+            className="gap-2"
+            onClick={() => setIsCreateModalOpen(true)}
+          >
             <Plus className="size-3.5" />
             Add address
           </Button>
         </div>
       </CardContent>
+
+      <CreateAddressModal
+        open={isCreateModalOpen}
+        onOpenChange={setIsCreateModalOpen}
+      />
     </Card>
   );
 }

@@ -1,6 +1,7 @@
 import { MapPin, Trash2 } from "lucide-react";
 import { Button } from "../../ui/button";
 import { AddressDto } from "@/types/address";
+import { AddressTypeEnum } from "@/types/enums";
 
 interface AddressCardProps {
   address: AddressDto;
@@ -15,7 +16,7 @@ export default function AddressCard({ address, onRemove }: AddressCardProps) {
           <MapPin className="size-4 text-muted-foreground" />
           <span className="text-sm font-medium">{address.label}</span>
           <span className="rounded-md border text-[0.65rem] font-medium px-1.5 py-0.5 text-muted-foreground">
-            {address.type}
+            {AddressTypeEnum[address.type as number]}
           </span>
           {address.isDefault && (
             <span className="rounded-full bg-primary text-primary-foreground text-[0.65rem] font-medium px-2 py-0.5">

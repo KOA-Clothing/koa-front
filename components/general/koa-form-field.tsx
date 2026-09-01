@@ -9,7 +9,7 @@ interface FormFieldProps extends ComponentPropsWithoutRef<typeof Input> {
   error?: string;
 }
 
-export default function FormField({
+export default function KoaFormField({
   label,
   id,
   containerClassName = "flex flex-col gap-2",

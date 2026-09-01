@@ -39,8 +39,6 @@ export default function Profile() {
     )
   }
 
-  console.log(data)
-
   var test : AddressDto[] = [
       {
       id: "45330gtrggg4g",
@@ -55,7 +53,7 @@ export default function Profile() {
       zipcode: "10200",
       createdAt: "",
       updatedAt: "",
-      type: "Shipping"
+      type: 1
     }
   ]
 
@@ -64,7 +62,7 @@ export default function Profile() {
       id: "34545f3r",
       label: "test",
       phoneNo: "112895668",
-      type: "Home",
+      type: 1,
       isActive: true,
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),

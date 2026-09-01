@@ -2,13 +2,12 @@
 
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "../../ui/card";
 import { Button } from "../../ui/button";
-import { Input } from "../../ui/input";
 import { Avatar, AvatarFallback, AvatarImage } from "../../ui/avatar";
 import { Camera } from "lucide-react";
 import { Separator } from "../../ui/separator";
-import { Label } from "../../ui/label";
 import { useState, ChangeEvent } from "react";
 import { BasicProfileDto } from "@/types/user";
+import KoaFormField from "@/components/general/koa-form-field";
 
 interface Props {
   profile?: BasicProfileDto;
@@ -74,36 +73,31 @@ export default function ProfileSection(props : Props) {
         <Separator />
 
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          <div className="flex flex-col gap-2">
-            <Label htmlFor="firstName">First name</Label>
-            <Input
-              id="firstName"
-              name="firstName"
-              value={profile.firstName || ""}
-              onChange={handleChange}
-            />
-          </div>
+          <KoaFormField
+            id="firstName"
+            name="firstName"
+            label="First name"
+            value={profile.firstName || ""}
+            onChange={handleChange}
+          />
           
-          <div className="flex flex-col gap-2">
-            <Label htmlFor="lastName">Last name</Label>
-            <Input
-              id="lastName"
-              name="lastName"
-              value={profile.lastName || ""}
-              onChange={handleChange}
-            />
-          </div>
+          <KoaFormField
+            id="lastName"
+            name="lastName"
+            label="Last name"
+            value={profile.lastName || ""}
+            onChange={handleChange}
+          />
           
-          <div className="flex flex-col gap-2 sm:col-span-2">
-            <Label htmlFor="email">Email address</Label>
-            <Input
-              id="email"
-              name="email"
-              type="email"
-              value={profile.email || ""}
-              onChange={handleChange}
-            />
-          </div>
+          <KoaFormField
+            id="email"
+            name="email"
+            type="email"
+            label="Email address"
+            value={profile.email || ""}
+            onChange={handleChange}
+            containerClassName="flex flex-col gap-2 sm:col-span-2"
+          />
         </div>
 
         <div className="flex justify-end">

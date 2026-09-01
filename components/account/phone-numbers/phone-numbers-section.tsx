@@ -29,7 +29,7 @@ export default function PhoneNumberSection(props: Props) {
       label: "Mobile",
       phoneNo: "",
       countryCode: "+1",
-      type: "Mobile",
+      type: 1,
       isDefault: phones.length === 0,
       isVerified: false,
       isActive: true,

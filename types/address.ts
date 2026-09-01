@@ -31,6 +31,7 @@ export const CreateAddressInputSchema = AddressDtoSchema.omit({
   province: z.string().min(1, "State/Province is required"),
   zipcode: z.string().min(1, "Zip/Postal code is required"),
   country: z.string().min(1, "Country is required"),
+  type: AddressTypeSchema
 });
 
 export type CreateAddressInput = z.infer<typeof CreateAddressInputSchema>;
