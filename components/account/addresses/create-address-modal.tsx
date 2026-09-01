@@ -36,9 +36,7 @@ const emptyForm: CreateAddressInput = {
   city: "",
   province: "",
   zipcode: "",
-  country: "",
   type: 1,
-  isDefault: false,
 };
 
 type FormErrors = Record<string, string>;
@@ -180,13 +178,14 @@ export default function CreateAddressModal({
               onChange={(e) => handleFieldChange("zipcode", e.target.value)}
               error={errors.zipcode}
             />
+
             <KoaFormField
               label="Country"
-              id="address-country"
-              placeholder="Country"
-              value={form.country}
-              onChange={(e) => handleFieldChange("country", e.target.value)}
-              error={errors.country}
+              id="country"
+              placeholder="Sri Lanka"
+              value="Sri Lanka"
+              disabled
+              error={errors.zipcode}
             />
           </div>
 
@@ -216,22 +215,6 @@ export default function CreateAddressModal({
               <span className="text-xs text-destructive">{errors.type}</span>
             )}
           </div>
-
-          <label
-            htmlFor="address-is-default"
-            className="flex cursor-pointer items-center gap-2"
-          >
-            <input
-              id="address-is-default"
-              type="checkbox"
-              checked={form.isDefault}
-              onChange={(e) =>
-                setForm((prev) => ({ ...prev, isDefault: e.target.checked }))
-              }
-              className="size-4 rounded border-input accent-primary"
-            />
-            <span className="text-sm font-medium">Set as default address</span>
-          </label>
         </div>
 
         <DialogFooter className="border-t">

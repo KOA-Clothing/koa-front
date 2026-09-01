@@ -21,6 +21,8 @@ export type AddressDto = z.infer<typeof AddressDtoSchema>;
 
 export const CreateAddressInputSchema = AddressDtoSchema.omit({
   id: true,
+  country: true,
+  isDefault: true,
   createdAt: true,
   updatedAt: true,
 }).extend({
@@ -30,7 +32,6 @@ export const CreateAddressInputSchema = AddressDtoSchema.omit({
   city: z.string().min(1, "City is required"),
   province: z.string().min(1, "State/Province is required"),
   zipcode: z.string().min(1, "Zip/Postal code is required"),
-  country: z.string().min(1, "Country is required"),
   type: AddressTypeSchema
 });
 
