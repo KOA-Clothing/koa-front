@@ -7,6 +7,7 @@ import { AddressDto } from "@/types/address";
 import { useState, useEffect } from "react";
 import AddressCard from "./address-card";
 import CreateAddressModal from "./create-address-modal";
+import DeleteAddressConfirmationModal from "./delete-address-confirmation-modal";
 
 interface Props {
   addresses?: AddressDto[];
@@ -16,6 +17,7 @@ interface Props {
 export default function AddressSection(props: Props) {
   const [addresses, setAddresses] = useState<AddressDto[]>(props.addresses ?? []);
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
+  const [addressToDelete, setAddressToDelete] = useState<string | null>(null);
 
   useEffect(() => {
     if (props.addresses) {
@@ -24,7 +26,7 @@ export default function AddressSection(props: Props) {
   }, [props.addresses]);
 
   const hanldeRemove = (id: string) => {
-    console.log("deleted: ", id)
+    setAddressToDelete(id);
   };
 
   return (
@@ -61,6 +63,14 @@ export default function AddressSection(props: Props) {
       <CreateAddressModal
         open={isCreateModalOpen}
         onOpenChange={setIsCreateModalOpen}
+      />
+
+      <DeleteAddressConfirmationModal
+        open={addressToDelete !== null}
+        onOpenChange={(open) => {
+          if (!open) setAddressToDelete(null);
+        }}
+        addressId={addressToDelete}
       />
     </Card>
   );

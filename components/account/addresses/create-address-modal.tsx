@@ -8,7 +8,7 @@ import {
   CreateAddressInput,
   CreateAddressInputSchema,
 } from "@/types/address";
-import { AddressTypeSchema, AddressType, AddressTypeEnum } from "@/types/enums";
+import { AddressTypeEnum } from "@/types/enums";
 import {
   Dialog,
   DialogContent,
