@@ -4,7 +4,7 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useAxiosClient } from "@/hooks/use-api-client";
 import { API_ROUTES } from "@/configs/api-routes";
 import { AddressDto, AddressFormInput, toAddressForm } from "@/types/address";
-import AddressFormModal from "./address-form-modal";
+import AddressFormModal from "./generic/address-form-modal";
 import toast from "react-hot-toast";
 import { AxiosError } from "axios";
 

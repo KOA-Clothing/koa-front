@@ -3,7 +3,7 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useAxiosClient } from "@/hooks/use-api-client";
 import { API_ROUTES } from "@/configs/api-routes";
-import ConfirmationModal from "./confirmation-modal";
+import ConfirmationModal from "./generic/confirmation-modal";
 import toast from "react-hot-toast";
 import { AxiosError } from "axios";
 

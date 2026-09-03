@@ -6,10 +6,10 @@ import { Button } from "../../ui/button";
 import { AddressDto } from "@/types/address";
 import { useState, useEffect } from "react";
 import AddressCard from "./address-card";
-import CreateAddressModal from "./create-address-modal";
-import UpdateAddressModal from "./update-address-modal";
-import ChangeDefaultConfirmationModal from "./change-default-confirmation-modal";
-import DeleteAddressConfirmationModal from "./delete-address-confirmation-modal";
+import CreateAddressModal from "./modals/create-address-modal";
+import UpdateAddressModal from "./modals/update-address-modal";
+import ChangeDefaultConfirmationModal from "./modals/change-default-confirmation-modal";
+import DeleteAddressConfirmationModal from "./modals/delete-address-confirmation-modal";
 
 interface Props {
   addresses?: AddressDto[];
