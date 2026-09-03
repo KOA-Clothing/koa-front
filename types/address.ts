@@ -19,7 +19,7 @@ export const AddressDtoSchema = z.object({
 
 export type AddressDto = z.infer<typeof AddressDtoSchema>;
 
-export const CreateAddressInputSchema = AddressDtoSchema.omit({
+export const AddressFormInputSchema = AddressDtoSchema.omit({
   id: true,
   country: true,
   isDefault: true,
@@ -32,30 +32,23 @@ export const CreateAddressInputSchema = AddressDtoSchema.omit({
   city: z.string().min(1, "City is required"),
   province: z.string().min(1, "State/Province is required"),
   zipcode: z.string().min(1, "Zip/Postal code is required"),
-  type: AddressTypeSchema
+  type: AddressTypeSchema,
 });
 
-export type CreateAddressInput = z.infer<typeof CreateAddressInputSchema>;
+export type AddressFormInput = z.infer<typeof AddressFormInputSchema>;
 
-export const UpdateAddressInputSchema = AddressDtoSchema.omit({
-  id: true,
-  country: true,
-  isDefault: true,
-  createdAt: true,
-  updatedAt: true,
-}).extend({
-  label: z.string().min(1, "Label is required (e.g. Home, Office)"),
-  houseNo: z.string().min(1, "House number is required"),
-  addressLine1: z.string().min(1, "Address line 1 is required"),
-  city: z.string().min(1, "City is required"),
-  province: z.string().min(1, "State/Province is required"),
-  zipcode: z.string().min(1, "Zip/Postal code is required"),
-  type: AddressTypeSchema
-});
+export const emptyAddressForm: AddressFormInput = {
+  label: "",
+  houseNo: "",
+  addressLine1: "",
+  addressLine2: "",
+  city: "",
+  province: "",
+  zipcode: "",
+  type: 1,
+};
 
-export type UpdateAddressInput = z.infer<typeof UpdateAddressInputSchema>;
-
-export function toUpdateInput(address: AddressDto): UpdateAddressInput {
+export function toAddressForm(address: AddressDto): AddressFormInput {
   return {
     label: address.label,
     houseNo: address.houseNo,

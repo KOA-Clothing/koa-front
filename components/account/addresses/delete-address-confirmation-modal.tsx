@@ -3,15 +3,7 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useAxiosClient } from "@/hooks/use-api-client";
 import { API_ROUTES } from "@/configs/api-routes";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogDescription,
-  DialogFooter,
-} from "@/components/ui/dialog";
-import { Button } from "@/components/ui/button";
+import ConfirmationModal from "./confirmation-modal";
 import toast from "react-hot-toast";
 import { AxiosError } from "axios";
 
@@ -51,35 +43,17 @@ export default function DeleteAddressConfirmationModal({
   };
 
   return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent>
-        <DialogHeader>
-          <DialogTitle>Delete address</DialogTitle>
-          <DialogDescription>
-            Are you sure you want to delete this address? This action cannot be
-            undone.
-          </DialogDescription>
-        </DialogHeader>
-
-        <DialogFooter>
-          <Button
-            variant="outline"
-            type="button"
-            onClick={() => onOpenChange(false)}
-            disabled={mutation.isPending}
-          >
-            Cancel
-          </Button>
-          <Button
-            variant="destructive"
-            type="button"
-            onClick={handleConfirm}
-            disabled={mutation.isPending}
-          >
-            {mutation.isPending ? "Deleting..." : "Confirm"}
-          </Button>
-        </DialogFooter>
-      </DialogContent>
-    </Dialog>
+    <ConfirmationModal
+      open={open}
+      onOpenChange={onOpenChange}
+      title="Delete address"
+      description="Are you sure you want to delete this address? This action cannot be undone."
+      confirmLabel="Confirm"
+      pendingLabel="Deleting..."
+      variant="destructive"
+      isPending={mutation.isPending}
+      onCancel={() => onOpenChange(false)}
+      onConfirm={handleConfirm}
+    />
   );
 }

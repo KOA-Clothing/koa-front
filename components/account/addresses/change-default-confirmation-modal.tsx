@@ -3,15 +3,7 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useAxiosClient } from "@/hooks/use-api-client";
 import { API_ROUTES } from "@/configs/api-routes";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogDescription,
-  DialogFooter,
-} from "@/components/ui/dialog";
-import { Button } from "@/components/ui/button";
+import ConfirmationModal from "./confirmation-modal";
 import toast from "react-hot-toast";
 import { AxiosError } from "axios";
 
@@ -51,33 +43,16 @@ export default function ChangeDefaultConfirmationModal({
   };
 
   return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent>
-        <DialogHeader>
-          <DialogTitle>Set as default</DialogTitle>
-          <DialogDescription>
-            Are you sure you want to set this address as your default address?
-          </DialogDescription>
-        </DialogHeader>
-
-        <DialogFooter>
-          <Button
-            variant="outline"
-            type="button"
-            onClick={() => onOpenChange(false)}
-            disabled={mutation.isPending}
-          >
-            Cancel
-          </Button>
-          <Button
-            type="button"
-            onClick={handleConfirm}
-            disabled={mutation.isPending}
-          >
-            {mutation.isPending ? "Setting..." : "Confirm"}
-          </Button>
-        </DialogFooter>
-      </DialogContent>
-    </Dialog>
+    <ConfirmationModal
+      open={open}
+      onOpenChange={onOpenChange}
+      title="Set as default"
+      description="Are you sure you want to set this address as your default address?"
+      confirmLabel="Confirm"
+      pendingLabel="Setting..."
+      isPending={mutation.isPending}
+      onCancel={() => onOpenChange(false)}
+      onConfirm={handleConfirm}
+    />
   );
 }
