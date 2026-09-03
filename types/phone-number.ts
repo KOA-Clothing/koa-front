@@ -5,7 +5,7 @@ import { PhoneNumberTypeSchema } from "./enums";
 export const PhoneNumberDtoSchema = z.object({
   id: z.uuid(),
   label: z.string(),
-  phoneNo: z.string(),
+  phoneNumber: z.string(),
   countryCode: z.string().nullable().optional(),
   type: PhoneNumberTypeSchema,
   isDefault: z.boolean(),
@@ -18,15 +18,36 @@ export const PhoneNumberDtoSchema = z.object({
 export type PhoneNumberDto = z.infer<typeof PhoneNumberDtoSchema>;
 
 // Form Input Schema
-export const CreatePhoneNumberInputSchema = PhoneNumberDtoSchema.pick({
-  label: true,
-  phoneNo: true,
+export const PhoneNumberFormInputSchema = PhoneNumberDtoSchema.omit({
+  id: true,
   countryCode: true,
-  type: true,
   isDefault: true,
+  isActive: true,
+  isVerified: true,
+  createdAt: true,
+  updatedAt: true
 }).extend({
-  label: z.string().min(1, "Label is required"),
-  phoneNo: z.string().regex(/^\+?[1-9]\d{1,14}$/, "Invalid phone number format"),
+  label: z.string()
+    .min(1, "Label is required (e.g. Mobile, Home)")
+    .max(100, "Label cannot exceed 100 characters"),
+  // Assuming property name mapping is handled elsewhere, otherwise rename to phoneNumber
+  phoneNumber: z.string()
+    .regex(/^[1-9]\d{8}$/, "Phone number must contain exactly 9 digits and should not start with 0"),
+  type: PhoneNumberTypeSchema,
 });
 
-export type CreatePhoneNumberInput = z.infer<typeof CreatePhoneNumberInputSchema>;
+export type PhoneNumberFormInput = z.infer<typeof PhoneNumberFormInputSchema>;
+
+export const emptyPhoneNumberForm: PhoneNumberFormInput = {
+  label: "",
+  phoneNumber: "",
+  type: 1,
+};
+
+export function toPhoneNumberForm(phone: PhoneNumberDto): PhoneNumberFormInput {
+  return {
+    label: phone.label,
+    phoneNumber: phone.phoneNumber,
+    type: phone.type as number,
+  };
+}

@@ -31,7 +31,7 @@ export const UpdateProfileInputSchema = BasicProfileDtoSchema.pick({
 }).extend({
   firstName: z.string().min(1, "First name is required"),
   lastName: z.string().min(1, "Last name is required"),
-  email: z.string().email("Invalid email address"),
+  email: z.email("Invalid email address"),
 });
 
 export type UpdateProfileInput = z.infer<typeof UpdateProfileInputSchema>;

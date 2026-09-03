@@ -31,6 +31,7 @@ export default function Profile() {
 
   // Handle error state
   if (isError) {
+    console.log(error)
     return (
       <Error error={error} />
     )

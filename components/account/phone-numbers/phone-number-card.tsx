@@ -1,15 +1,24 @@
-import { Phone, Trash2 } from "lucide-react";
+import { Phone, Pencil, Star, Trash2 } from "lucide-react";
 import { Button } from "../../ui/button";
 import { Input } from "../../ui/input";
 import { PhoneNumberDto } from "@/types/phone-number";
+import { PhoneNumberTypeEnum } from "@/types/enums";
 
 interface PhoneNumberCardProps {
   phone: PhoneNumberDto;
+  onEdit: (phone: PhoneNumberDto) => void;
+  onSetDefault: (id: string) => void;
   onRemove: (id: string) => void;
   onChange: (id: string, newNumber: string) => void;
 }
 
-export default function PhoneNumberCard({ phone, onRemove, onChange }: PhoneNumberCardProps) {
+export default function PhoneNumberCard({
+  phone,
+  onEdit,
+  onSetDefault,
+  onRemove,
+  onChange,
+}: PhoneNumberCardProps) {
   return (
     <div className="relative flex flex-col gap-3 rounded-xl border border-border bg-muted/30 p-4">
       <div className="flex items-center justify-between">
@@ -17,7 +26,7 @@ export default function PhoneNumberCard({ phone, onRemove, onChange }: PhoneNumb
           <Phone className="size-4 text-muted-foreground" />
           <span className="text-sm font-medium capitalize">{phone.label}</span>
           <span className="rounded-md border text-[0.65rem] font-medium px-1.5 py-0.5 text-muted-foreground">
-            {phone.type}
+            {PhoneNumberTypeEnum[phone.type as number]}
           </span>
           {phone.isDefault && (
             <span className="rounded-full bg-primary text-primary-foreground text-[0.65rem] font-medium px-2 py-0.5">
@@ -26,15 +35,38 @@ export default function PhoneNumberCard({ phone, onRemove, onChange }: PhoneNumb
           )}
         </div>
 
-        <Button
-          variant="ghost"
-          size="icon-sm"
-          className="text-muted-foreground hover:text-destructive"
-          onClick={() => onRemove(phone.id)}
-          aria-label={`Remove ${phone.label} number`}
-        >
-          <Trash2 className="size-3.5" />
-        </Button>
+        <div className="flex items-center gap-1">
+          {!phone.isDefault && (
+            <Button
+              variant="ghost"
+              size="sm"
+              className="text-muted-foreground hover:text-foreground"
+              onClick={() => onSetDefault(phone.id)}
+              aria-label={`Set ${phone.label} as default`}
+            >
+              <Star className="size-3.5" />
+              Set Default
+            </Button>
+          )}
+          <Button
+            variant="ghost"
+            size="icon-sm"
+            className="text-muted-foreground hover:text-foreground"
+            onClick={() => onEdit(phone)}
+            aria-label={`Edit ${phone.label} number`}
+          >
+            <Pencil className="size-3.5" />
+          </Button>
+          <Button
+            variant="ghost"
+            size="icon-sm"
+            className="text-muted-foreground hover:text-destructive"
+            onClick={() => onRemove(phone.id)}
+            aria-label={`Remove ${phone.label} number`}
+          >
+            <Trash2 className="size-3.5" />
+          </Button>
+        </div>
       </div>
 
       <div className="flex gap-2">
@@ -46,7 +78,7 @@ export default function PhoneNumberCard({ phone, onRemove, onChange }: PhoneNumb
           />
         )}
         <Input
-          value={phone.phoneNo}
+          value={phone.phoneNumber}
           onChange={(e) => onChange(phone.id, e.target.value)}
           placeholder="Enter phone number..."
           className="h-8 text-xs"
