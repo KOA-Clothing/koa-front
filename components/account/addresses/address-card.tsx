@@ -1,4 +1,4 @@
-import { MapPin, Pencil, Trash2 } from "lucide-react";
+import { MapPin, Pencil, Star, Trash2 } from "lucide-react";
 import { Button } from "../../ui/button";
 import { AddressDto } from "@/types/address";
 import { AddressTypeEnum } from "@/types/enums";
@@ -6,10 +6,11 @@ import { AddressTypeEnum } from "@/types/enums";
 interface AddressCardProps {
   address: AddressDto;
   onEdit: (address: AddressDto) => void;
+  onSetDefault: (id: string) => void;
   onRemove: (id: string) => void;
 }
 
-export default function AddressCard({ address, onEdit, onRemove }: AddressCardProps) {
+export default function AddressCard({ address, onEdit, onSetDefault, onRemove }: AddressCardProps) {
   return (
     <div className="relative flex flex-col gap-3 rounded-xl border border-border bg-muted/30 p-4">
       <div className="flex items-center justify-between">
@@ -27,6 +28,18 @@ export default function AddressCard({ address, onEdit, onRemove }: AddressCardPr
         </div>
         
         <div className="flex items-center gap-1">
+          {!address.isDefault && (
+            <Button
+              variant="ghost"
+              size="sm"
+              className="text-muted-foreground hover:text-foreground"
+              onClick={() => onSetDefault(address.id)}
+              aria-label={`Set ${address.label} as default`}
+            >
+              <Star className="size-3.5" />
+              Set Default
+            </Button>
+          )}
           <Button
             variant="ghost"
             size="icon-sm"

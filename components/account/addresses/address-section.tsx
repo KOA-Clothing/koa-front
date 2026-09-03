@@ -8,6 +8,7 @@ import { useState, useEffect } from "react";
 import AddressCard from "./address-card";
 import CreateAddressModal from "./create-address-modal";
 import UpdateAddressModal from "./update-address-modal";
+import ChangeDefaultConfirmationModal from "./change-default-confirmation-modal";
 import DeleteAddressConfirmationModal from "./delete-address-confirmation-modal";
 
 interface Props {
@@ -20,6 +21,7 @@ export default function AddressSection(props: Props) {
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
   const [addressToDelete, setAddressToDelete] = useState<string | null>(null);
   const [addressToEdit, setAddressToEdit] = useState<AddressDto | null>(null);
+  const [addressToSetDefault, setAddressToSetDefault] = useState<string | null>(null);
 
   useEffect(() => {
     if (props.addresses) {
@@ -45,6 +47,7 @@ export default function AddressSection(props: Props) {
               key={address.id} 
               address={address} 
               onEdit={setAddressToEdit}
+              onSetDefault={setAddressToSetDefault}
               onRemove={hanldeRemove} 
             />
           ))}
@@ -74,6 +77,14 @@ export default function AddressSection(props: Props) {
           if (!open) setAddressToEdit(null);
         }}
         address={addressToEdit}
+      />
+
+      <ChangeDefaultConfirmationModal
+        open={addressToSetDefault !== null}
+        onOpenChange={(open) => {
+          if (!open) setAddressToSetDefault(null);
+        }}
+        addressId={addressToSetDefault}
       />
 
       <DeleteAddressConfirmationModal
