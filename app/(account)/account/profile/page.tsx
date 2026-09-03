@@ -25,6 +25,7 @@ export default function Profile() {
       return UserProfileDtoSchema.parse(response.data)
     },
   })
+  
   // Handle loading state
   if (isLoading) {
     return (

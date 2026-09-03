@@ -1,14 +1,15 @@
-import { MapPin, Trash2 } from "lucide-react";
+import { MapPin, Pencil, Trash2 } from "lucide-react";
 import { Button } from "../../ui/button";
 import { AddressDto } from "@/types/address";
 import { AddressTypeEnum } from "@/types/enums";
 
 interface AddressCardProps {
   address: AddressDto;
+  onEdit: (address: AddressDto) => void;
   onRemove: (id: string) => void;
 }
 
-export default function AddressCard({ address, onRemove }: AddressCardProps) {
+export default function AddressCard({ address, onEdit, onRemove }: AddressCardProps) {
   return (
     <div className="relative flex flex-col gap-3 rounded-xl border border-border bg-muted/30 p-4">
       <div className="flex items-center justify-between">
@@ -25,15 +26,26 @@ export default function AddressCard({ address, onRemove }: AddressCardProps) {
           )}
         </div>
         
-        <Button
-          variant="ghost"
-          size="icon-sm"
-          className="text-muted-foreground hover:text-destructive"
-          onClick={() => onRemove(address.id)}
-          aria-label={`Remove ${address.label}`}
-        >
-          <Trash2 className="size-3.5" />
-        </Button>
+        <div className="flex items-center gap-1">
+          <Button
+            variant="ghost"
+            size="icon-sm"
+            className="text-muted-foreground hover:text-foreground"
+            onClick={() => onEdit(address)}
+            aria-label={`Edit ${address.label}`}
+          >
+            <Pencil className="size-3.5" />
+          </Button>
+          <Button
+            variant="ghost"
+            size="icon-sm"
+            className="text-muted-foreground hover:text-destructive"
+            onClick={() => onRemove(address.id)}
+            aria-label={`Remove ${address.label}`}
+          >
+            <Trash2 className="size-3.5" />
+          </Button>
+        </div>
       </div>
 
       <div className="text-sm text-muted-foreground leading-relaxed">
