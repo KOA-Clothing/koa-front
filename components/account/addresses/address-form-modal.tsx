@@ -1,15 +1,10 @@
 "use client"
 
 import { useEffect, useState } from "react";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { useAxiosClient } from "@/hooks/use-api-client";
-import { API_ROUTES } from "@/configs/api-routes";
 import {
-  AddressDto,
   AddressFormInput,
   AddressFormInputSchema,
   emptyAddressForm,
-  toAddressForm,
 } from "@/types/address";
 import { AddressTypeEnum } from "@/types/enums";
 import {
@@ -23,13 +18,15 @@ import {
 import { Button } from "@/components/ui/button";
 import KoaFormField from "@/components/general/koa-form-field";
 import { cn } from "@/lib/utils";
-import toast from "react-hot-toast";
-import { AxiosError } from "axios";
 
 interface AddressFormModalProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  address?: AddressDto | null;
+  title: string;
+  description: string;
+  initialValue?: AddressFormInput;
+  isPending?: boolean;
+  onSubmit: (data: AddressFormInput) => void;
 }
 
 type FormErrors = Record<string, string>;
@@ -44,50 +41,21 @@ const addressTypes = Object.keys(AddressTypeEnum)
 export default function AddressFormModal({
   open,
   onOpenChange,
-  address,
+  title,
+  description,
+  initialValue,
+  isPending = false,
+  onSubmit,
 }: AddressFormModalProps) {
-  const axiosClient = useAxiosClient();
-  const queryClient = useQueryClient();
-
-  const isEdit = Boolean(address);
-
   const [form, setForm] = useState<AddressFormInput>(emptyAddressForm);
   const [errors, setErrors] = useState<FormErrors>({});
 
   useEffect(() => {
     if (open) {
-      setForm(address ? toAddressForm(address) : emptyAddressForm);
+      setForm(initialValue ?? emptyAddressForm);
       setErrors({});
     }
-  }, [open, address]);
-
-  const mutation = useMutation({
-    mutationFn: async (payload: AddressFormInput) => {
-      if (address) {
-        const response = await axiosClient.put(
-          API_ROUTES.ADDRESSES.BY_ID(address.id),
-          payload
-        );
-        return response.data;
-      }
-      const response = await axiosClient.post(API_ROUTES.ADDRESSES.BASE, payload);
-      return response.data;
-    },
-    onSuccess: (data) => {
-      queryClient.invalidateQueries({ queryKey: ["user-profile"] });
-      toast.success(data?.message || (isEdit ? "Address updated successfully!" : "Address added successfully!"));
-      closeAndReset();
-    },
-    onError: (error: AxiosError) => {
-      toast.error(error.message);
-    },
-  });
-
-  const closeAndReset = () => {
-    setForm(emptyAddressForm);
-    setErrors({});
-    onOpenChange(false);
-  };
+  }, [open, initialValue]);
 
   const handleFieldChange = <K extends keyof AddressFormInput>(
     field: K,
@@ -111,28 +79,20 @@ export default function AddressFormModal({
     }
 
     setErrors({});
-    mutation.mutate(result.data);
+    onSubmit(result.data);
   };
 
   return (
     <Dialog
       open={open}
       onOpenChange={(nextOpen) => {
-        if (!nextOpen) {
-          closeAndReset();
-        } else {
-          onOpenChange(nextOpen);
-        }
+        onOpenChange(nextOpen);
       }}
     >
       <DialogContent className="max-h-[90vh] overflow-y-auto">
         <DialogHeader className="border-b pb-2">
-          <DialogTitle>{isEdit ? "Update address" : "Add address"}</DialogTitle>
-          <DialogDescription>
-            {isEdit
-              ? "Update your shipping or billing address details."
-              : "Add a new shipping or billing address to your account."}
-          </DialogDescription>
+          <DialogTitle>{title}</DialogTitle>
+          <DialogDescription>{description}</DialogDescription>
         </DialogHeader>
 
         <div className="flex flex-col gap-4 px-5">
@@ -241,17 +201,17 @@ export default function AddressFormModal({
           <Button
             variant="outline"
             type="button"
-            onClick={closeAndReset}
-            disabled={mutation.isPending}
+            onClick={() => onOpenChange(false)}
+            disabled={isPending}
           >
             Cancel
           </Button>
           <Button
             type="button"
             onClick={handleSubmit}
-            disabled={mutation.isPending}
+            disabled={isPending}
           >
-            {mutation.isPending ? "Saving..." : "Save"}
+            {isPending ? "Saving..." : "Save"}
           </Button>
         </DialogFooter>
       </DialogContent>
