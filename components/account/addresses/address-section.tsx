@@ -29,10 +29,6 @@ export default function AddressSection(props: Props) {
     }
   }, [props.addresses]);
 
-  const hanldeRemove = (id: string) => {
-    setAddressToDelete(id);
-  };
-
   return (
     <Card>
       <CardHeader>
@@ -48,7 +44,7 @@ export default function AddressSection(props: Props) {
               address={address} 
               onEdit={setAddressToEdit}
               onSetDefault={setAddressToSetDefault}
-              onRemove={hanldeRemove} 
+              onRemove={setAddressToDelete} 
             />
           ))}
         </div>
