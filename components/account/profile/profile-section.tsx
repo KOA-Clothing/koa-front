@@ -8,6 +8,7 @@ import { useState, useEffect } from "react";
 import { BasicProfileDto } from "@/types/user";
 import KoaFormField from "@/components/general/koa-form-field";
 import UpdateUserProfileModal from "./modals/update-user-profile";
+import PasswordStatus from "./password-status";
 
 interface Props {
   profile?: BasicProfileDto;
@@ -21,6 +22,7 @@ export default function ProfileSection(props : Props) {
       firstName: "",
       lastName: "",
       email: "",
+      passwordEnabled: false,
       profileImageUrl: "",
       createdAt: "",
       updatedAt: "",
@@ -95,15 +97,17 @@ export default function ProfileSection(props : Props) {
             />
           </div>
           
-          <KoaFormField
-            readOnly
-            id="email"
-            name="email"
-            type="email"
-            label="Email address"
-            value={profile.email || ""}
-            containerClassName="flex flex-col gap-2 sm:col-span-2"
-          />
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <KoaFormField
+              readOnly
+              id="email"
+              name="email"
+              type="email"
+              label="Email address"
+              value={profile.email || ""}
+            />
+            <PasswordStatus enabled={profile.passwordEnabled} />
+          </div>
         </div>
       </CardContent>
 
