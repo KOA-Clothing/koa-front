@@ -1,13 +1,13 @@
 "use client"
 
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "../../ui/card";
+import { Card, CardAction, CardContent, CardDescription, CardHeader, CardTitle } from "../../ui/card";
 import { Button } from "../../ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "../../ui/avatar";
-import { Camera } from "lucide-react";
-import { Separator } from "../../ui/separator";
-import { useState, ChangeEvent } from "react";
+import { Camera, Pencil } from "lucide-react";
+import { useState, useEffect } from "react";
 import { BasicProfileDto } from "@/types/user";
 import KoaFormField from "@/components/general/koa-form-field";
+import UpdateUserProfileModal from "./modals/update-user-profile";
 
 interface Props {
   profile?: BasicProfileDto;
@@ -26,6 +26,13 @@ export default function ProfileSection(props : Props) {
       updatedAt: "",
     }
   );
+  const [isEditOpen, setIsEditOpen] = useState(false);
+
+  useEffect(() => {
+    if (props.profile) {
+      setProfile(props.profile);
+    }
+  }, [props.profile]);
 
   const firstInitial = profile.firstName?.charAt(0).toUpperCase() || "";
   const lastInitial = profile.lastName?.charAt(0).toUpperCase() || "";
@@ -36,6 +43,17 @@ export default function ProfileSection(props : Props) {
       <CardHeader>
         <CardTitle>Profile</CardTitle>
         <CardDescription>Your basic personal information.</CardDescription>
+        <CardAction>
+          <Button
+            variant="ghost"
+            size="icon-sm"
+            className="text-muted-foreground hover:text-foreground"
+            onClick={() => setIsEditOpen(true)}
+            aria-label="Edit profile"
+          >
+            <Pencil className="size-3.5" />
+          </Button>
+        </CardAction>
       </CardHeader>
       
       <CardContent className="flex flex-col gap-6">
@@ -88,6 +106,12 @@ export default function ProfileSection(props : Props) {
           />
         </div>
       </CardContent>
+
+      <UpdateUserProfileModal
+        open={isEditOpen}
+        onOpenChange={setIsEditOpen}
+        profile={profile}
+      />
     </Card>
   );
 }
