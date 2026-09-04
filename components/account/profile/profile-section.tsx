@@ -27,20 +27,6 @@ export default function ProfileSection(props : Props) {
     }
   );
 
-  const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
-    setProfile((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
-  };
-
-  const handleSave = () => {
-    if (props.onSave) {
-      props.onSave(profile);
-    }
-  };
-
   const firstInitial = profile.firstName?.charAt(0).toUpperCase() || "";
   const lastInitial = profile.lastName?.charAt(0).toUpperCase() || "";
   const initials = `${firstInitial}${lastInitial}` || "U";
@@ -70,38 +56,36 @@ export default function ProfileSection(props : Props) {
           </div>
         </div>
 
-        <Separator />
+        {/* <Separator /> */}
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          <KoaFormField
-            id="firstName"
-            name="firstName"
-            label="First name"
-            value={profile.firstName || ""}
-            onChange={handleChange}
-          />
+        <div className="relative flex flex-col gap-3 rounded-xl border border-border bg-muted/30 p-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <KoaFormField
+              readOnly
+              id="firstName"
+              name="firstName"
+              label="First name"
+              value={profile.firstName || ""}
+            />
+            
+            <KoaFormField
+              readOnly
+              id="lastName"
+              name="lastName"
+              label="Last name"
+              value={profile.lastName || ""}
+            />
+          </div>
           
           <KoaFormField
-            id="lastName"
-            name="lastName"
-            label="Last name"
-            value={profile.lastName || ""}
-            onChange={handleChange}
-          />
-          
-          <KoaFormField
+            readOnly
             id="email"
             name="email"
             type="email"
             label="Email address"
             value={profile.email || ""}
-            onChange={handleChange}
             containerClassName="flex flex-col gap-2 sm:col-span-2"
           />
-        </div>
-
-        <div className="flex justify-end">
-          <Button onClick={handleSave}>Save changes</Button>
         </div>
       </CardContent>
     </Card>

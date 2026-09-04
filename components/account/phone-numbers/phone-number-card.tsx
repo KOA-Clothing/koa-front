@@ -78,6 +78,7 @@ export default function PhoneNumberCard({
           />
         )}
         <Input
+          readOnly
           value={phone.phoneNumber}
           onChange={(e) => onChange(phone.id, e.target.value)}
           placeholder="Enter phone number..."
