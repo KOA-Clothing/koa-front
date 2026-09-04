@@ -26,6 +26,7 @@ export default function ProfileSection(props : Props) {
       profileImageUrl: "",
       createdAt: "",
       updatedAt: "",
+      externalAccounts: []
     }
   );
   const [isEditOpen, setIsEditOpen] = useState(false);
