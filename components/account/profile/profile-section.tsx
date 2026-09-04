@@ -9,6 +9,7 @@ import { BasicProfileDto } from "@/types/user";
 import KoaFormField from "@/components/general/koa-form-field";
 import UpdateUserProfileModal from "./modals/update-user-profile";
 import PasswordStatus from "./password-status";
+import SsoAccounts from "./sso-accounts";
 
 interface Props {
   profile?: BasicProfileDto;
@@ -60,21 +61,25 @@ export default function ProfileSection(props : Props) {
       </CardHeader>
       
       <CardContent className="flex flex-col gap-6">
-        <div className="flex items-center gap-4">
-          <Avatar className="size-16">
-            <AvatarImage src={profile.profileImageUrl ?? undefined} alt="Profile Photo" />
-            <AvatarFallback className="text-lg bg-muted">
-              {initials}
-            </AvatarFallback>
-          </Avatar>
-          
-          <div>
-            <Button variant="outline" size="sm" className="gap-2">
-              <Camera className="size-3.5" />
-              Change photo
-            </Button>
-            <p className="text-xs text-muted-foreground mt-2">JPG, PNG or GIF. Max 2MB.</p>
+        <div className="flex flex-wrap items-center justify-between gap-6">
+          <div className="flex items-center gap-4">
+            <Avatar className="size-16">
+              <AvatarImage src={profile.profileImageUrl ?? undefined} alt="Profile Photo" />
+              <AvatarFallback className="text-lg bg-muted">
+                {initials}
+              </AvatarFallback>
+            </Avatar>
+            
+            <div>
+              <Button variant="outline" size="sm" className="gap-2">
+                <Camera className="size-3.5" />
+                Change photo
+              </Button>
+              <p className="text-xs text-muted-foreground mt-2">JPG, PNG or GIF. Max 2MB.</p>
+            </div>
           </div>
+
+          <SsoAccounts providers={profile.externalAccounts.map(a => a.provider)} />
         </div>
 
         {/* <Separator /> */}
