@@ -1,29 +1,31 @@
 export default async function getCroppedImg(
-  imageSrc: string,
-  pixelCrop: { x: number; y: number; width: number; height: number }
+  imageElement: HTMLImageElement,
+  crop: { x: number; y: number; width: number; height: number }
 ): Promise<File> {
-  const image = new Image();
-  image.src = imageSrc;
-  await new Promise((resolve) => (image.onload = resolve));
-
   const canvas = document.createElement("canvas");
   const ctx = canvas.getContext("2d");
 
   if (!ctx) throw new Error("No 2d context");
 
-  canvas.width = pixelCrop.width;
-  canvas.height = pixelCrop.height;
+  // Calculate scaling factor between rendered size and actual image resolution
+  const scaleX = imageElement.naturalWidth / imageElement.width;
+  const scaleY = imageElement.naturalHeight / imageElement.height;
+
+  canvas.width = crop.width * scaleX;
+  canvas.height = crop.height * scaleY;
+
+  ctx.imageSmoothingQuality = "high";
 
   ctx.drawImage(
-    image,
-    pixelCrop.x,
-    pixelCrop.y,
-    pixelCrop.width,
-    pixelCrop.height,
+    imageElement,
+    crop.x * scaleX,
+    crop.y * scaleY,
+    crop.width * scaleX,
+    crop.height * scaleY,
     0,
     0,
-    pixelCrop.width,
-    pixelCrop.height
+    canvas.width,
+    canvas.height
   );
 
   return new Promise((resolve, reject) => {
