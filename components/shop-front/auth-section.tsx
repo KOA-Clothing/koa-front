@@ -1,4 +1,5 @@
-import { Show, SignInButton, SignUpButton, UserButton } from "@clerk/nextjs";
+import { Show, SignInButton, SignUpButton } from "@clerk/nextjs";
+import UserButton from "@/components/account/user-button";
 
 interface Props {
   isSolidActive : boolean
@@ -36,7 +37,7 @@ export default function AuthSection({isSolidActive} : Props) {
       </Show>
 
       <Show when="signed-in">
-        <div className={`p-1 rounded-full transition duration-300 ${isSolidActive ? 'hover:bg-muted' : 'hover:bg-white/10'}`}>
+        <div className={`flex p-1 rounded-full transition duration-300 ${isSolidActive ? 'hover:bg-muted' : 'hover:bg-white/10'}`}>
           <UserButton />
         </div>
       </Show>
