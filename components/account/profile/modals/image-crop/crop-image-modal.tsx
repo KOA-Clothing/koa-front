@@ -67,7 +67,7 @@ export function CropImageDialog({
           <DialogTitle>Crop Profile Picture</DialogTitle>
         </DialogHeader>
 
-        <div className="flex justify-center items-center max-h-[400px] bg-black/5 rounded-md overflow-hidden my-4 p-2">
+        <div className="flex justify-center items-center max-h-100 bg-black/5 rounded-md overflow-hidden my-4 p-2">
           {selectedImage && (
             <ReactCrop
               crop={crop}
@@ -81,7 +81,7 @@ export function CropImageDialog({
                 src={selectedImage}
                 onLoad={onImageLoad}
                 alt="Crop preview"
-                className="max-h-[350px] w-auto object-contain"
+                className="max-h-87.5 w-auto object-contain"
               />
             </ReactCrop>
           )}
