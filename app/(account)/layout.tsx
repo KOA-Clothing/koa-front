@@ -9,7 +9,7 @@ export default function AccountLayout({ children }: { children: React.ReactNode 
     <div className="min-h-screen w-full bg-gray-50">
       <div className="max-w-7xl mx-auto px-4 py-8">
         <div className="flex flex-col gap-6">
-          <div className="flex flex-row items-center gap-4">
+          <div className="flex flex-row items-start gap-4">
             <BackButton />
             <div>
               <h1 className="text-2xl font-heading font-medium">My Account</h1>
@@ -19,7 +19,7 @@ export default function AccountLayout({ children }: { children: React.ReactNode 
 
           <AccountTabs />
 
-          <main className="flex-1 border rounded-xl p-6 bg-background shadow-sm">
+          <main className="flex-1 border rounded-xl p-4 bg-background shadow-sm max-w-7xl w-7xl">
             {children}
           </main>
         </div>

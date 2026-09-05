@@ -12,8 +12,8 @@ export default function ShopFrontLayout({ children }: LayoutProps<"/">) {
   return (
     <div className="min-h-screen flex flex-col items-center justify-start bg-gray-50"> 
       <Header />
-      <Hero />  
-      <div className="border border-red-500 flex flex-col max-w-7xl w-7xl">
+       
+      <div className="flex flex-col w-full">
         {children}
       </div> 
       <Footer />  

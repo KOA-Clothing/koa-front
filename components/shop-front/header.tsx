@@ -7,7 +7,6 @@ import { ShoppingCart, Search } from 'lucide-react'
 import { usePathname } from 'next/navigation'
 import { Button } from '@/components/ui/button'
 import logo from "@/public/logo/black/warrior-face.png"
-import { Show, SignInButton, SignUpButton, UserButton } from '@clerk/nextjs'
 import NavItem from './nav-item'
 import AuthSection from './auth-section'
 
