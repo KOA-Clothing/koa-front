@@ -16,5 +16,10 @@ export const API_ROUTES = {
     ALL: "/api/v1/users/phone-numbers/all",
     BY_ID: (id: string) => `/api/v1/users/phone-numbers/${id}`,
     SET_DEFAULT: (id: string) => `/api/v1/users/phone-numbers/${id}/set-default` 
+  },
+  CATEGORIES: {
+    BASE: "/api/v1/categories",
+    ALL: "/api/v1/categories/all",
+    BY_ID: (id: string) => `/api/v1/categories/${id}`,
   }
 } as const;
