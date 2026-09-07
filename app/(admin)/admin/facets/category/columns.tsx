@@ -9,22 +9,15 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { createDataTableColumnHelper } from "@/lib/data-table/configs";
+import { CategoryDto } from "@/types/category";
 import { Ellipsis, Pencil, Trash2 } from "lucide-react";
 
-export interface Category {
-  id: string;
-  name: string;
-  slug: string;
-  isActive: boolean;
-  sortOrder: number;
-}
-
 interface CategoryColumnActions {
-  onEdit: (category: Category) => void;
-  onDelete: (category: Category) => void;
+  onEdit: (category: CategoryDto) => void;
+  onDelete: (category: CategoryDto) => void;
 }
 
-const columnHelper = createDataTableColumnHelper<Category>();
+const columnHelper = createDataTableColumnHelper<CategoryDto>();
 
 /**
  * Everything table-shape-related for the categories route lives here.
@@ -34,15 +27,16 @@ export function getCategoryColumns({
   onEdit,
   onDelete,
 }: CategoryColumnActions) {
-  return [
+  // `columnHelper.columns([...])` (not a bare array literal) normalizes
+  // this array — whose entries each have a different, precise value type
+  // (string, boolean, number, unknown for the display column) — into a
+  // single ColumnDef<Features, Category, unknown>[], which is what
+  // <DataTable />'s `columns` prop expects. Returning a plain array here
+  // instead is exactly what produces the "Type ... is not assignable"
+  // errors when this gets passed into <DataTable columns={columns} />.
+  return columnHelper.columns([
     columnHelper.accessor("name", {
       header: "Name",
-    }),
-    columnHelper.accessor("slug", {
-      header: "Slug",
-      cell: (info) => (
-        <span className="text-muted-foreground">{info.getValue()}</span>
-      ),
     }),
     columnHelper.accessor("isActive", {
       header: "Status",
@@ -93,5 +87,5 @@ export function getCategoryColumns({
         </div>
       ),
     }),
-  ];
+  ]);
 }

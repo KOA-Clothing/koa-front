@@ -10,13 +10,14 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Skeleton } from "@/components/ui/skeleton";
-
+import type { PaginationChangeHandler } from "@/types/pagination";
 import { DataTablePagination } from "./data-table-pagination";
-import { PaginationChangeHandler } from "@/types/pagination";
 import { DataTableColumnDef, tableFeatureSet } from "@/lib/data-table/configs";
 
-interface DataTableProps<TData extends RowData, TValue> {
-  columns: DataTableColumnDef<TData, TValue>[];
+interface DataTableProps<TData extends RowData> {
+  // TValue is intentionally not a generic param here — see the note on
+  // DataTableColumnDef in lib/data-table/config.ts for why.
+  columns: DataTableColumnDef<TData>[];
   data: TData[];
   /** Total row count across every page, from the API — required for manual pagination. */
   rowCount: number;
@@ -37,7 +38,7 @@ interface DataTableProps<TData extends RowData, TValue> {
  * `createDataTableColumnHelper` from `@/lib/data-table/config`. This
  * component and the query/state that feeds it stay the same everywhere.
  */
-export function DataTable<TData extends RowData, TValue>({
+export function DataTable<TData extends RowData>({
   columns,
   data,
   rowCount,
@@ -47,7 +48,7 @@ export function DataTable<TData extends RowData, TValue>({
   emptyMessage = "No results.",
   pageSizeOptions,
   className,
-}: DataTableProps<TData, TValue>) {
+}: DataTableProps<TData>) {
   const table = useTable({
     features: tableFeatureSet,
     columns,
@@ -112,9 +113,25 @@ export function DataTable<TData extends RowData, TValue>({
         </Table>
       </div>
 
+      {/*
+        Pagination state/APIs are read HERE, off the `table` value that
+        useTable() actually returned (correctly typed, including `.state`),
+        and handed down as plain props/callbacks. DataTablePagination never
+        touches a TanStack Table type itself.
+      */}
       <DataTablePagination
-        table={table}
+        pageIndex={table.state.pagination.pageIndex}
+        pageSize={table.state.pagination.pageSize}
+        pageCount={table.getPageCount()}
         rowCount={rowCount}
+        canPreviousPage={table.getCanPreviousPage()}
+        canNextPage={table.getCanNextPage()}
+        canLastPage={table.getCanLastPage()}
+        onFirstPage={() => table.firstPage()}
+        onPreviousPage={() => table.previousPage()}
+        onNextPage={() => table.nextPage()}
+        onLastPage={() => table.lastPage()}
+        onPageSizeChange={(size) => table.setPageSize(size)}
         isLoading={isLoading}
         pageSizeOptions={pageSizeOptions}
       />

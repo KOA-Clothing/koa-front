@@ -23,10 +23,6 @@ import {
  * does that work as well). See the Features guide for how features, row
  * models, and function registries fit together:
  * https://tanstack.com/table/latest/docs/guide/features
- *
- * Keeping this as one shared, module-scoped `tableFeatures()` call (rather
- * than redefining it per route) is what lets every columns.tsx file use
- * the same `DataTableColumnDef` / `createDataTableColumnHelper` below.
  */
 export const tableFeatureSet = tableFeatures({
   rowPaginationFeature,
@@ -38,8 +34,20 @@ export type AppTableFeatures = typeof tableFeatureSet;
  * Shorthand so a route's columns.tsx doesn't need to repeat
  * `ColumnDef<typeof tableFeatureSet, TData, TValue>` for every column.
  *
- * Usage in a route's columns.tsx:
- *   const columns: DataTableColumnDef<Category>[] = [...]
+ * TValue is left at its `unknown` default and NOT threaded through as a
+ * second generic param on <DataTable />. A single columns.tsx normally
+ * defines columns with different value types (string, boolean, number...),
+ * so the array returned is a union of precisely-typed ColumnDefs. Trying
+ * to force that whole union into one caller-supplied `TValue` is what
+ * produces TS errors like "Type 'unknown' is not assignable to type
+ * 'TValue'" — `TValue` could be instantiated as anything, so the compiler
+ * can't assume it lines up with a specific column's value type.
+ *
+ * The fix used throughout this app: build columns.tsx's return value with
+ * `columnHelper.columns([...])` (not a bare array literal). That helper
+ * normalizes the heterogeneous array into ColumnDef<Features, TData,
+ * unknown>[], which is exactly what this type — and <DataTable />'s
+ * `columns` prop — expect.
  */
 export type DataTableColumnDef<TData extends RowData, TValue = unknown> = ColumnDef<
   AppTableFeatures,
@@ -53,7 +61,12 @@ export type DataTableColumnDef<TData extends RowData, TValue = unknown> = Column
  *
  * Usage:
  *   const columnHelper = createDataTableColumnHelper<Category>()
- *   columnHelper.accessor('name', { header: 'Name' })
+ *   export function getCategoryColumns(...) {
+ *     return columnHelper.columns([
+ *       columnHelper.accessor('name', { header: 'Name' }),
+ *       ...
+ *     ])
+ *   }
  */
 export function createDataTableColumnHelper<TData extends RowData>() {
   return createColumnHelper<AppTableFeatures, TData>();

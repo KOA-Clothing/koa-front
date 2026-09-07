@@ -1,6 +1,5 @@
 "use client";
 
-import type { RowData, Table as TanstackTable } from "@tanstack/react-table";
 import {
   ChevronLeft,
   ChevronRight,
@@ -15,29 +14,51 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { AppTableFeatures } from "@/lib/data-table/configs";
 import { PAGE_SIZE_OPTIONS } from "@/types/pagination";
 
-interface DataTablePaginationProps<TData extends RowData> {
-  table: TanstackTable<AppTableFeatures, TData>;
+interface DataTablePaginationProps {
+  pageIndex: number;
+  pageSize: number;
+  pageCount: number;
   /** Total row count across every page, from the API. */
   rowCount: number;
+  canPreviousPage: boolean;
+  canNextPage: boolean;
+  canLastPage: boolean;
+  onFirstPage: () => void;
+  onPreviousPage: () => void;
+  onNextPage: () => void;
+  onLastPage: () => void;
+  onPageSizeChange: (size: number) => void;
   isLoading?: boolean;
   pageSizeOptions?: number[];
 }
 
-export function DataTablePagination<TData extends RowData>({
-  table,
+/**
+ * Pure presentational pagination bar — it knows nothing about TanStack
+ * Table or its types. <DataTable /> reads pagination state/APIs off its
+ * own `table` instance (where they're correctly typed) and passes plain
+ * values + callbacks down here. This sidesteps re-declaring TanStack's
+ * table type on a prop, which loses the extra properties (`state`,
+ * `FlexRender`) that only exist on the value `useTable()` actually
+ * returns, not on the exported `Table<TFeatures, TData>` type.
+ */
+export function DataTablePagination({
+  pageIndex,
+  pageSize,
+  pageCount,
   rowCount,
+  canPreviousPage,
+  canNextPage,
+  canLastPage,
+  onFirstPage,
+  onPreviousPage,
+  onNextPage,
+  onLastPage,
+  onPageSizeChange,
   isLoading = false,
   pageSizeOptions = PAGE_SIZE_OPTIONS,
-}: DataTablePaginationProps<TData>) {
-  // `table.state.pagination` is a reactive read: this component re-renders
-  // whenever pagination state changes because <DataTable /> (the component
-  // that owns the useTable() call) re-renders with a fresh `table`
-  // reference and passes it down as a prop.
-  const { pageIndex, pageSize } = table.state.pagination;
-  const pageCount = table.getPageCount();
+}: DataTablePaginationProps) {
   const controlsDisabled = isLoading;
 
   return (
@@ -56,7 +77,7 @@ export function DataTablePagination<TData extends RowData>({
           <p className="text-sm font-medium">Rows per page</p>
           <Select
             value={`${pageSize}`}
-            onValueChange={(value) => table.setPageSize(Number(value))}
+            onValueChange={(value) => onPageSizeChange(Number(value))}
             disabled={controlsDisabled}
           >
             <SelectTrigger size="sm" className="w-17.5">
@@ -81,8 +102,8 @@ export function DataTablePagination<TData extends RowData>({
             variant="outline"
             size="icon-sm"
             className="hidden lg:flex"
-            onClick={() => table.firstPage()}
-            disabled={controlsDisabled || !table.getCanPreviousPage()}
+            onClick={onFirstPage}
+            disabled={controlsDisabled || !canPreviousPage}
           >
             <span className="sr-only">Go to first page</span>
             <ChevronsLeft />
@@ -90,8 +111,8 @@ export function DataTablePagination<TData extends RowData>({
           <Button
             variant="outline"
             size="icon-sm"
-            onClick={() => table.previousPage()}
-            disabled={controlsDisabled || !table.getCanPreviousPage()}
+            onClick={onPreviousPage}
+            disabled={controlsDisabled || !canPreviousPage}
           >
             <span className="sr-only">Go to previous page</span>
             <ChevronLeft />
@@ -99,8 +120,8 @@ export function DataTablePagination<TData extends RowData>({
           <Button
             variant="outline"
             size="icon-sm"
-            onClick={() => table.nextPage()}
-            disabled={controlsDisabled || !table.getCanNextPage()}
+            onClick={onNextPage}
+            disabled={controlsDisabled || !canNextPage}
           >
             <span className="sr-only">Go to next page</span>
             <ChevronRight />
@@ -109,8 +130,8 @@ export function DataTablePagination<TData extends RowData>({
             variant="outline"
             size="icon-sm"
             className="hidden lg:flex"
-            onClick={() => table.lastPage()}
-            disabled={controlsDisabled || !table.getCanLastPage()}
+            onClick={onLastPage}
+            disabled={controlsDisabled || !canLastPage}
           >
             <span className="sr-only">Go to last page</span>
             <ChevronsRight />
