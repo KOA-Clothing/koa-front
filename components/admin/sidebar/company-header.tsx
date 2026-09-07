@@ -14,7 +14,7 @@ export function CompanyHeader() {
       <SidebarMenuItem>
         <SidebarMenuButton
           size="lg"
-          className="bg-neutral-200 hover:bg-neutral-300 data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground transition-colors duration-300"
+          className="bg-muted hover:bg-accent data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground transition-colors duration-300"
         >
           <Image
             src={logo}
