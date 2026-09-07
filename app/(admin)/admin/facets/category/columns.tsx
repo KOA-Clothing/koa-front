@@ -4,7 +4,8 @@ import { Button } from "@/components/ui/button";
 import { KoaSwitch } from "@/components/general/koa-switch";
 import { createDataTableColumnHelper } from "@/lib/data-table/configs";
 import { CategoryDto } from "@/types/category";
-import { Pencil, Trash2 } from "lucide-react";
+import { ExternalLink, Pencil, Trash2 } from "lucide-react";
+import Link from "next/link";
 
 interface CategoryColumnActions {
   onEdit: (category: CategoryDto) => void;
@@ -22,11 +23,43 @@ export function getCategoryColumns({
   return columnHelper.columns(
   [
     columnHelper.accessor("name", {
-      header: "Name",
+      header: () => <div className="text-center">Name</div>,
+      enableSorting: true
     }),
     columnHelper.accessor("description", {
       header: () => <div className="text-center">Description</div>,
       cell: (info) => <div className="text-rigth">{info.getValue()}</div>,
+      enableSorting: true
+    }),
+    columnHelper.accessor("sizeGuideUrl", {
+      header: () => <div className="text-center">Size Guide</div>,
+      cell: (info) => {
+        const url = info.getValue();
+
+        if (!url) {
+          return <div className="text-center text-muted-foreground text-xs">—</div>;
+        }
+
+        return (
+          <div className="flex justify-center">
+            <Button
+              variant="outline"
+              size="icon-sm"
+              title="Open size guide"
+            >
+              <Link
+                href={url}
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                <ExternalLink className="size-3.5" />
+                <span className="sr-only">Open size guide in new tab</span>
+              </Link>
+            </Button>
+          </div>
+        );
+      },
+      enableSorting: false,
     }),
     columnHelper.accessor("isActive", {
       header: () => <div className="text-center">Active Status</div>,
@@ -38,10 +71,12 @@ export function getCategoryColumns({
           />
         </div>
       ),
+      enableSorting: true
     }),
     columnHelper.accessor("sortOrder", {
       header: () => <div className="text-center">Sort Order</div>,
       cell: (info) => <div className="text-center">{info.getValue()}</div>,
+      enableSorting: true
     }),
     columnHelper.display({
       id: "actions",
