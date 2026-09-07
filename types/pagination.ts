@@ -22,10 +22,11 @@ export const PAGE_SIZE_OPTIONS = [10, 20, 25, 30, 40, 50];
  * the URL convention the table mirrors in the browser's address bar
  * (see hooks/use-data-table-params.ts).
  */
-export function toApiPageParams(pagination: PaginationState) {
+export function toApiPageParams(pagination: PaginationState, search?: string) {
   return {
     pageIndex: pagination.pageIndex + 1,
     pageSize: pagination.pageSize,
+    ...(search && search.trim() !== "" ? { search } : {}),
   };
 }
 

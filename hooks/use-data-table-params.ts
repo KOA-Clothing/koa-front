@@ -62,6 +62,12 @@ export function useDataTableParams(options: UseDataTableParamsOptions = {}) {
     return { pageIndex, pageSize };
   }, [searchParams, options.initialPageIndex, options.initialPageSize]);
 
+  /** The current `?search=` keyword ('' when absent). */
+  const search = useMemo(
+    () => searchParams.get("search") ?? "",
+    [searchParams]
+  );
+
   /** Writes table pagination state to the URL, preserving other search params. */
   const setPagination = useCallback<PaginationChangeHandler>(
     (updater) => {
@@ -90,5 +96,22 @@ export function useDataTableParams(options: UseDataTableParamsOptions = {}) {
     setPagination((prev) => ({ ...prev, pageIndex: 0 }));
   }, [setPagination]);
 
-  return { pagination, setPagination, resetPageIndex };
+  /** Writes a search keyword to the URL, resetting to page 1 whenever it changes. */
+  const setSearch = useCallback(
+    (value: string) => {
+      const params = new URLSearchParams(searchParams.toString());
+      params.set("pageIndex", "1");
+
+      if (value.trim() === "") {
+        params.delete("search");
+      } else {
+        params.set("search", value.trim());
+      }
+
+      router.replace(`${pathname}?${params.toString()}`, { scroll: false });
+    },
+    [pathname, router, searchParams]
+  );
+
+  return { pagination, setPagination, search, setSearch, resetPageIndex };
 }
