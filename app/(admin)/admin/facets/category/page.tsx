@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { useAxiosClient } from "@/hooks/use-api-client";
 import { useDataTableParams } from "@/hooks/use-data-table-params";
@@ -12,6 +12,9 @@ import { PaginatedList } from "@/types/api-response";
 import { KoaTable } from "@/components/general/table/koa-table";
 import { Shirt } from "lucide-react";
 import { PageHeader } from "@/components/admin/page-header";
+import { Input } from "@/components/ui/input";
+import { AddNewButton } from "@/components/general/add-new-button";
+import { Item, ItemContent } from "@/components/ui/item";
 
 export default function CategoriesPage() {
   const axiosClient = useAxiosClient();
@@ -34,12 +37,6 @@ export default function CategoriesPage() {
     placeholderData: (previousData) => previousData,
   });
 
-  // useEffect(() => {
-  //   console.log("edit: ", categoryToEdit)
-  //   console.log("delete: ", categoryToDelete)
-  //   console.log("toggle: ", categoryToToggleStatus)
-  // }, [categoryToDelete, categoryToEdit, categoryToToggleStatus])
-
   return (
     <div className="flex flex-col gap-4">
       <PageHeader 
@@ -48,6 +45,23 @@ export default function CategoriesPage() {
         icon={<Shirt/>} 
       />
 
+      <div className="flex flex-col gap-3">
+        <Item variant="outline" className="rounded-xl bg-background text-foreground">
+          <ItemContent className="flex flex-row items-center gap-2">
+            <span>Search </span>
+            <Input
+              id="search"
+              type="text"
+              placeholder="Search categories..."
+            />
+          </ItemContent>
+        </Item>
+        
+        <div className="flex items-center justify-end gap-2">
+          <AddNewButton onClick={() => console.log("test")} />
+        </div>
+      </div>
+      
       <KoaTable
         columns={getCategoryColumns({
           onEdit: setCategoryToEdit,

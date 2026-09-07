@@ -52,10 +52,7 @@ export function useDataTableParams(options: UseDataTableParamsOptions = {}) {
     const urlPageIndex = getPositiveInt(searchParams.get("pageIndex"));
     const urlPageSize = getPositiveInt(searchParams.get("pageSize"));
 
-    const pageSize =
-      urlPageSize !== null && PAGE_SIZE_OPTIONS.includes(urlPageSize)
-        ? urlPageSize
-        : options.initialPageSize ?? DEFAULT_PAGE_SIZE;
+    const pageSize = urlPageSize !== null && PAGE_SIZE_OPTIONS.includes(urlPageSize) ? urlPageSize : options.initialPageSize ?? DEFAULT_PAGE_SIZE;
 
     const pageIndex =
       urlPageIndex !== null
@@ -68,8 +65,7 @@ export function useDataTableParams(options: UseDataTableParamsOptions = {}) {
   /** Writes table pagination state to the URL, preserving other search params. */
   const setPagination = useCallback<PaginationChangeHandler>(
     (updater) => {
-      const next =
-        typeof updater === "function" ? updater(pagination) : updater;
+      const next = typeof updater === "function" ? updater(pagination) : updater;
 
       if (
         next.pageIndex === pagination.pageIndex &&
