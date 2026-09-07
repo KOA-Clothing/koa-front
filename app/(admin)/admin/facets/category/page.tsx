@@ -10,6 +10,8 @@ import { API_ROUTES } from "@/configs/api-routes";
 import { toApiPageParams } from "@/types/pagination";
 import { PaginatedList } from "@/types/api-response";
 import { KoaTable } from "@/components/general/table/koa-table";
+import { Shirt } from "lucide-react";
+import { PageHeader } from "@/components/admin/page-header";
 
 export default function CategoriesPage() {
   const axiosClient = useAxiosClient();
@@ -40,6 +42,12 @@ export default function CategoriesPage() {
 
   return (
     <div className="flex flex-col gap-4">
+      <PageHeader 
+        title={"Category"} 
+        description={"The fundamental structural geometry and cut of an apparel item (ex: T-Shirt, Skirt, Shorts) that serves as the base entity for a product."} 
+        icon={<Shirt/>} 
+      />
+
       <KoaTable
         columns={getCategoryColumns({
           onEdit: setCategoryToEdit,

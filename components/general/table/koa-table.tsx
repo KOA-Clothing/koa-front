@@ -12,7 +12,7 @@ import {
 import { Skeleton } from "@/components/ui/skeleton";
 import type { PaginationChangeHandler } from "@/types/pagination";
 import { DataTablePagination } from "./data-table-pagination";
-import { DataTableColumnDef, tableFeatureSet } from "@/lib/data-table/configs";
+import { DataTableColumnDef, tableFeatureSet } from "@/configs/table-configs";
 import { DataTableSortButton } from "./data-table-sort-button";
 
 interface DataTableProps<TData extends RowData> {
