@@ -5,9 +5,8 @@ export interface ApiResponse<T> {
   errorCode?: string;
 }
 
-// Maps to your C# PagedList<T>
 export interface PaginatedList<T> {
-  items: T[]; // Use 'items' globally instead of 'categories', 'products', etc.
+  items: T[];
   totalRecords: number;
   pageIndex: number;
   pageSize: number;

@@ -16,13 +16,15 @@ export const DEFAULT_PAGE_SIZE = 10;
 export const PAGE_SIZE_OPTIONS = [10, 20, 25, 30, 40, 50];
 
 /**
- * TanStack Table's `pageIndex` is zero-based. Most ASP.NET Core list
- * endpoints expect a one-based `page` query param, so this is the one
- * place that conversion happens — every route reuses it.
+ * TanStack Table's `pageIndex` is zero-based. The ASP.NET Core list
+ * endpoints expect a one-based `pageIndex` query param, so this is the
+ * one place that conversion happens — every route reuses it. It matches
+ * the URL convention the table mirrors in the browser's address bar
+ * (see hooks/use-data-table-params.ts).
  */
 export function toApiPageParams(pagination: PaginationState) {
   return {
-    page: pagination.pageIndex + 1,
+    pageIndex: pagination.pageIndex + 1,
     pageSize: pagination.pageSize,
   };
 }

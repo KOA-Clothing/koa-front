@@ -19,7 +19,6 @@ export const API_ROUTES = {
   },
   CATEGORIES: {
     BASE: "/api/v1/categories",
-    ALL: "/api/v1/categories/all",
     BY_ID: (id: string) => `/api/v1/categories/${id}`,
   }
 } as const;
