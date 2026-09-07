@@ -1,3 +1,5 @@
+"use client";
+
 import { Show, UserButton } from "@clerk/nextjs";
 import { SidebarTrigger } from "../ui/sidebar";
 
