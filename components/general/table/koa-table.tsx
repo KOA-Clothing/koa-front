@@ -38,7 +38,7 @@ interface DataTableProps<TData extends RowData> {
  * `createDataTableColumnHelper` from `@/lib/data-table/config`. This
  * component and the query/state that feeds it stay the same everywhere.
  */
-export function DataTable<TData extends RowData>({
+export function KoaTable<TData extends RowData>({
   columns,
   data,
   rowCount,
