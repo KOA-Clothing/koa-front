@@ -32,11 +32,11 @@ export default function CategoriesPage() {
     placeholderData: (previousData) => previousData,
   });
 
-  useEffect(() => {
-    console.log("edit: ", categoryToEdit)
-    console.log("delete: ", categoryToDelete)
-    console.log("toggle: ", categoryToToggleStatus)
-  }, [categoryToDelete, categoryToEdit, categoryToToggleStatus])
+  // useEffect(() => {
+  //   console.log("edit: ", categoryToEdit)
+  //   console.log("delete: ", categoryToDelete)
+  //   console.log("toggle: ", categoryToToggleStatus)
+  // }, [categoryToDelete, categoryToEdit, categoryToToggleStatus])
 
   return (
     <div className="flex flex-col gap-4">

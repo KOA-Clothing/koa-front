@@ -1,7 +1,13 @@
 import {
   createColumnHelper,
+  createSortedRowModel,
   RowData,
   rowPaginationFeature,
+  rowSortingFeature,
+  sortFn_alphanumeric,
+  sortFn_basic,
+  sortFn_datetime,
+  sortFn_text,
   tableFeatures,
   type ColumnDef,
 } from "@tanstack/react-table";
@@ -9,23 +15,36 @@ import {
 /**
  * Central feature registration, shared by every data table in the app.
  *
- * Only `rowPaginationFeature` is registered, and no client-side row model
- * (`paginatedRowModel`) is added for it, because every table built with
- * <DataTable /> uses *manual* (server-side) pagination — the .NET API
- * returns one page of rows at a time, so the browser never needs to slice
- * pages itself. See "Manual Server-Side Pagination":
+ * `rowPaginationFeature` is registered without a client-side row model
+ * (`paginatedRowModel`) because every table built with <DataTable /> uses
+ * *manual* (server-side) pagination — the .NET API returns one page of rows
+ * at a time. See "Manual Server-Side Pagination":
  * https://tanstack.com/table/latest/docs/framework/react/guide/pagination
  *
- * If a specific route later needs sortable columns or column filters,
- * register `rowSortingFeature` / `columnFilteringFeature` here too (still
- * without a client-side row model, and with `manualSorting` /
- * `manualFiltering` set on that table's useTable call, since the server
- * does that work as well). See the Features guide for how features, row
- * models, and function registries fit together:
- * https://tanstack.com/table/latest/docs/guide/features
+ * `rowSortingFeature` + `createSortedRowModel` give each table **client-side
+ * sorting of the currently fetched rows**. No `manualSorting` is set, so
+ * clicking a column header reorders the page of data already in the browser
+ * (asc -> desc -> off via TanStack's `getToggleSortingHandler`). Since the
+ * sorted row model sorts whatever rows are in `data`, it sorts only the
+ * loaded page — which is what <DataTable /> is built for today. If a route
+ * later moves sorting to the server, set `manualSorting: true` on that
+ * table's useTable call (the feature/APIs stay the same).
+ *
+ * The `sortFns` registry provides the built-ins that the default
+ * `sortFn: 'auto'` resolves to based on column data type (alphanumeric /
+ * text / datetime / basic). See the Sorting guide:
+ * https://tanstack.com/table/latest/docs/framework/react/guide/sorting
  */
 export const tableFeatureSet = tableFeatures({
   rowPaginationFeature,
+  rowSortingFeature,
+  sortedRowModel: createSortedRowModel(),
+  sortFns: {
+    alphanumeric: sortFn_alphanumeric,
+    text: sortFn_text,
+    datetime: sortFn_datetime,
+    basic: sortFn_basic,
+  },
 });
 
 export type AppTableFeatures = typeof tableFeatureSet;

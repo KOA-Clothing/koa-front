@@ -13,6 +13,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import type { PaginationChangeHandler } from "@/types/pagination";
 import { DataTablePagination } from "./data-table-pagination";
 import { DataTableColumnDef, tableFeatureSet } from "@/lib/data-table/configs";
+import { DataTableSortButton } from "./data-table-sort-button";
 
 interface DataTableProps<TData extends RowData> {
   // TValue is intentionally not a generic param here — see the note on
@@ -70,7 +71,16 @@ export function KoaTable<TData extends RowData>({
               <TableRow key={headerGroup.id}>
                 {headerGroup.headers.map((header) => (
                   <TableHead key={header.id} colSpan={header.colSpan}>
-                    {header.isPlaceholder ? null : (
+                    {header.isPlaceholder ? null : header.column.getCanSort() ? (
+                      <DataTableSortButton
+                        sortDir={header.column.getIsSorted() || null}
+                        onToggleSort={(event) =>
+                          header.column.getToggleSortingHandler()?.(event)
+                        }
+                      >
+                        <table.FlexRender header={header} />
+                      </DataTableSortButton>
+                    ) : (
                       <table.FlexRender header={header} />
                     )}
                   </TableHead>
