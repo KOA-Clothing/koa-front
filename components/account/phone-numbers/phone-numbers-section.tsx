@@ -3,7 +3,7 @@
 import { Plus } from "lucide-react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "../../ui/card";
 import { Button } from "../../ui/button";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { PhoneNumberDto } from "@/types/phone-number";
 import PhoneNumberCard from "./phone-number-card";
 import CreatePhoneNumberModal from "./modals/create-phone-number-modal";
@@ -18,16 +18,16 @@ interface Props {
 
 export default function PhoneNumberSection(props: Props) {
   const [phones, setPhones] = useState<PhoneNumberDto[]>(props.phoneNumbers ?? []);
+  const [prevPhoneNumbers, setPrevPhoneNumbers] = useState(props.phoneNumbers);
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
   const [phoneToDelete, setPhoneToDelete] = useState<string | null>(null);
   const [phoneToEdit, setPhoneToEdit] = useState<PhoneNumberDto | null>(null);
   const [phoneToSetDefault, setPhoneToSetDefault] = useState<string | null>(null);
 
-  useEffect(() => {
-    if (props.phoneNumbers) {
-      setPhones(props.phoneNumbers);
-    }
-  }, [props.phoneNumbers]);
+  if (props.phoneNumbers !== prevPhoneNumbers) {
+    setPrevPhoneNumbers(props.phoneNumbers);
+    setPhones(props.phoneNumbers ?? []);
+  }
 
   const handleRemove = (id: string) => {
     setPhoneToDelete(id);

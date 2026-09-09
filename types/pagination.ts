@@ -1,4 +1,3 @@
-import { z } from "zod";
 import type { PaginationState } from "@tanstack/react-table";
 
 /**
@@ -29,23 +28,3 @@ export function toApiPageParams(pagination: PaginationState, search?: string) {
     ...(search && search.trim() !== "" ? { search } : {}),
   };
 }
-
-/**
- * Generic shape for a paginated list response coming back from the .NET
- * API. Adjust the field names here if your DTO uses different casing
- * (e.g. `TotalCount` instead of `totalCount`) — this is the only place
- * that needs to change; every route's response schema is built from this.
- */
-export function paginatedResponseSchema<ItemSchema extends z.ZodTypeAny>(
-  itemSchema: ItemSchema
-) {
-  return z.object({
-    items: z.array(itemSchema),
-    totalCount: z.number(),
-  });
-}
-
-export type PaginatedResponse<T> = {
-  items: T[];
-  totalCount: number;
-};

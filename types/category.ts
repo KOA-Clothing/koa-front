@@ -1,14 +1,14 @@
 import { z } from "zod";
 
 export const CategoryDtoSchema = z.object({
-  id: z.string().uuid(),
+  id: z.string(),
   name: z.string(),
   description: z.string().nullable().optional(),
-  sizeGuideUrl: z.string().nullable().optional(),
+  sizeGuideUrl: z.string().url().nullable().optional(),
   isActive: z.boolean(),
   sortOrder: z.number(),
-  createdAt: z.iso.datetime({ offset: true }), // Standard Zod syntax
-  updatedAt: z.iso.datetime({ offset: true }),
+  createdAt: z.string().datetime({ offset: true }),
+  updatedAt: z.string().datetime({ offset: true }),
 });
 
 export type CategoryDto = z.infer<typeof CategoryDtoSchema>;

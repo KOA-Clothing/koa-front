@@ -2,9 +2,8 @@
 
 import { Card, CardAction, CardContent, CardDescription, CardHeader, CardTitle } from "../../ui/card";
 import { Button } from "../../ui/button";
-import { Avatar, AvatarFallback, AvatarImage } from "../../ui/avatar";
-import { Camera, Pencil } from "lucide-react";
-import { useState, useEffect } from "react";
+import { Pencil } from "lucide-react";
+import { useState } from "react";
 import { BasicProfileDto } from "@/types/user";
 import KoaFormField from "@/components/general/koa-form-field";
 import UpdateUserProfileModal from "./modals/update-user-profile";
@@ -17,27 +16,20 @@ interface Props {
   onSave?: (profile: BasicProfileDto) => void;
 }
 
-export default function ProfileSection(props : Props) {
-  const [profile, setProfile] = useState<BasicProfileDto>(
-    props.profile ?? {
-      id: "",
-      firstName: "",
-      lastName: "",
-      email: "",
-      passwordEnabled: false,
-      profileImageUrl: "",
-      createdAt: "",
-      updatedAt: "",
-      externalAccounts: []
-    }
-  );
+export default function ProfileSection(props: Props) {
   const [isEditOpen, setIsEditOpen] = useState(false);
 
-  useEffect(() => {
-    if (props.profile) {
-      setProfile(props.profile);
-    }
-  }, [props.profile]);
+  const profile: BasicProfileDto = props.profile ?? {
+    id: "",
+    firstName: "",
+    lastName: "",
+    email: "",
+    passwordEnabled: false,
+    profileImageUrl: "",
+    createdAt: "",
+    updatedAt: "",
+    externalAccounts: [],
+  };
 
   const firstInitial = profile.firstName?.charAt(0).toUpperCase() || "";
   const lastInitial = profile.lastName?.charAt(0).toUpperCase() || "";

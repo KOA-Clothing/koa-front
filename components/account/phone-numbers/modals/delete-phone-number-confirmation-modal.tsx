@@ -1,11 +1,7 @@
 "use client"
 
-import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { useAxiosClient } from "@/hooks/use-api-client";
-import { API_ROUTES } from "@/configs/api-routes";
+import { usePhoneNumberMutations } from "@/features/account/hooks/use-phone-number-mutations";
 import ConfirmationModal from "./generic/confirmation-modal";
-import toast from "react-hot-toast";
-import { AxiosError } from "axios";
 
 interface DeletePhoneNumberConfirmationModalProps {
   open: boolean;
@@ -18,27 +14,11 @@ export default function DeletePhoneNumberConfirmationModal({
   onOpenChange,
   phoneId,
 }: DeletePhoneNumberConfirmationModalProps) {
-  const axiosClient = useAxiosClient();
-  const queryClient = useQueryClient();
-
-  const mutation = useMutation({
-    mutationFn: async (id: string) => {
-      const response = await axiosClient.delete(API_ROUTES.PHONE_NUMBERS.BY_ID(id));
-      return response.data;
-    },
-    onSuccess: (data) => {
-      queryClient.invalidateQueries({ queryKey: ["user-profile"] });
-      toast.success(data?.message || "Phone number deleted successfully!");
-      onOpenChange(false);
-    },
-    onError: (error: AxiosError) => {
-      toast.error(error.message);
-    },
-  });
+  const { remove } = usePhoneNumberMutations();
 
   const handleConfirm = () => {
     if (phoneId) {
-      mutation.mutate(phoneId);
+      remove.mutate(phoneId, { onSuccess: () => onOpenChange(false) });
     }
   };
 
@@ -51,7 +31,7 @@ export default function DeletePhoneNumberConfirmationModal({
       confirmLabel="Confirm"
       pendingLabel="Deleting..."
       variant="destructive"
-      isPending={mutation.isPending}
+      isPending={remove.isPending}
       onCancel={() => onOpenChange(false)}
       onConfirm={handleConfirm}
     />

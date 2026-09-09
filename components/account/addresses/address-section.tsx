@@ -4,7 +4,7 @@ import { Plus } from "lucide-react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "../../ui/card";
 import { Button } from "../../ui/button";
 import { AddressDto } from "@/types/address";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import AddressCard from "./address-card";
 import CreateAddressModal from "./modals/create-address-modal";
 import UpdateAddressModal from "./modals/update-address-modal";
@@ -17,17 +17,11 @@ interface Props {
 }
 
 export default function AddressSection(props: Props) {
-  const [addresses, setAddresses] = useState<AddressDto[]>(props.addresses ?? []);
+  const addresses = props.addresses ?? [];
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
   const [addressToDelete, setAddressToDelete] = useState<string | null>(null);
   const [addressToEdit, setAddressToEdit] = useState<AddressDto | null>(null);
   const [addressToSetDefault, setAddressToSetDefault] = useState<string | null>(null);
-
-  useEffect(() => {
-    if (props.addresses) {
-      setAddresses(props.addresses);
-    }
-  }, [props.addresses]);
 
   return (
     <Card>

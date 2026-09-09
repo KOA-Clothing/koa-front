@@ -1,12 +1,8 @@
 "use client"
 
-import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { useAxiosClient } from "@/hooks/use-api-client";
-import { API_ROUTES } from "@/configs/api-routes";
-import { AddressDto, AddressFormInput, toAddressForm } from "@/types/address";
+import { useAddressMutations } from "@/features/account/hooks/use-address-mutations";
+import { AddressDto, toAddressForm } from "@/types/address";
 import AddressFormModal from "./generic/address-form-modal";
-import toast from "react-hot-toast";
-import { AxiosError } from "axios";
 
 interface UpdateAddressModalProps {
   open: boolean;
@@ -19,26 +15,7 @@ export default function UpdateAddressModal({
   onOpenChange,
   address,
 }: UpdateAddressModalProps) {
-  const axiosClient = useAxiosClient();
-  const queryClient = useQueryClient();
-
-  const mutation = useMutation({
-    mutationFn: async (payload: AddressFormInput) => {
-      const response = await axiosClient.put(
-        API_ROUTES.ADDRESSES.BY_ID(address!.id),
-        payload
-      );
-      return response.data;
-    },
-    onSuccess: (data) => {
-      queryClient.invalidateQueries({ queryKey: ["user-profile"] });
-      toast.success(data?.message || "Address updated successfully!");
-      onOpenChange(false);
-    },
-    onError: (error: AxiosError) => {
-      toast.error(error.message);
-    },
-  });
+  const { update } = useAddressMutations();
 
   return (
     <AddressFormModal
@@ -47,8 +24,15 @@ export default function UpdateAddressModal({
       title="Update address"
       description="Update your shipping or billing address details."
       initialValue={address ? toAddressForm(address) : undefined}
-      isPending={mutation.isPending}
-      onSubmit={(data) => mutation.mutate(data)}
+      isPending={update.isPending}
+      onSubmit={(data) => {
+        if (address) {
+          update.mutate(
+            { id: address.id, payload: data },
+            { onSuccess: () => onOpenChange(false) }
+          );
+        }
+      }}
     />
   );
 }

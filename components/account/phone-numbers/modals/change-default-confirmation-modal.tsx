@@ -1,11 +1,7 @@
 "use client"
 
-import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { useAxiosClient } from "@/hooks/use-api-client";
-import { API_ROUTES } from "@/configs/api-routes";
+import { usePhoneNumberMutations } from "@/features/account/hooks/use-phone-number-mutations";
 import ConfirmationModal from "./generic/confirmation-modal";
-import toast from "react-hot-toast";
-import { AxiosError } from "axios";
 
 interface ChangeDefaultConfirmationModalProps {
   open: boolean;
@@ -18,27 +14,11 @@ export default function ChangeDefaultConfirmationModal({
   onOpenChange,
   phoneId,
 }: ChangeDefaultConfirmationModalProps) {
-  const axiosClient = useAxiosClient();
-  const queryClient = useQueryClient();
-
-  const mutation = useMutation({
-    mutationFn: async (id: string) => {
-      const response = await axiosClient.put(API_ROUTES.PHONE_NUMBERS.SET_DEFAULT(id));
-      return response.data;
-    },
-    onSuccess: (data) => {
-      queryClient.invalidateQueries({ queryKey: ["user-profile"] });
-      toast.success(data?.message || "Default phone number updated successfully!");
-      onOpenChange(false);
-    },
-    onError: (error: AxiosError) => {
-      toast.error(error.message);
-    },
-  });
+  const { setDefault } = usePhoneNumberMutations();
 
   const handleConfirm = () => {
     if (phoneId) {
-      mutation.mutate(phoneId);
+      setDefault.mutate(phoneId, { onSuccess: () => onOpenChange(false) });
     }
   };
 
@@ -50,7 +30,7 @@ export default function ChangeDefaultConfirmationModal({
       description="Are you sure you want to set this phone number as your default phone number?"
       confirmLabel="Confirm"
       pendingLabel="Setting..."
-      isPending={mutation.isPending}
+      isPending={setDefault.isPending}
       onCancel={() => onOpenChange(false)}
       onConfirm={handleConfirm}
     />

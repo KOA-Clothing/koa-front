@@ -10,7 +10,7 @@
     "lint:fix": "eslint --fix"
   },
   "dependencies": {
-    "@base-ui/react": "^1.7.0",
+    "@base-ui/react": "^1.8.0",
     "@clerk/nextjs": "^7.7.6",
     "@tanstack/react-devtools": "^0.10.12",
     "@tanstack/react-form": "^1.33.5",

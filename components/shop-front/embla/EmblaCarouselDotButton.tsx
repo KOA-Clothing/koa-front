@@ -37,6 +37,10 @@ export const useDotButton = (
   useEffect(() => {
     if (!emblaApi) return
 
+    // Seed snap state from the external Embla store. This is the canonical
+    // Embla one-time sync of carousel state; without it dots don't render and
+    // the active dot is wrong until the first scroll event.
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- required external-store sync
     onInit(emblaApi)
     onSelect(emblaApi)
 

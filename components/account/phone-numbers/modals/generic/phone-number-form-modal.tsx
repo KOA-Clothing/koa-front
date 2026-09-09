@@ -1,6 +1,6 @@
 "use client"
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import {
   PhoneNumberFormInput,
   PhoneNumberFormInputSchema,
@@ -47,15 +47,15 @@ export default function PhoneNumberFormModal({
   isPending = false,
   onSubmit,
 }: PhoneNumberFormModalProps) {
-  const [form, setForm] = useState<PhoneNumberFormInput>(emptyPhoneNumberForm);
+  const [form, setForm] = useState<PhoneNumberFormInput>(initialValue ?? emptyPhoneNumberForm);
   const [errors, setErrors] = useState<FormErrors>({});
+  const [prevOpen, setPrevOpen] = useState(open);
 
-  useEffect(() => {
-    if (open) {
-      setForm(initialValue ?? emptyPhoneNumberForm);
-      setErrors({});
-    }
-  }, [open, initialValue]);
+  if (open && prevOpen !== open) {
+    setPrevOpen(open);
+    setForm(initialValue ?? emptyPhoneNumberForm);
+    setErrors({});
+  }
 
   const handleFieldChange = <K extends keyof PhoneNumberFormInput>(
     field: K,

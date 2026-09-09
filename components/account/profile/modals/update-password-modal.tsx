@@ -1,9 +1,7 @@
 "use client"
 
-import { useEffect, useState } from "react";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { useAxiosClient } from "@/hooks/use-api-client";
-import { API_ROUTES } from "@/configs/api-routes";
+import { useState } from "react";
+import { useProfileMutations } from "@/features/account/hooks/use-profile-mutations";
 import {
   Dialog,
   DialogContent,
@@ -14,8 +12,6 @@ import {
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import KoaFormField from "@/components/general/koa-form-field";
-import toast from "react-hot-toast";
-import { AxiosError } from "axios";
 
 interface UpdatePasswordModalProps {
   open: boolean;
@@ -28,35 +24,17 @@ export default function UpdatePasswordModal({
   open,
   onOpenChange,
 }: UpdatePasswordModalProps) {
-  const axiosClient = useAxiosClient();
-  const queryClient = useQueryClient();
+  const { updatePassword } = useProfileMutations();
 
   const [password, setPassword] = useState("");
   const [errors, setErrors] = useState<FormErrors>({});
+  const [prevOpen, setPrevOpen] = useState(open);
 
-  useEffect(() => {
-    if (open) {
-      setPassword("");
-      setErrors({});
-    }
-  }, [open]);
-
-  const mutation = useMutation({
-    mutationFn: async () => {
-      const response = await axiosClient.put(API_ROUTES.USERS.PASSWORD, {
-        password,
-      });
-      return response.data;
-    },
-    onSuccess: (data) => {
-      queryClient.invalidateQueries({ queryKey: ["user-profile"] });
-      toast.success(data?.message || "Password updated successfully!");
-      onOpenChange(false);
-    },
-    onError: (error: AxiosError) => {
-      toast.error(error.message);
-    },
-  });
+  if (open && prevOpen !== open) {
+    setPrevOpen(open);
+    setPassword("");
+    setErrors({});
+  }
 
   const handleSubmit = () => {
     const nextErrors: FormErrors = {};
@@ -69,7 +47,7 @@ export default function UpdatePasswordModal({
     }
 
     setErrors({});
-    mutation.mutate();
+    updatePassword.mutate({ password }, { onSuccess: () => onOpenChange(false) });
   };
 
   const closeAndReset = () => {
@@ -114,16 +92,16 @@ export default function UpdatePasswordModal({
             variant="outline"
             type="button"
             onClick={closeAndReset}
-            disabled={mutation.isPending}
+            disabled={updatePassword.isPending}
           >
             Cancel
           </Button>
           <Button
             type="button"
             onClick={handleSubmit}
-            disabled={mutation.isPending}
+            disabled={updatePassword.isPending}
           >
-            {mutation.isPending ? "Saving..." : "Save"}
+            {updatePassword.isPending ? "Saving..." : "Save"}
           </Button>
         </DialogFooter>
       </DialogContent>

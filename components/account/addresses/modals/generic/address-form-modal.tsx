@@ -1,6 +1,6 @@
 "use client"
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import {
   AddressFormInput,
   AddressFormInputSchema,
@@ -47,15 +47,15 @@ export default function AddressFormModal({
   isPending = false,
   onSubmit,
 }: AddressFormModalProps) {
-  const [form, setForm] = useState<AddressFormInput>(emptyAddressForm);
+  const [form, setForm] = useState<AddressFormInput>(initialValue ?? emptyAddressForm);
   const [errors, setErrors] = useState<FormErrors>({});
+  const [prevOpen, setPrevOpen] = useState(open);
 
-  useEffect(() => {
-    if (open) {
-      setForm(initialValue ?? emptyAddressForm);
-      setErrors({});
-    }
-  }, [open, initialValue]);
+  if (open && prevOpen !== open) {
+    setPrevOpen(open);
+    setForm(initialValue ?? emptyAddressForm);
+    setErrors({});
+  }
 
   const handleFieldChange = <K extends keyof AddressFormInput>(
     field: K,

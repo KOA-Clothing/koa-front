@@ -1,15 +1,11 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useQuery } from "@tanstack/react-query";
-import { useAxiosClient } from "@/hooks/use-api-client";
-import { useDataTableParams } from "@/hooks/use-data-table-params";
-import { useDebouncedValue } from "@/hooks/use-debounced-value";
+import { useServerTableParams } from "@/hooks/use-server-table-params";
+import { useSearchField } from "@/hooks/use-search-field";
+import { useCategories } from "@/features/category/hooks/use-categories";
 import { getCategoryColumns } from "./columns";
 import { CategoryDto } from "@/types/category";
-import { API_ROUTES } from "@/configs/api-routes";
-import { toApiPageParams } from "@/types/pagination";
-import { PaginatedList } from "@/types/api-response";
 import { KoaTable } from "@/components/general/table/koa-table";
 import { RotateCcw, Shirt } from "lucide-react";
 import { PageHeader } from "@/components/admin/page-header";
@@ -19,40 +15,18 @@ import { Item, ItemContent } from "@/components/ui/item";
 import { Button } from "@/components/ui/button";
 
 export default function CategoriesPage() {
-  const axiosClient = useAxiosClient();
-  const { pagination, setPagination, search, setSearch } = useDataTableParams();
+  const { pagination, setPagination, search, setSearch } = useServerTableParams();
+  const searchField = useSearchField({ value: search, onCommit: setSearch });
 
   const [categoryToEdit, setCategoryToEdit] = useState<CategoryDto | null>(null);
   const [categoryToDelete, setCategoryToDelete] = useState<CategoryDto | null>(null);
   const [categoryToToggleStatus, setCategoryToToggleStatus] = useState<CategoryDto | null>(null);
 
-  const [searchInput, setSearchInput] = useState(search);
-  const [prevSearch, setPrevSearch] = useState(search);
+  const { data, isLoading, isFetching } = useCategories(pagination, search);
 
-  if (search !== prevSearch) {
-    setPrevSearch(search);
-    setSearchInput(search);
-  }
-
-  const debouncedSearch = useDebouncedValue(searchInput, 400);
-
-  useEffect(() => {
-    if (debouncedSearch === searchInput && debouncedSearch !== search) {
-      setSearch(debouncedSearch);
-    }
-  }, [debouncedSearch, searchInput, search, setSearch]);
-
-  const { data, isLoading, isFetching } = useQuery({
-    queryKey: ["categories", pagination, search],
-    queryFn: async () => {
-      const response = await axiosClient.get<PaginatedList<CategoryDto>>(
-        API_ROUTES.CATEGORIES.BASE,
-        { params: toApiPageParams(pagination, search) }
-      );
-      return response.data;
-    },
-    placeholderData: (previousData) => previousData,
-  });
+  // useEffect(() => {
+  //   console.log(data)
+  // }, [data])
 
   return (
     <div className="flex flex-col gap-4">
@@ -70,19 +44,16 @@ export default function CategoriesPage() {
               id="search"
               type="text"
               placeholder="Search categories..."
-              value={searchInput}
-              onChange={(e) => setSearchInput(e.target.value)}
+              value={searchField.value}
+              onChange={(e) => searchField.onChange(e.target.value)}
             />
             <Button
               variant="ghost"
               size="sm"
               type="button"
-              onClick={() => {
-                setSearchInput("");
-                setSearch("");
-              }}
+              onClick={searchField.clear}
             >
-            <RotateCcw />
+              <RotateCcw />
               Clear
             </Button>
           </ItemContent>

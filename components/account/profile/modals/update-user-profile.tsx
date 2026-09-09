@@ -1,10 +1,8 @@
 "use client"
 
-import { useEffect, useState } from "react";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { useAxiosClient } from "@/hooks/use-api-client";
-import { API_ROUTES } from "@/configs/api-routes";
-import { BasicProfileDto } from "@/types/user";
+import { useState } from "react";
+import { useProfileMutations } from "@/features/account/hooks/use-profile-mutations";
+import { BasicProfileDto, UpdateProfileInputSchema } from "@/types/user";
 import {
   Dialog,
   DialogContent,
@@ -15,8 +13,6 @@ import {
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import KoaFormField from "@/components/general/koa-form-field";
-import toast from "react-hot-toast";
-import { AxiosError } from "axios";
 
 interface UpdateUserProfileModalProps {
   open: boolean;
@@ -31,51 +27,36 @@ export default function UpdateUserProfileModal({
   onOpenChange,
   profile,
 }: UpdateUserProfileModalProps) {
-  const axiosClient = useAxiosClient();
-  const queryClient = useQueryClient();
+  const { updateProfile } = useProfileMutations();
 
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [errors, setErrors] = useState<FormErrors>({});
+  const [prevOpen, setPrevOpen] = useState(open);
 
-  useEffect(() => {
-    if (open && profile) {
-      setFirstName(profile.firstName || "");
-      setLastName(profile.lastName || "");
-      setErrors({});
-    }
-  }, [open, profile]);
-
-  const mutation = useMutation({
-    mutationFn: async () => {
-      const response = await axiosClient.put(API_ROUTES.USERS.PROFILE, {
-        firstName,
-        lastName,
-      });
-      return response.data;
-    },
-    onSuccess: (data) => {
-      queryClient.invalidateQueries({ queryKey: ["user-profile"] });
-      toast.success(data?.message || "Profile updated successfully!");
-      onOpenChange(false);
-    },
-    onError: (error: AxiosError) => {
-      toast.error(error.message);
-    },
-  });
+  if (open && prevOpen !== open) {
+    setPrevOpen(open);
+    setFirstName(profile?.firstName || "");
+    setLastName(profile?.lastName || "");
+    setErrors({});
+  }
 
   const handleSubmit = () => {
-    const nextErrors: FormErrors = {};
-    if (!firstName.trim()) nextErrors.firstName = "First name is required";
-    if (!lastName.trim()) nextErrors.lastName = "Last name is required";
-
-    if (Object.keys(nextErrors).length > 0) {
-      setErrors(nextErrors);
+    const result = UpdateProfileInputSchema.safeParse({ firstName, lastName });
+    if (!result.success) {
+      const fieldErrors: FormErrors = {};
+      result.error.issues.forEach((issue) => {
+        const path = issue.path.join(".");
+        if (!fieldErrors[path]) {
+          fieldErrors[path] = issue.message;
+        }
+      });
+      setErrors(fieldErrors);
       return;
     }
 
     setErrors({});
-    mutation.mutate();
+    updateProfile.mutate(result.data, { onSuccess: () => onOpenChange(false) });
   };
 
   const closeAndReset = () => {
@@ -128,16 +109,16 @@ export default function UpdateUserProfileModal({
             variant="outline"
             type="button"
             onClick={closeAndReset}
-            disabled={mutation.isPending}
+            disabled={updateProfile.isPending}
           >
             Cancel
           </Button>
           <Button
             type="button"
             onClick={handleSubmit}
-            disabled={mutation.isPending}
+            disabled={updateProfile.isPending}
           >
-            {mutation.isPending ? "Saving..." : "Save"}
+            {updateProfile.isPending ? "Saving..." : "Save"}
           </Button>
         </DialogFooter>
       </DialogContent>
