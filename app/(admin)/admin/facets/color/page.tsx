@@ -11,11 +11,14 @@ import { KoaTable } from "@/components/general/table/koa-table";
 import { Palette } from "lucide-react";
 import { PageHeader } from "@/components/admin/page-header";
 import KoaAdminSearchBar from "@/components/admin/koa-admin-searchbar";
+import { AddNewButton } from "@/components/general/add-new-button";
+import CreateColorModal from "@/components/admin/color/modals/create-color-modal";
 
 export default function ColorPage() {
   const { pagination, setPagination, search, setSearch } = useServerTableParams();
   const searchField = useSearchField({ value: search, onCommit: setSearch });
 
+  const [isCreateOpen, setIsCreateOpen] = useState(false);
   const [colorToEdit, setColorToEdit] = useState<ColorDto | null>(null);
   const [colorToDelete, setColorToDelete] = useState<ColorDto | null>(null);
 
@@ -39,6 +42,10 @@ export default function ColorPage() {
         placeholder="Search Color..."
       />
 
+      <div className="flex items-center justify-end gap-2">
+        <AddNewButton onClick={() => setIsCreateOpen(true)} />
+      </div>
+
       <KoaTable
         columns={getColorColumns({
           onEdit: setColorToEdit,
@@ -51,6 +58,8 @@ export default function ColorPage() {
         onPaginationChange={setPagination}
         isLoading={isLoading}
       />
+
+      <CreateColorModal open={isCreateOpen} onOpenChange={setIsCreateOpen} />
     </div>
   );
 }
