@@ -17,6 +17,7 @@ import { Button } from "@/components/ui/button";
 import CreateCategoryModal from "@/components/admin/category/modals/create-category-modal";
 import DeleteCategoryConfirmationModal from "@/components/admin/category/modals/delete-category-confirmation-modal";
 import UpdateCategoryModal from "@/components/admin/category/modals/update-category-modal";
+import KoaAdminSearchBar from "@/components/admin/koa-admin-searchbar";
 
 export default function CategoriesPage() {
   const { pagination, setPagination, search, setSearch } = useServerTableParams();
@@ -42,27 +43,10 @@ export default function CategoriesPage() {
       />
 
       <div className="flex flex-col gap-3">
-        <Item variant="outline" className="rounded-xl bg-background text-foreground">
-          <ItemContent className="flex flex-row items-center gap-2">
-            <span>Search </span>
-            <Input
-              id="search"
-              type="text"
-              placeholder="Search categories..."
-              value={searchField.value}
-              onChange={(e) => searchField.onChange(e.target.value)}
-            />
-            <Button
-              variant="ghost"
-              size="sm"
-              type="button"
-              onClick={searchField.clear}
-            >
-              <RotateCcw />
-              Clear
-            </Button>
-          </ItemContent>
-        </Item>
+        <KoaAdminSearchBar 
+          searchField={searchField} 
+          placeholder="Search Category..."
+        />
         
         <div className="flex items-center justify-end gap-2">
           <AddNewButton onClick={() => setIsCreateOpen(true)} />

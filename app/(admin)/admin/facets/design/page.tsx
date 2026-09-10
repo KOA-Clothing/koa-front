@@ -17,6 +17,7 @@ import { Button } from "@/components/ui/button";
 import CreateDesignModal from "@/components/admin/design/modals/create-design-modal";
 import DeleteDesignConfirmationModal from "@/components/admin/design/modals/delete-design-confirmation-modal";
 import UpdateDesignModal from "@/components/admin/design/modals/update-design-modal";
+import KoaAdminSearchBar from "@/components/admin/koa-admin-searchbar";
 
 export default function DesignsPage() {
   const { pagination, setPagination, search, setSearch } = useServerTableParams();
@@ -42,27 +43,10 @@ export default function DesignsPage() {
       />
 
       <div className="flex flex-col gap-3">
-        <Item variant="outline" className="rounded-xl bg-background text-foreground">
-          <ItemContent className="flex flex-row items-center gap-2">
-            <span>Search </span>
-            <Input
-              id="search"
-              type="text"
-              placeholder="Search designs..."
-              value={searchField.value}
-              onChange={(e) => searchField.onChange(e.target.value)}
-            />
-            <Button
-              variant="ghost"
-              size="sm"
-              type="button"
-              onClick={searchField.clear}
-            >
-              <RotateCcw />
-              Clear
-            </Button>
-          </ItemContent>
-        </Item>
+        <KoaAdminSearchBar
+          searchField={searchField}
+          placeholder="Search Design..."
+        />
 
         <div className="flex items-center justify-end gap-2">
           <AddNewButton onClick={() => setIsCreateOpen(true)} />
