@@ -20,5 +20,8 @@ export const API_ROUTES = {
   CATEGORIES: {
     BASE: "/api/v1/categories",
     BY_ID: (id: string) => `/api/v1/categories/${id}`,
+  },
+  STORAGE: {
+    UPLOAD_REQUESTS: "/api/v1/storage/upload-url",
   }
 } as const;

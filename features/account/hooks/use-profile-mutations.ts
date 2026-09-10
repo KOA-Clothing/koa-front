@@ -1,7 +1,7 @@
 "use client";
 
 import { useAxiosClient } from "@/hooks/use-api-client";
-import { API_ROUTES } from "@/configs/api-routes";
+import { API_ROUTES } from "@/lib/configs/api-routes";
 import { queryKeys } from "@/lib/api/query-keys";
 import { useAppMutation } from "@/lib/api/use-app-mutation";
 import type { UpdateProfileInput } from "@/types/user";

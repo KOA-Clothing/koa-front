@@ -2,7 +2,7 @@
 
 import { Button } from "@/components/ui/button";
 import { KoaSwitch } from "@/components/general/koa-switch";
-import { createDataTableColumnHelper } from "@/configs/table-configs";
+import { createDataTableColumnHelper } from "@/lib/configs/table-configs";
 import { CategoryDto } from "@/types/category";
 import { ExternalLink, Pencil, Trash2 } from "lucide-react";
 import Link from "next/link";

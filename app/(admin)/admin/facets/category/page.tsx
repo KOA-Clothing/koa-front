@@ -13,11 +13,13 @@ import { Input } from "@/components/ui/input";
 import { AddNewButton } from "@/components/general/add-new-button";
 import { Item, ItemContent } from "@/components/ui/item";
 import { Button } from "@/components/ui/button";
+import CreateCategoryModal from "@/components/admin/category/modals/create-category-modal";
 
 export default function CategoriesPage() {
   const { pagination, setPagination, search, setSearch } = useServerTableParams();
   const searchField = useSearchField({ value: search, onCommit: setSearch });
 
+  const [isCreateOpen, setIsCreateOpen] = useState(false);
   const [categoryToEdit, setCategoryToEdit] = useState<CategoryDto | null>(null);
   const [categoryToDelete, setCategoryToDelete] = useState<CategoryDto | null>(null);
   const [categoryToToggleStatus, setCategoryToToggleStatus] = useState<CategoryDto | null>(null);
@@ -60,7 +62,7 @@ export default function CategoriesPage() {
         </Item>
         
         <div className="flex items-center justify-end gap-2">
-          <AddNewButton onClick={() => console.log("test")} />
+          <AddNewButton onClick={() => setIsCreateOpen(true)} />
         </div>
       </div>
       
@@ -76,6 +78,8 @@ export default function CategoriesPage() {
         onPaginationChange={setPagination}
         isLoading={isLoading || isFetching}
       />
+
+      <CreateCategoryModal open={isCreateOpen} onOpenChange={setIsCreateOpen} />
     </div>
   );
 }

@@ -3,7 +3,7 @@
 import { useQuery } from "@tanstack/react-query";
 import type { PaginationState } from "@tanstack/react-table";
 import { useAxiosClient } from "@/hooks/use-api-client";
-import { API_ROUTES } from "@/configs/api-routes";
+import { API_ROUTES } from "@/lib/configs/api-routes";
 import { paginatedListSchema } from "@/types/api-response";
 import { CategoryDtoSchema } from "@/types/category";
 import { toApiPageParams } from "@/types/pagination";

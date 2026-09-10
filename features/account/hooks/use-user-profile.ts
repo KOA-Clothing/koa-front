@@ -2,7 +2,7 @@
 
 import { useQuery } from "@tanstack/react-query";
 import { useAxiosClient } from "@/hooks/use-api-client";
-import { API_ROUTES } from "@/configs/api-routes";
+import { API_ROUTES } from "@/lib/configs/api-routes";
 import { UserProfileDtoSchema } from "@/types/user";
 import { queryKeys } from "@/lib/api/query-keys";
 

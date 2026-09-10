@@ -17,6 +17,7 @@ export const CategoryFormInputSchema = CategoryDtoSchema.omit({
   id: true,
   createdAt: true,
   updatedAt: true,
+  isActive: true,
 }).extend({
   name: z.string()
     .min(1, "Name is required")
@@ -26,8 +27,7 @@ export const CategoryFormInputSchema = CategoryDtoSchema.omit({
     .max(500, "Size guide URL must not exceed 500 characters")
     .nullable()
     .optional(),
-  isActive: z.boolean(),
-  sortOrder: z.number().int(),
+  sortOrder: z.number().int()
 });
 
 export type CategoryFormInput = z.infer<typeof CategoryFormInputSchema>;
@@ -36,7 +36,6 @@ export const emptyCategoryForm: CategoryFormInput = {
   name: "",
   description: "",
   sizeGuideUrl: "",
-  isActive: true,
   sortOrder: 0,
 };
 
@@ -45,7 +44,6 @@ export function toCategoryForm(category: CategoryDto): CategoryFormInput {
     name: category.name,
     description: category.description ?? "",
     sizeGuideUrl: category.sizeGuideUrl ?? "",
-    isActive: category.isActive,
     sortOrder: category.sortOrder,
   };
 }
