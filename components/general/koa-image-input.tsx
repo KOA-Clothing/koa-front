@@ -5,7 +5,10 @@ import { ComponentPropsWithoutRef, RefObject } from "react";
 interface KoaImageInputProps extends Omit<ComponentPropsWithoutRef<"input">, "type" | "onChange"> {
   label: string;
   file: File | null;
+  /** Blob URL of the newly picked file, or the URL of an existing uploaded image. */
   previewUrl: string | null;
+  /** Existing uploaded image shown when no new file is picked. */
+  existingUrl?: string | null;
   error?: string | null;
   maxSizeMB?: number;
   
@@ -21,6 +24,7 @@ export default function KoaImageInput({
   label,
   file,
   previewUrl,
+  existingUrl = null,
   error,
   maxSizeMB = 10,
   fileInputRef,
@@ -40,7 +44,7 @@ export default function KoaImageInput({
         {...inputProps}
       />
 
-      {!file ? (
+      {!file && !existingUrl ? (
         <button
           type="button"
           onClick={() => fileInputRef.current?.click()}
@@ -62,10 +66,18 @@ export default function KoaImageInput({
             />
           )}
           <div className="flex min-w-0 flex-1 flex-col">
-            <span className="truncate text-sm font-medium">{file.name}</span>
-            <span className="text-xs text-muted-foreground">
-              {(file.size / 1024 / 1024).toFixed(2)} MB
-            </span>
+            {file ? (
+              <>
+                <span className="truncate text-sm font-medium">{file.name}</span>
+                <span className="text-xs text-muted-foreground">
+                  {(file.size / 1024 / 1024).toFixed(2)} MB
+                </span>
+              </>
+            ) : (
+              <span className="truncate text-sm font-medium">
+                Current {label.toLowerCase()}
+              </span>
+            )}
           </div>
           <Button
             variant="ghost"

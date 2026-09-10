@@ -16,6 +16,7 @@ import { Item, ItemContent } from "@/components/ui/item";
 import { Button } from "@/components/ui/button";
 import CreateCategoryModal from "@/components/admin/category/modals/create-category-modal";
 import DeleteCategoryConfirmationModal from "@/components/admin/category/modals/delete-category-confirmation-modal";
+import UpdateCategoryModal from "@/components/admin/category/modals/update-category-modal";
 
 export default function CategoriesPage() {
   const { pagination, setPagination, search, setSearch } = useServerTableParams();
@@ -87,6 +88,13 @@ export default function CategoriesPage() {
         category={categoryToDelete}
         onOpenChange={(open) => {
           if (!open) setCategoryToDelete(null);
+        }}
+      />
+
+      <UpdateCategoryModal
+        category={categoryToEdit}
+        onOpenChange={(open) => {
+          if (!open) setCategoryToEdit(null);
         }}
       />
     </div>

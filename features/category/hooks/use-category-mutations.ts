@@ -55,5 +55,12 @@ export function useCategoryMutations() {
     successMessage: "Category deleted successfully!",
   });
 
-  return { create, requestSizeGuideUpload, toggleActiveStatus, remove };
+  const update = useAppMutation<void, { id: string; payload: CategoryFormInput }>({
+    mutationFn: ({ id, payload }) =>
+      axiosClient.put(API_ROUTES.CATEGORIES.BY_ID(id), payload).then((r) => r.data),
+    invalidateKeys,
+    successMessage: "Category updated successfully!",
+  });
+
+  return { create, requestSizeGuideUpload, toggleActiveStatus, remove, update };
 }
