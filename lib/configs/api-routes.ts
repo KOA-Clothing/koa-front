@@ -22,6 +22,11 @@ export const API_ROUTES = {
     BY_ID: (id: string) => `/api/v1/categories/${id}`,
     TOGGLE_ACTIVE_STATUS: (id: string) => `/api/v1/categories/${id}/toggle-active-status`,
   },
+  DESIGNS: {
+    BASE: "/api/v1/designs",
+    BY_ID: (id: string) => `/api/v1/designs/${id}`,
+    TOGGLE_ACTIVE_STATUS: (id: string) => `/api/v1/designs/${id}/toggle-active-status`,
+  },
   STORAGE: {
     UPLOAD_REQUESTS: "/api/v1/storage/upload-url",
   }
