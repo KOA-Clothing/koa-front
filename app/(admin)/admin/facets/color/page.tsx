@@ -14,6 +14,7 @@ import KoaAdminSearchBar from "@/components/admin/koa-admin-searchbar";
 import { AddNewButton } from "@/components/general/add-new-button";
 import CreateColorModal from "@/components/admin/color/modals/create-color-modal";
 import DeleteColorConfirmationModal from "@/components/admin/color/modals/delete-color-confirmation-modal";
+import UpdateColorModal from "@/components/admin/color/modals/update-color-modal";
 
 export default function ColorPage() {
   const { pagination, setPagination, search, setSearch } = useServerTableParams();
@@ -66,6 +67,13 @@ export default function ColorPage() {
         color={colorToDelete}
         onOpenChange={(open) => {
           if (!open) setColorToDelete(null);
+        }}
+      />
+
+      <UpdateColorModal
+        color={colorToEdit}
+        onOpenChange={(open) => {
+          if (!open) setColorToEdit(null);
         }}
       />
     </div>

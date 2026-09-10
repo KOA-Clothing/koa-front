@@ -40,7 +40,7 @@ export const emptyColorForm: ColorFormInput = {
   swatchImageUrl: "",
 };
 
-export function toCategoryForm(color: ColorDto): ColorFormInput {
+export function toColorForm(color: ColorDto): ColorFormInput {
   return {
     name: color.name,
     hexCode: color.hexCode,
