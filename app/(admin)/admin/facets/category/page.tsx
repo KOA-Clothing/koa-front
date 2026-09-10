@@ -24,7 +24,7 @@ export default function CategoriesPage() {
   const [categoryToEdit, setCategoryToEdit] = useState<CategoryDto | null>(null);
   const [categoryToDelete, setCategoryToDelete] = useState<CategoryDto | null>(null);
 
-  const { data, isLoading, isFetching } = useCategories(pagination, search);
+  const { data, isLoading } = useCategories(pagination, search);
   const { toggleActiveStatus } = useCategoryMutations();
 
   const handleToggleActiveStatus = (category: CategoryDto) => {
@@ -77,7 +77,7 @@ export default function CategoriesPage() {
         rowCount={data?.totalRecords ?? 0}
         pagination={pagination}
         onPaginationChange={setPagination}
-        isLoading={isLoading || isFetching}
+        isLoading={isLoading}
       />
 
       <CreateCategoryModal open={isCreateOpen} onOpenChange={setIsCreateOpen} />
