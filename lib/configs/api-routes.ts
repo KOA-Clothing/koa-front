@@ -20,6 +20,7 @@ export const API_ROUTES = {
   CATEGORIES: {
     BASE: "/api/v1/categories",
     BY_ID: (id: string) => `/api/v1/categories/${id}`,
+    TOGGLE_ACTIVE_STATUS: (id: string) => `/api/v1/categories/${id}/toggle-active-status`,
   },
   STORAGE: {
     UPLOAD_REQUESTS: "/api/v1/storage/upload-url",

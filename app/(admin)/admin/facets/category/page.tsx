@@ -1,9 +1,10 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useServerTableParams } from "@/hooks/use-server-table-params";
 import { useSearchField } from "@/hooks/use-search-field";
 import { useCategories } from "@/features/category/hooks/use-categories";
+import { useCategoryMutations } from "@/features/category/hooks/use-category-mutations";
 import { getCategoryColumns } from "./columns";
 import { CategoryDto } from "@/types/category";
 import { KoaTable } from "@/components/general/table/koa-table";
@@ -22,13 +23,13 @@ export default function CategoriesPage() {
   const [isCreateOpen, setIsCreateOpen] = useState(false);
   const [categoryToEdit, setCategoryToEdit] = useState<CategoryDto | null>(null);
   const [categoryToDelete, setCategoryToDelete] = useState<CategoryDto | null>(null);
-  const [categoryToToggleStatus, setCategoryToToggleStatus] = useState<CategoryDto | null>(null);
 
   const { data, isLoading, isFetching } = useCategories(pagination, search);
+  const { toggleActiveStatus } = useCategoryMutations();
 
-  // useEffect(() => {
-  //   console.log(data)
-  // }, [data])
+  const handleToggleActiveStatus = (category: CategoryDto) => {
+    toggleActiveStatus.mutate(category.id);
+  };
 
   return (
     <div className="flex flex-col gap-4">
@@ -70,7 +71,7 @@ export default function CategoriesPage() {
         columns={getCategoryColumns({
           onEdit: setCategoryToEdit,
           onDelete: setCategoryToDelete,
-          toggleActiveStatus: setCategoryToToggleStatus
+          toggleActiveStatus: handleToggleActiveStatus
         })}
         data={data?.items ?? []}
         rowCount={data?.totalRecords ?? 0}

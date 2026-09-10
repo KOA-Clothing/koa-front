@@ -41,5 +41,12 @@ export function useCategoryMutations() {
     return UploadRequestResponseSchema.parse(response.data);
   };
 
-  return { create, requestSizeGuideUpload };
+  const toggleActiveStatus = useAppMutation<void, string>({
+    mutationFn: (id) =>
+      axiosClient.post(API_ROUTES.CATEGORIES.TOGGLE_ACTIVE_STATUS(id)).then((r) => r.data),
+    invalidateKeys,
+    successMessage: "Category updated",
+  });
+
+  return { create, requestSizeGuideUpload, toggleActiveStatus };
 }

@@ -14,14 +14,11 @@ import {
   DialogDescription,
   DialogFooter,
 } from "@/components/ui/dialog";
-import { Button } from "@/components/ui/button";
 import KoaFormField from "@/components/general/koa-form-field";
-import { Label } from "@/components/ui/label";
 import { useCategoryMutations } from "@/features/category/hooks/use-category-mutations";
 import { uploadFileToPresignedUrl } from "@/lib/storage/direct-upload";
 import { getErrorMessage } from "@/lib/api/errors";
 import toast from "react-hot-toast";
-import { ImagePlus, Loader2, X } from "lucide-react";
 import KoaTextArea from "@/components/general/koa-text-area";
 import KoaImageInput from "@/components/general/koa-image-input";
 import KoaModalCancelButton from "@/components/general/koa-modal-cancel-button";
