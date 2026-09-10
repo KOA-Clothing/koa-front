@@ -47,5 +47,12 @@ export function useColorMutations() {
     successMessage: "Color updated",
   });
 
-  return { create, requestSwatchImageUpload, toggleActiveStatus };
+  const remove = useAppMutation<void, string>({
+    mutationFn: (id) =>
+      axiosClient.delete(API_ROUTES.COLORS.BY_ID(id)).then((r) => r.data),
+    invalidateKeys,
+    successMessage: "Color deleted successfully!",
+  });
+
+  return { create, requestSwatchImageUpload, toggleActiveStatus, remove };
 }

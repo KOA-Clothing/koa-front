@@ -20,9 +20,7 @@ export function useColors(pagination: PaginationState, search: string) {
       const response = await axiosClient.get(API_ROUTES.COLORS.BASE, {
         params: toApiPageParams(pagination, search),
       });
-      var test = colorListSchema.safeParse(response.data);
-      console.log(test)
-      return test.data
+      return colorListSchema.parse(response.data);
     },
     placeholderData: (previousData) => previousData,
   });
