@@ -11,13 +11,18 @@ import { KoaTable } from "@/components/general/table/koa-table";
 import { RotateCcw, Palette } from "lucide-react";
 import { PageHeader } from "@/components/admin/page-header";
 import { Input } from "@/components/ui/input";
+import { AddNewButton } from "@/components/general/add-new-button";
 import { Item, ItemContent } from "@/components/ui/item";
 import { Button } from "@/components/ui/button";
+import CreateDesignModal from "@/components/admin/design/modals/create-design-modal";
+import DeleteDesignConfirmationModal from "@/components/admin/design/modals/delete-design-confirmation-modal";
+import UpdateDesignModal from "@/components/admin/design/modals/update-design-modal";
 
 export default function DesignsPage() {
   const { pagination, setPagination, search, setSearch } = useServerTableParams();
   const searchField = useSearchField({ value: search, onCommit: setSearch });
 
+  const [isCreateOpen, setIsCreateOpen] = useState(false);
   const [designToEdit, setDesignToEdit] = useState<DesignDto | null>(null);
   const [designToDelete, setDesignToDelete] = useState<DesignDto | null>(null);
 
@@ -27,8 +32,6 @@ export default function DesignsPage() {
   const handleToggleActiveStatus = (design: DesignDto) => {
     toggleActiveStatus.mutate(design.id);
   };
-
-  console.log(searchField.value)
 
   return (
     <div className="flex flex-col gap-4">
@@ -60,6 +63,10 @@ export default function DesignsPage() {
             </Button>
           </ItemContent>
         </Item>
+
+        <div className="flex items-center justify-end gap-2">
+          <AddNewButton onClick={() => setIsCreateOpen(true)} />
+        </div>
       </div>
 
       <KoaTable
@@ -73,6 +80,22 @@ export default function DesignsPage() {
         pagination={pagination}
         onPaginationChange={setPagination}
         isLoading={isLoading}
+      />
+
+      <CreateDesignModal open={isCreateOpen} onOpenChange={setIsCreateOpen} />
+
+      <DeleteDesignConfirmationModal
+        design={designToDelete}
+        onOpenChange={(open) => {
+          if (!open) setDesignToDelete(null);
+        }}
+      />
+
+      <UpdateDesignModal
+        design={designToEdit}
+        onOpenChange={(open) => {
+          if (!open) setDesignToEdit(null);
+        }}
       />
     </div>
   );
