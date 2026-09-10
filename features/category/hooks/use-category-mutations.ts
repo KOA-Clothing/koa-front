@@ -48,5 +48,12 @@ export function useCategoryMutations() {
     successMessage: "Category updated",
   });
 
-  return { create, requestSizeGuideUpload, toggleActiveStatus };
+  const remove = useAppMutation<void, string>({
+    mutationFn: (id) =>
+      axiosClient.delete(API_ROUTES.CATEGORIES.BY_ID(id)).then((r) => r.data),
+    invalidateKeys,
+    successMessage: "Category deleted successfully!",
+  });
+
+  return { create, requestSizeGuideUpload, toggleActiveStatus, remove };
 }
