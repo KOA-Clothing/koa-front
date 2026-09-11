@@ -27,10 +27,10 @@ export function getColorColumns({
     }),
     columnHelper.accessor("hexCode", {
       header: () => <div className="text-center">Hex Code</div>,
-      cell: (info) => {
-        const hex = info.getValue();
+      cell: ({ row, getValue }) => {
+        const hex = getValue();
 
-        if (!hex) {
+        if (row.original.swatchImageUrl || !hex) {
           return <div className="text-center text-muted-foreground text-xs">—</div>;
         }
 

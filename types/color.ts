@@ -36,14 +36,14 @@ export type ColorFormInput = z.infer<typeof ColorFormInputSchema>;
 
 export const emptyColorForm: ColorFormInput = {
   name: "",
-  hexCode: "",
-  swatchImageUrl: "",
+  hexCode: null,
+  swatchImageUrl: null,
 };
 
 export function toColorForm(color: ColorDto): ColorFormInput {
   return {
     name: color.name,
     hexCode: color.hexCode,
-    swatchImageUrl: color.swatchImageUrl ?? "",
+    swatchImageUrl: color.swatchImageUrl,
   };
 }
