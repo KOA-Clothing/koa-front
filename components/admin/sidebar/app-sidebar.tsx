@@ -10,22 +10,49 @@ import {
   SidebarHeader,
   SidebarRail,
 } from "@/components/ui/sidebar"
-import { TerminalSquareIcon, Columns3Cog, Shirt, Palette, DraftingCompass } from "lucide-react"
+import { TerminalSquareIcon, Columns3Cog, Shirt, Palette, DraftingCompass, ShelvingUnit, ChartLine, ChartLineIcon, ChartSpline, StickyNote, PersonStanding, TimerReset, ScissorsLineDashed, Scissors, UserRound, Users, FileCode, FileCog, Bolt } from "lucide-react"
 import { CompanyHeader } from "./company-header"
 import { NavSingle } from "./nav-single"
 
 // This is sample data.
 const data = {
-  SingleItems: [
+  TopSingle: [
     {
       name: "Analytics",
       url: "/admin/analytics",
       icon: (
-        <TerminalSquareIcon/>
+        <ChartSpline/>
+      )
+    },
+    {
+      name: "Inventory",
+      url: "/admin/inventory",
+      icon: (
+        <ShelvingUnit/>
       )
     }
   ],
   SubItems: [
+    {
+      title: "Product Configurations",
+      url: "/admin/product-configs/products",
+      icon: (
+        <Bolt/>
+      ),
+      isActive: true,
+      items: [
+        {
+          title: "Products",
+          url: "/admin/product-configs/products",
+          icon: (<Shirt/>)
+        },
+        {
+          title: "Product Variants",
+          url: "/admin/product-configs/variants",
+          icon: (<ScissorsLineDashed/>)
+        }
+      ],
+    },
     {
       title: "Facets",
       url: "/admin/facets/category",
@@ -35,21 +62,37 @@ const data = {
       isActive: true,
       items: [
         {
-          title: "Category",
+          title: "Categories",
           url: "/admin/facets/category",
-          icon: (<Shirt/>)
+          icon: (<StickyNote/>)
         },
         {
-          title: "Design",
+          title: "Designs",
           url: "/admin/facets/design",
           icon: (<DraftingCompass/>)
         },
         {
-          title: "Color",
+          title: "Colors",
           url: "/admin/facets/color",
           icon: (<Palette/>)
         }
       ],
+    }
+  ],
+  BottomSingle: [
+    {
+      name: "Customers",
+      url: "/admin/customers",
+      icon: (
+        <Users/>
+      )
+    },
+    {
+      name: "Logs",
+      url: "/admin/logs",
+      icon: (
+        <TimerReset/>
+      )
     }
   ],
 }
@@ -61,8 +104,9 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         <CompanyHeader />
       </SidebarHeader>
       <SidebarContent>
-        <NavSingle projects={data.SingleItems} />
+        <NavSingle projects={data.TopSingle} />
         <NavSub items={data.SubItems} />
+        <NavSingle projects={data.BottomSingle} />
       </SidebarContent>
 
       <SidebarFooter> </SidebarFooter>

@@ -8,6 +8,11 @@ const nextConfig: NextConfig = {
         destination: '/auth/signin',
         permanent: true, // Set to false if it's a temporary redirect (307 vs 308)
       },
+      // {
+      //   source: '/admin',
+      //   destination: '/admin/analytics',
+      //   permanent: false, // Set to false if it's a temporary redirect (307 vs 308)
+      // },
     ];
   },
 };
