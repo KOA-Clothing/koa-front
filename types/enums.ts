@@ -27,3 +27,51 @@ export enum SsoProviderEnum {
 }
 export const SsoProviderSchema = z.enum(SsoProviderEnum);
 export type SsoProvider = z.infer<typeof SsoProviderSchema>
+
+export enum GenderEnum {
+  Male = 1,
+  Female = 2,
+  Unisex = 3
+}
+export const GenderSchema = z.enum(GenderEnum);
+export type Gender = z.infer<typeof GenderSchema>;
+
+export enum AgeGroupEnum {
+  Infant = 1,
+  Toddler = 2,
+  Kids = 3,
+  Teen = 4,
+  Adult = 5,
+}
+export const AgeGroupSchema = z.enum(AgeGroupEnum);
+export type AgeGroup = z.infer<typeof AgeGroupSchema>;
+
+export enum ProductStatusEnum {
+  Draft = 1,
+  Discontinued = 2,
+  OutOfStock = 3,
+  Available = 4,
+}
+export const ProductStatusSchema = z.enum(ProductStatusEnum);
+export type ProductStatus = z.infer<typeof ProductStatusSchema>;
+
+export const genderLabels: Record<GenderEnum, string> = {
+  [GenderEnum.Male]: "Male",
+  [GenderEnum.Female]: "Female",
+  [GenderEnum.Unisex]: "Unisex",
+};
+
+export const ageGroupLabels: Record<AgeGroupEnum, string> = {
+  [AgeGroupEnum.Infant]: "Infant",
+  [AgeGroupEnum.Toddler]: "Toddler",
+  [AgeGroupEnum.Kids]: "Kids",
+  [AgeGroupEnum.Teen]: "Teen",
+  [AgeGroupEnum.Adult]: "Adult",
+};
+
+export const productStatusLabels: Record<ProductStatusEnum, string> = {
+  [ProductStatusEnum.Draft]: "Draft",
+  [ProductStatusEnum.Discontinued]: "Discontinued",
+  [ProductStatusEnum.OutOfStock]: "Out of Stock",
+  [ProductStatusEnum.Available]: "Available",
+};
