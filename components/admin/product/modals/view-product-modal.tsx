@@ -12,6 +12,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import KoaModalCancelButton from "@/components/general/koa-modal-cancel-button";
+import KoaViewOnlySizeGuide from "@/components/general/koa-view-only-size-guide";
 import { cn } from "@/lib/utils";
 import { calculatePriceBreakdown } from "@/lib/pricing/price-calculations";
 import {
@@ -21,8 +22,6 @@ import {
   ProductStatusEnum,
 } from "@/types/enums";
 import { ProductDto } from "@/types/product";
-import { ExternalLink } from "lucide-react";
-import Link from "next/link";
 
 interface ViewProductModalProps {
   product: ProductDto | null;
@@ -78,7 +77,7 @@ function Section({
   children: ReactNode;
 }) {
   return (
-    <section className="flex flex-col gap-3">
+    <section className="flex flex-col gap-3 rounded-xl border bg-card p-4">
       <h3 className="text-sm font-semibold text-foreground">{title}</h3>
       <dl className="grid grid-cols-1 gap-4 sm:grid-cols-2 sm:gap-x-6">
         {children}
@@ -177,7 +176,7 @@ export default function ViewProductModal({
               </DialogDescription>
             </DialogHeader>
 
-            <div className="flex flex-col gap-6 p-5">
+            <div className="flex flex-col gap-4 p-5">
               <Section title="Overview">
                 <Field label="Name" value={product.name} />
                 <Field label="Category" value={product.category?.name} />
@@ -190,26 +189,13 @@ export default function ViewProductModal({
                   }
                 />
                 <Field
-                  label="Size guide"
-                  value={
-                    product.sizeGuide ? (
-                      <div className="flex w-fit items-center gap-2">
-                        <Link
-                          href={product.sizeGuide}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="inline-flex items-center gap-1 text-primary underline-offset-4 hover:underline"
-                        >
-                          Open size guide
-                          <ExternalLink className="size-3.5" />
-                        </Link>
-                      </div>
-                    ) : null
-                  }
-                />
-                <Field
                   label="Description"
                   value={product.description}
+                  className="sm:col-span-2"
+                />
+                <KoaViewOnlySizeGuide
+                  productSizeGuide={product.sizeGuide}
+                  categorySizeGuide={product.category?.sizeGuideUrl}
                   className="sm:col-span-2"
                 />
               </Section>
