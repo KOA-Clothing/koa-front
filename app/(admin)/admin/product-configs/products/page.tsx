@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useServerTableParams } from "@/hooks/use-server-table-params";
 import { useSearchField } from "@/hooks/use-search-field";
 import { useProducts } from "@/features/product/hooks/use-products";
+import { useProductMutations } from "@/features/product/hooks/use-product-mutations";
 import { getProductColumns } from "./columns";
 import { ProductDto } from "@/types/product";
 import { KoaTable } from "@/components/general/table/koa-table";
@@ -24,6 +25,15 @@ export default function ProductsPage() {
   const [productToDelete, setProductToDelete] = useState<ProductDto | null>(null);
 
   const { data, isLoading } = useProducts(pagination, search);
+  const { toggleActiveStatus, toggleFeaturedStatus } = useProductMutations();
+
+  const handleToggleActiveStatus = (product: ProductDto) => {
+    toggleActiveStatus.mutate(product.id);
+  };
+
+  const handleToggleFeaturedStatus = (product: ProductDto) => {
+    toggleFeaturedStatus.mutate(product.id);
+  };
 
   return (
     <div className="flex flex-col gap-4">
@@ -49,8 +59,8 @@ export default function ProductsPage() {
           onEdit: setProductToEdit,
           onDelete: setProductToDelete,
           onView: (product) => console.log(product),
-          toggleFeaturedStatus: (product) => console.log(product),
-          toggleActiveStatus: (product) => console.log(product),
+          toggleFeaturedStatus: handleToggleFeaturedStatus,
+          toggleActiveStatus: handleToggleActiveStatus,
         })}
         data={data?.items ?? []}
         rowCount={data?.totalRecords ?? 0}

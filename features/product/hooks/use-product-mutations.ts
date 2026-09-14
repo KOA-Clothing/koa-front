@@ -32,5 +32,19 @@ export function useProductMutations() {
     successMessage: "Product updated successfully!",
   });
 
-  return { create, remove, update };
+  const toggleActiveStatus = useAppMutation<void, string>({
+    mutationFn: (id) =>
+      axiosClient.post(API_ROUTES.PRODUCTS.TOGGLE_ACTIVE_STATUS(id)).then((r) => r.data),
+    invalidateKeys,
+    successMessage: "Product updated",
+  });
+
+  const toggleFeaturedStatus = useAppMutation<void, string>({
+    mutationFn: (id) =>
+      axiosClient.post(API_ROUTES.PRODUCTS.TOGGLE_FEATURED_STATUS(id)).then((r) => r.data),
+    invalidateKeys,
+    successMessage: "Product updated",
+  });
+
+  return { create, remove, update, toggleActiveStatus, toggleFeaturedStatus };
 }

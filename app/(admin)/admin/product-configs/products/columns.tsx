@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { createDataTableColumnHelper } from "@/lib/configs/table-configs";
 import { ProductDto } from "@/types/product";
-import { ageGroupLabels, genderLabels, ProductStatus, ProductStatusEnum, productStatusLabels } from "@/types/enums";
+import { ageGroupLabels, genderLabels, productStatusLabels } from "@/types/enums";
 import { ExternalLink, Eye, Pencil, Trash2 } from "lucide-react";
 import Link from "next/link";
 import { KoaSwitch } from "@/components/general/koa-switch";
@@ -30,10 +30,10 @@ export function getProductColumns({ onEdit, onDelete, onView, toggleFeaturedStat
       header: () => <div className="text-center">Name</div>,
       enableSorting: true,
     }),
-    columnHelper.accessor("description", {
-      header: () => <div className="text-center">Description</div>,
-      enableSorting: false,
-    }),
+    // columnHelper.accessor("description", {
+    //   header: () => <div className="text-center">Description</div>,
+    //   enableSorting: false,
+    // }),
     columnHelper.accessor("sizeGuide", {
       header: () => <div className="text-center">Size Guide</div>,
       cell: (info) => {
