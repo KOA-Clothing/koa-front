@@ -32,21 +32,21 @@ export function useProductMutations() {
 
   const update = useAppMutation<void, { id: string; payload: ProductFormInput }>({
     mutationFn: ({ id, payload }) =>
-      axiosClient.put(API_ROUTES.PRODUCTS.BY_ID(id), payload).then((r) => r.data),
+      axiosClient.patch(API_ROUTES.PRODUCTS.BY_ID(id), payload).then((r) => r.data),
     invalidateKeys,
     successMessage: "Product updated successfully!",
   });
 
   const toggleActiveStatus = useAppMutation<void, string>({
     mutationFn: (id) =>
-      axiosClient.post(API_ROUTES.PRODUCTS.TOGGLE_ACTIVE_STATUS(id)).then((r) => r.data),
+      axiosClient.patch(API_ROUTES.PRODUCTS.TOGGLE_ACTIVE_STATUS(id)).then((r) => r.data),
     invalidateKeys,
     successMessage: "Product updated",
   });
 
   const toggleFeaturedStatus = useAppMutation<void, string>({
     mutationFn: (id) =>
-      axiosClient.post(API_ROUTES.PRODUCTS.TOGGLE_FEATURED_STATUS(id)).then((r) => r.data),
+      axiosClient.patch(API_ROUTES.PRODUCTS.TOGGLE_FEATURED_STATUS(id)).then((r) => r.data),
     invalidateKeys,
     successMessage: "Product updated",
   });
@@ -54,7 +54,7 @@ export function useProductMutations() {
   const changeGender = useAppMutation<void, { id: string; gender: GenderEnum }>({
     mutationFn: ({ id, gender }) =>
       axiosClient
-        .post(API_ROUTES.PRODUCTS.CHANGE_GENDER(id), { newGender: Number(gender) })
+        .patch(API_ROUTES.PRODUCTS.CHANGE_GENDER(id), { newGender: Number(gender) })
         .then((r) => r.data),
     invalidateKeys,
     successMessage: "Product gender updated",
@@ -63,7 +63,7 @@ export function useProductMutations() {
   const changeAgeGroup = useAppMutation<void, { id: string; ageGroup: AgeGroupEnum }>({
     mutationFn: ({ id, ageGroup }) =>
       axiosClient
-        .post(API_ROUTES.PRODUCTS.CHANGE_AGE_GROUP(id), { newAgeGroup: Number(ageGroup) })
+        .patch(API_ROUTES.PRODUCTS.CHANGE_AGE_GROUP(id), { newAgeGroup: Number(ageGroup) })
         .then((r) => r.data),
     invalidateKeys,
     successMessage: "Product age group updated",
@@ -72,7 +72,7 @@ export function useProductMutations() {
   const changeProductStatus = useAppMutation<void, { id: string; status: ProductStatusEnum }>({
     mutationFn: ({ id, status }) =>
       axiosClient
-        .post(API_ROUTES.PRODUCTS.CHANGE_PRODUCT_STATUS(id), { newProductStatus: Number(status) })
+        .patch(API_ROUTES.PRODUCTS.CHANGE_PRODUCT_STATUS(id), { newProductStatus: Number(status) })
         .then((r) => r.data),
     invalidateKeys,
     successMessage: "Product status updated",
