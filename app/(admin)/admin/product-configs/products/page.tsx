@@ -7,6 +7,7 @@ import { useProducts } from "@/features/product/hooks/use-products";
 import { useProductMutations } from "@/features/product/hooks/use-product-mutations";
 import { getProductColumns } from "./columns";
 import { ProductDto } from "@/types/product";
+import { AgeGroupEnum, GenderEnum, ProductStatusEnum } from "@/types/enums";
 import { KoaTable } from "@/components/general/table/koa-table";
 import { Shirt } from "lucide-react";
 import { PageHeader } from "@/components/admin/page-header";
@@ -27,7 +28,12 @@ export default function ProductsPage() {
   const [productToDelete, setProductToDelete] = useState<ProductDto | null>(null);
 
   const { data, isLoading } = useProducts(pagination, search);
-  const { toggleActiveStatus, toggleFeaturedStatus } = useProductMutations();
+  const { 
+    toggleActiveStatus, 
+    toggleFeaturedStatus, 
+    changeGender, 
+    changeAgeGroup, 
+    changeProductStatus } = useProductMutations();
 
   const handleToggleActiveStatus = (product: ProductDto) => {
     toggleActiveStatus.mutate(product.id);
@@ -35,6 +41,19 @@ export default function ProductsPage() {
 
   const handleToggleFeaturedStatus = (product: ProductDto) => {
     toggleFeaturedStatus.mutate(product.id);
+  };
+
+  const handleChangeGender = (product: ProductDto, gender: GenderEnum) => {
+    console.log(gender)
+    changeGender.mutate({ id: product.id, gender });
+  };
+
+  const handleChangeAgeGroup = (product: ProductDto, ageGroup: AgeGroupEnum) => {
+    changeAgeGroup.mutate({ id: product.id, ageGroup });
+  };
+
+  const handleChangeProductStatus = (product: ProductDto, status: ProductStatusEnum) => {
+    changeProductStatus.mutate({ id: product.id, status });
   };
 
   return (
@@ -63,6 +82,9 @@ export default function ProductsPage() {
           onView: setProductToView,
           toggleFeaturedStatus: handleToggleFeaturedStatus,
           toggleActiveStatus: handleToggleActiveStatus,
+          onChangeGender: handleChangeGender,
+          onChangeAgeGroup: handleChangeAgeGroup,
+          onChangeProductStatus: handleChangeProductStatus,
         })}
         data={data?.items ?? []}
         rowCount={data?.totalRecords ?? 0}

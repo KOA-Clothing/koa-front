@@ -4,6 +4,11 @@ import { useAxiosClient } from "@/hooks/use-api-client";
 import { API_ROUTES } from "@/lib/configs/api-routes";
 import { queryKeys } from "@/lib/api/query-keys";
 import { useAppMutation } from "@/lib/api/use-app-mutation";
+import {
+  AgeGroupEnum,
+  GenderEnum,
+  ProductStatusEnum,
+} from "@/types/enums";
 import type { ProductFormInput } from "@/types/product";
 
 const invalidateKeys = [queryKeys.products.all] as const;
@@ -46,5 +51,41 @@ export function useProductMutations() {
     successMessage: "Product updated",
   });
 
-  return { create, remove, update, toggleActiveStatus, toggleFeaturedStatus };
+  const changeGender = useAppMutation<void, { id: string; gender: GenderEnum }>({
+    mutationFn: ({ id, gender }) =>
+      axiosClient
+        .post(API_ROUTES.PRODUCTS.CHANGE_GENDER(id), { newGender: Number(gender) })
+        .then((r) => r.data),
+    invalidateKeys,
+    successMessage: "Product gender updated",
+  });
+
+  const changeAgeGroup = useAppMutation<void, { id: string; ageGroup: AgeGroupEnum }>({
+    mutationFn: ({ id, ageGroup }) =>
+      axiosClient
+        .post(API_ROUTES.PRODUCTS.CHANGE_AGE_GROUP(id), { newAgeGroup: Number(ageGroup) })
+        .then((r) => r.data),
+    invalidateKeys,
+    successMessage: "Product age group updated",
+  });
+
+  const changeProductStatus = useAppMutation<void, { id: string; status: ProductStatusEnum }>({
+    mutationFn: ({ id, status }) =>
+      axiosClient
+        .post(API_ROUTES.PRODUCTS.CHANGE_PRODUCT_STATUS(id), { newProductStatus: Number(status) })
+        .then((r) => r.data),
+    invalidateKeys,
+    successMessage: "Product status updated",
+  });
+
+  return {
+    create,
+    remove,
+    update,
+    toggleActiveStatus,
+    toggleFeaturedStatus,
+    changeGender,
+    changeAgeGroup,
+    changeProductStatus,
+  };
 }

@@ -37,6 +37,9 @@ export const API_ROUTES = {
     BY_ID: (id: string) => `/api/v1/products/${id}`,
     TOGGLE_ACTIVE_STATUS: (id: string) => `/api/v1/products/${id}/toggle-active-status`,
     TOGGLE_FEATURED_STATUS: (id: string) => `/api/v1/products/${id}/toggle-featured-status`,
+    CHANGE_GENDER: (id: string) => `/api/v1/products/${id}/change-gender`,
+    CHANGE_AGE_GROUP: (id: string) => `/api/v1/products/${id}/change-age-group`,
+    CHANGE_PRODUCT_STATUS: (id: string) => `/api/v1/products/${id}/change-product-status`,
   },
   STORAGE: {
     UPLOAD_REQUESTS: "/api/v1/storage/upload-url",

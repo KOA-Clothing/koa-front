@@ -1,15 +1,23 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
 import { createDataTableColumnHelper } from "@/lib/configs/table-configs";
 import { ProductDto } from "@/types/product";
-import { ageGroupLabels, genderLabels, productStatusLabels } from "@/types/enum-labels";
+import {
+  ageGroupLabels,
+  genderLabels,
+  productStatusLabels,
+} from "@/types/enum-labels";
+import { AgeGroupEnum, GenderEnum, ProductStatusEnum } from "@/types/enums";
 import { ExternalLink, Eye, Pencil, Trash2 } from "lucide-react";
 import Link from "next/link";
 import { KoaSwitch } from "@/components/general/koa-switch";
-import KoaEnumBadge from "@/components/general/koa-enum-badge";
-import { ageGroupBadgeStyles, genderBadgeStyles, productStatusBadgeStyles } from "@/lib/configs/enum-badge-styles";
+import KoaEnumChanger from "@/components/general/koa-enum-changer";
+import {
+  ageGroupBadgeStyles,
+  genderBadgeStyles,
+  productStatusBadgeStyles,
+} from "@/lib/configs/enum-badge-styles";
 
 interface ProductColumnActions {
   onEdit: (product: ProductDto) => void;
@@ -17,6 +25,9 @@ interface ProductColumnActions {
   onView: (product: ProductDto) => void;
   toggleFeaturedStatus: (product: ProductDto) => void;
   toggleActiveStatus: (product: ProductDto) => void;
+  onChangeGender: (product: ProductDto, gender: GenderEnum) => void;
+  onChangeAgeGroup: (product: ProductDto, ageGroup: AgeGroupEnum) => void;
+  onChangeProductStatus: (product: ProductDto, status: ProductStatusEnum) => void;
 }
 
 const columnHelper = createDataTableColumnHelper<ProductDto>();
@@ -26,7 +37,7 @@ const currencyFormatter = new Intl.NumberFormat("en-US", {
   currency: "USD",
 });
 
-export function getProductColumns({ onEdit, onDelete, onView, toggleFeaturedStatus, toggleActiveStatus }: ProductColumnActions) {
+export function getProductColumns({ onEdit, onDelete, onView, toggleFeaturedStatus, toggleActiveStatus, onChangeGender, onChangeAgeGroup, onChangeProductStatus }: ProductColumnActions) {
   return columnHelper.columns([
     columnHelper.accessor("name", {
       header: () => <div className="text-center">Name</div>,
@@ -94,27 +105,42 @@ export function getProductColumns({ onEdit, onDelete, onView, toggleFeaturedStat
     }),
     columnHelper.accessor("gender", {
       header: () => <div className="text-center">Gender</div>,
-      cell: (info) => (
+      cell: ({ row, getValue }) => (
         <div className="flex justify-center">
-          <KoaEnumBadge styles={genderBadgeStyles} labels={genderLabels} value={info.getValue()} />
+          <KoaEnumChanger
+            styles={genderBadgeStyles}
+            labels={genderLabels}
+            value={getValue()}
+            onValueChange={(gender) => onChangeGender(row.original, gender)}
+          />
         </div>
       ),
       enableSorting: true,
     }),
     columnHelper.accessor("ageGroup", {
       header: () => <div className="text-center">Age Group</div>,
-      cell: (info) => (
+      cell: ({ row, getValue }) => (
         <div className="flex justify-center">
-          <KoaEnumBadge styles={ageGroupBadgeStyles} labels={ageGroupLabels} value={info.getValue()} />
+          <KoaEnumChanger
+            styles={ageGroupBadgeStyles}
+            labels={ageGroupLabels}
+            value={getValue()}
+            onValueChange={(ageGroup) => onChangeAgeGroup(row.original, ageGroup)}
+          />
         </div>
       ),
       enableSorting: true,
     }),
     columnHelper.accessor("status", {
       header: () => <div className="text-center">Product Status</div>,
-      cell: (info) => (
+      cell: ({ row, getValue }) => (
         <div className="flex justify-center">
-          <KoaEnumBadge styles={productStatusBadgeStyles} labels={productStatusLabels} value={info.getValue()} />
+          <KoaEnumChanger
+            styles={productStatusBadgeStyles}
+            labels={productStatusLabels}
+            value={getValue()}
+            onValueChange={(status) => onChangeProductStatus(row.original, status)}
+          />
         </div>
       ),
       enableSorting: true,
