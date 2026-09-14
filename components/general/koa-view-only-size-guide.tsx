@@ -16,11 +16,16 @@ export default function KoaViewOnlySizeGuide({
   className,
 }: KoaViewOnlySizeGuideProps) {
   const src = productSizeGuide || categorySizeGuide;
+  const label = src
+    ? productSizeGuide
+      ? "Size guide (from Product)"
+      : "Size guide (from Category)"
+    : "Size guide";
 
   return (
     <div className={cn("flex flex-col gap-1", className)}>
       <span className="text-xs font-medium tracking-wide text-muted-foreground uppercase">
-        Size guide
+        {label}
       </span>
       {src ? (
         <div className="flex min-h-40 items-center justify-center rounded-lg border border-input p-3">
