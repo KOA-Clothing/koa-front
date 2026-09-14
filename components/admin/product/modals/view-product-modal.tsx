@@ -1,7 +1,6 @@
 "use client";
 
 import type { ReactNode } from "react";
-import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -18,11 +17,15 @@ import KoaPricingSummary from "@/components/general/koa-pricing-summary";
 import KoaViewOnlyField from "@/components/general/koa-view-only-field";
 import KoaViewOnlySizeGuide from "@/components/general/koa-view-only-size-guide";
 import {
+  ageGroupBadgeStyles,
+  genderBadgeStyles,
+  productStatusBadgeStyles,
+} from "@/lib/configs/enum-badge-styles";
+import {
   ageGroupLabels,
   genderLabels,
   productStatusLabels,
-  ProductStatusEnum,
-} from "@/types/enums";
+} from "@/types/enum-labels";
 import { ProductDto } from "@/types/product";
 
 interface ViewProductModalProps {
@@ -35,16 +38,6 @@ const currencyFormatter = new Intl.NumberFormat("en-US", {
   style: "currency",
   currency: "USD",
 });
-
-const statusVariant: Record<
-  ProductStatusEnum,
-  "default" | "secondary" | "destructive" | "outline"
-> = {
-  [ProductStatusEnum.Available]: "default",
-  [ProductStatusEnum.Draft]: "secondary",
-  [ProductStatusEnum.Discontinued]: "destructive",
-  [ProductStatusEnum.OutOfStock]: "outline",
-};
 
 function Section({
   title,
@@ -98,9 +91,11 @@ export default function ViewProductModal({
                 <KoaViewOnlyField
                   label="Product status"
                   value={
-                    <Badge variant={statusVariant[product.status]}>
-                      {productStatusLabels[product.status]}
-                    </Badge>
+                    <KoaEnumBadge
+                      labels={productStatusLabels}
+                      value={product.status}
+                      styles={productStatusBadgeStyles}
+                    />
                   }
                 />
                 <KoaViewOnlyField
@@ -140,13 +135,21 @@ export default function ViewProductModal({
                 <KoaViewOnlyField
                   label="Gender"
                   value={
-                    <KoaEnumBadge>{genderLabels[product.gender]}</KoaEnumBadge>
+                    <KoaEnumBadge
+                      labels={genderLabels}
+                      value={product.gender}
+                      styles={genderBadgeStyles}
+                    />
                   }
                 />
                 <KoaViewOnlyField
                   label="Age group"
                   value={
-                    <KoaEnumBadge>{ageGroupLabels[product.ageGroup]}</KoaEnumBadge>
+                    <KoaEnumBadge
+                      labels={ageGroupLabels}
+                      value={product.ageGroup}
+                      styles={ageGroupBadgeStyles}
+                    />
                   }
                 />
               </Section>

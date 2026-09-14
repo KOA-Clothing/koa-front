@@ -12,10 +12,12 @@ import {
   AgeGroupEnum,
   GenderEnum,
   ProductStatusEnum,
+} from "@/types/enums";
+import {
   ageGroupLabels,
   genderLabels,
   productStatusLabels,
-} from "@/types/enums";
+} from "@/types/enum-labels";
 import {
   Dialog,
   DialogContent,

@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { createDataTableColumnHelper } from "@/lib/configs/table-configs";
 import { ProductDto } from "@/types/product";
-import { ageGroupLabels, genderLabels, productStatusLabels } from "@/types/enums";
+import { ageGroupLabels, genderLabels, productStatusLabels } from "@/types/enum-labels";
 import { ExternalLink, Eye, Pencil, Trash2 } from "lucide-react";
 import Link from "next/link";
 import { KoaSwitch } from "@/components/general/koa-switch";
