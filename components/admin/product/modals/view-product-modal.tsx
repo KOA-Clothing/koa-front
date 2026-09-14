@@ -11,10 +11,12 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
+import KoaBoolBadge from "@/components/general/koa-bool-badge";
+import KoaEnumBadge from "@/components/general/koa-enum-badge";
 import KoaModalCancelButton from "@/components/general/koa-modal-cancel-button";
+import KoaPricingSummary from "@/components/general/koa-pricing-summary";
+import KoaViewOnlyField from "@/components/general/koa-view-only-field";
 import KoaViewOnlySizeGuide from "@/components/general/koa-view-only-size-guide";
-import { cn } from "@/lib/utils";
-import { calculatePriceBreakdown } from "@/lib/pricing/price-calculations";
 import {
   ageGroupLabels,
   genderLabels,
@@ -44,31 +46,6 @@ const statusVariant: Record<
   [ProductStatusEnum.OutOfStock]: "outline",
 };
 
-function Field({
-  label,
-  value,
-  className,
-}: {
-  label: string;
-  value: ReactNode;
-  className?: string;
-}) {
-  return (
-    <div className={cn("flex flex-col gap-1", className)}>
-      <dt className="text-xs font-medium tracking-wide text-muted-foreground uppercase">
-        {label}
-      </dt>
-      <dd className="text-sm text-foreground">
-        {value === null || value === undefined || value === "" ? (
-          <span className="text-muted-foreground/60">—</span>
-        ) : (
-          value
-        )}
-      </dd>
-    </div>
-  );
-}
-
 function Section({
   title,
   children,
@@ -83,68 +60,6 @@ function Section({
         {children}
       </dl>
     </section>
-  );
-}
-
-function BoolBadge({ active, label }: { active: boolean; label: string }) {
-  return active ? (
-    <Badge className="bg-emerald-600/10 text-emerald-600">{label}</Badge>
-  ) : (
-    <Badge variant="outline" className="text-muted-foreground">
-      {label}
-    </Badge>
-  );
-}
-
-function EnumBadge({ children }: { children: ReactNode }) {
-  return <Badge variant="secondary">{children}</Badge>;
-}
-
-const roundToTwo = (value: number) => Math.round(value * 100) / 100;
-
-function PricingSummaryCard({ product }: { product: ProductDto }) {
-  const breakdown = calculatePriceBreakdown(
-    product.costPrice,
-    product.sellingPrice,
-    product.discountPercentage
-  );
-  const isProfit = breakdown.profitLoss >= 0;
-  const pnlColor = isProfit ? "text-emerald-600" : "text-red-600";
-
-  return (
-    <div className="flex flex-col gap-3 rounded-xl border border-emerald-600/20 bg-emerald-600/5 p-4">
-      <h3 className="text-sm font-semibold text-foreground">Pricing Summary</h3>
-      <dl className="grid grid-cols-1 gap-4 sm:grid-cols-2 sm:gap-x-6">
-        <Field
-          label="Final price"
-          value={
-            <span className="text-lg font-semibold text-emerald-600">
-              {currencyFormatter.format(breakdown.finalPrice)}
-            </span>
-          }
-        />
-        <Field
-          label="Discount amount"
-          value={currencyFormatter.format(breakdown.discountAmount)}
-        />
-        <Field
-          label="Profit / loss"
-          value={
-            <span className={pnlColor}>
-              {currencyFormatter.format(breakdown.profitLoss)}
-            </span>
-          }
-        />
-        <Field
-          label="Profit / loss %"
-          value={
-            <span className={pnlColor}>
-              {roundToTwo(breakdown.profitLossPercentage)}%
-            </span>
-          }
-        />
-      </dl>
-    </div>
   );
 }
 
@@ -178,9 +93,9 @@ export default function ViewProductModal({
 
             <div className="flex flex-col gap-4 p-5">
               <Section title="Overview">
-                <Field label="Name" value={product.name} />
-                <Field label="Category" value={product.category?.name} />
-                <Field
+                <KoaViewOnlyField label="Name" value={product.name} />
+                <KoaViewOnlyField label="Category" value={product.category?.name} />
+                <KoaViewOnlyField
                   label="Product status"
                   value={
                     <Badge variant={statusVariant[product.status]}>
@@ -188,7 +103,7 @@ export default function ViewProductModal({
                     </Badge>
                   }
                 />
-                <Field
+                <KoaViewOnlyField
                   label="Description"
                   value={product.description}
                   className="sm:col-span-2"
@@ -201,65 +116,69 @@ export default function ViewProductModal({
               </Section>
 
               <Section title="Pricing">
-                <Field
+                <KoaViewOnlyField
                   label="Cost price"
                   value={currencyFormatter.format(product.costPrice)}
                 />
-                <Field
+                <KoaViewOnlyField
                   label="Selling price"
                   value={currencyFormatter.format(product.sellingPrice)}
                 />
-                <Field
+                <KoaViewOnlyField
                   label="Discount percentage"
                   value={`${product.discountPercentage}%`}
                 />
               </Section>
 
-              <PricingSummaryCard product={product} />
+              <KoaPricingSummary
+                costPrice={product.costPrice}
+                sellingPrice={product.sellingPrice}
+                discountPercentage={product.discountPercentage}
+              />
 
               <Section title="Classification">
-                <Field
+                <KoaViewOnlyField
                   label="Gender"
                   value={
-                    <EnumBadge>{genderLabels[product.gender]}</EnumBadge>
+                    <KoaEnumBadge>{genderLabels[product.gender]}</KoaEnumBadge>
                   }
                 />
-                <Field
+                <KoaViewOnlyField
                   label="Age group"
                   value={
-                    <EnumBadge>{ageGroupLabels[product.ageGroup]}</EnumBadge>
+                    <KoaEnumBadge>{ageGroupLabels[product.ageGroup]}</KoaEnumBadge>
                   }
                 />
               </Section>
 
               <Section title="Display">
-                <Field
+                <KoaViewOnlyField
                   label="Featured"
                   value={
-                    <BoolBadge active={product.isFeatured} label="Yes" />
+                    <KoaBoolBadge active={product.isFeatured} label="Yes" />
                   }
                 />
-                <Field
+                <KoaViewOnlyField
                   label="Active"
-                  value={<BoolBadge active={product.isActive} label="Yes" />}
+                  value={<KoaBoolBadge active={product.isActive} label="Yes" />}
                 />
               </Section>
 
               <Section title="Details">
-                <Field label="Material" value={product.material} />
-                <Field
+                <KoaViewOnlyField label="Material" value={product.material} />
+                <KoaViewOnlyField
                   label="Care instructions"
                   value={product.careInstructions}
                 />
               </Section>
 
               <Section title="Search Engine Optimization">
-                <Field
+                <KoaViewOnlyField
                   label="Meta title"
                   value={product.metaTitle}
                   className="sm:col-span-2"
                 />
-                <Field
+                <KoaViewOnlyField
                   label="Meta description"
                   value={product.metaDescription}
                   className="sm:col-span-2"
@@ -267,7 +186,7 @@ export default function ViewProductModal({
               </Section>
 
               <Section title="Record">
-                <Field
+                <KoaViewOnlyField
                   label="ID"
                   value={
                     <code className="font-mono text-xs break-all">
@@ -276,11 +195,11 @@ export default function ViewProductModal({
                   }
                   className="sm:col-span-2"
                 />
-                <Field
+                <KoaViewOnlyField
                   label="Created"
                   value={new Date(product.createdAt).toLocaleString()}
                 />
-                <Field
+                <KoaViewOnlyField
                   label="Updated"
                   value={new Date(product.updatedAt).toLocaleString()}
                 />
