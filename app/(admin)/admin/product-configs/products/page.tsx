@@ -15,12 +15,14 @@ import KoaAdminSearchBar from "@/components/admin/koa-admin-searchbar";
 import CreateProductModal from "@/components/admin/product/modals/create-product-modal";
 import DeleteProductConfirmationModal from "@/components/admin/product/modals/delete-product-confirmation-modal";
 import UpdateProductModal from "@/components/admin/product/modals/update-product-modal";
+import ViewProductModal from "@/components/admin/product/modals/view-product-modal";
 
 export default function ProductsPage() {
   const { pagination, setPagination, search, setSearch } = useServerTableParams();
   const searchField = useSearchField({ value: search, onCommit: setSearch });
 
   const [isCreateOpen, setIsCreateOpen] = useState(false);
+  const [productToView, setProductToView] = useState<ProductDto | null>(null);
   const [productToEdit, setProductToEdit] = useState<ProductDto | null>(null);
   const [productToDelete, setProductToDelete] = useState<ProductDto | null>(null);
 
@@ -58,7 +60,7 @@ export default function ProductsPage() {
         columns={getProductColumns({
           onEdit: setProductToEdit,
           onDelete: setProductToDelete,
-          onView: (product) => console.log(product),
+          onView: setProductToView,
           toggleFeaturedStatus: handleToggleFeaturedStatus,
           toggleActiveStatus: handleToggleActiveStatus,
         })}
@@ -70,6 +72,17 @@ export default function ProductsPage() {
       />
 
       <CreateProductModal open={isCreateOpen} onOpenChange={setIsCreateOpen} />
+
+      <ViewProductModal
+        product={productToView}
+        onOpenChange={(open) => {
+          if (!open) setProductToView(null);
+        }}
+        onEdit={(product) => {
+          setProductToView(null);
+          setProductToEdit(product);
+        }}
+      />
 
       <DeleteProductConfirmationModal
         product={productToDelete}

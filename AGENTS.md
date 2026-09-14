@@ -16,8 +16,8 @@ Shop/admin storefront against a .NET API. App Router, Next.js 16 (see block abov
 
 - `npm run dev` — dev server. Also generates the in-repo Next docs/agent files referenced above.
 - `npm run lint` / `npm run lint:fix` — ESLint (flat config, `eslint.config.mjs`).
-- `npm run build` — production build (includes lint + typecheck).
-- No test framework or CI in this repo. Verify with `npm run lint` + `npx tsc --noEmit` (or `npm run build`).
+- `npm run build` — production build; runs typecheck but **not** lint (Next 16 removed linting from `next build`).
+- No test framework or CI in this repo. Verify with `npm run lint` + `npx tsc --noEmit`.
 
 ## Gotchas
 
@@ -29,9 +29,10 @@ Shop/admin storefront against a .NET API. App Router, Next.js 16 (see block abov
 
 - Path alias `@/*` maps to repo root. Route groups: `(shop)`, `(account)`, `(admin)`, `(auth)` (sign-in/up are `[[...rest]]` catch-alls under `(auth)`).
 - API calls: axios via `useAxiosClient` (`hooks/use-api-client.ts`) — injects the Clerk bearer token.
-- Endpoint paths in `configs/api-routes.ts`, not inline. TanStack Query keys in `lib/api/query-keys.ts`, not inline.
+- Endpoint paths in `lib/configs/api-routes.ts`, not inline. TanStack Query keys in `lib/api/query-keys.ts`, not inline.
 - New mutations should use `useAppMutation` (`lib/api/use-app-mutation.ts`): it invalidates keys, toasts success (server message when present) and errors. Supply `invalidateKeys` + `successMessage`.
 - Feature modules (feature-scoped hooks/components) under `features/`; shared UI under `components/` (shadcn-style, lucide icons); `hooks/` for cross-cutting hooks.
 - Admin area is server-gated in `app/(admin)/layout.tsx` via `auth.protect()` + `sessionClaims.metadata.role === "admin"`; keep that gating, don't trust client-side checks.
 - File uploads are direct-to-presigned-URL (`lib/storage/direct-upload.ts`) — no auth header on the PUT, the signed URL is self-contained.
+- Repo ships local OpenCode design/UI skills (banner-design, brand, design, design-system, slides, ui-styling, ui-ux-pro-max) under `.opencode/skills/` — reuse them for UI work before writing fresh styles.
 
