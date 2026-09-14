@@ -8,6 +8,8 @@ import { ageGroupLabels, genderLabels, productStatusLabels } from "@/types/enum-
 import { ExternalLink, Eye, Pencil, Trash2 } from "lucide-react";
 import Link from "next/link";
 import { KoaSwitch } from "@/components/general/koa-switch";
+import KoaEnumBadge from "@/components/general/koa-enum-badge";
+import { ageGroupBadgeStyles, genderBadgeStyles, productStatusBadgeStyles } from "@/lib/configs/enum-badge-styles";
 
 interface ProductColumnActions {
   onEdit: (product: ProductDto) => void;
@@ -94,9 +96,7 @@ export function getProductColumns({ onEdit, onDelete, onView, toggleFeaturedStat
       header: () => <div className="text-center">Gender</div>,
       cell: (info) => (
         <div className="flex justify-center">
-          <Badge variant="default">
-            {genderLabels[info.getValue()]}
-          </Badge>
+          <KoaEnumBadge styles={genderBadgeStyles} labels={genderLabels} value={info.getValue()} />
         </div>
       ),
       enableSorting: true,
@@ -105,9 +105,7 @@ export function getProductColumns({ onEdit, onDelete, onView, toggleFeaturedStat
       header: () => <div className="text-center">Age Group</div>,
       cell: (info) => (
         <div className="flex justify-center">
-          <Badge variant="default">
-            {ageGroupLabels[info.getValue()]}
-          </Badge>
+          <KoaEnumBadge styles={ageGroupBadgeStyles} labels={ageGroupLabels} value={info.getValue()} />
         </div>
       ),
       enableSorting: true,
@@ -116,9 +114,7 @@ export function getProductColumns({ onEdit, onDelete, onView, toggleFeaturedStat
       header: () => <div className="text-center">Product Status</div>,
       cell: (info) => (
         <div className="flex justify-center">
-          <Badge variant="default">
-            {productStatusLabels[info.getValue()]}
-          </Badge>
+          <KoaEnumBadge styles={productStatusBadgeStyles} labels={productStatusLabels} value={info.getValue()} />
         </div>
       ),
       enableSorting: true,
