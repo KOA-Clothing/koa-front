@@ -32,6 +32,7 @@ Shop/admin storefront against a .NET API. App Router, Next.js 16 (see block abov
 - Endpoint paths in `lib/configs/api-routes.ts`, not inline. TanStack Query keys in `lib/api/query-keys.ts`, not inline.
 - New mutations should use `useAppMutation` (`lib/api/use-app-mutation.ts`): it invalidates keys, toasts success (server message when present) and errors. Supply `invalidateKeys` + `successMessage`.
 - Feature modules (feature-scoped hooks/components) under `features/`; shared UI under `components/` (shadcn-style, lucide icons); `hooks/` for cross-cutting hooks.
+- Add shadcn components with `npx shadcn@latest add <name>` — `components.json` is `style: "base-nova"` with CSS vars in `app/globals.css` only. Don't use the legacy `shadcn-ui` CLI or create a `tailwind.config`.
 - Admin area is server-gated in `app/(admin)/layout.tsx` via `auth.protect()` + `sessionClaims.metadata.role === "admin"`; keep that gating, don't trust client-side checks.
 - File uploads are direct-to-presigned-URL (`lib/storage/direct-upload.ts`) — no auth header on the PUT, the signed URL is self-contained.
 - Repo ships local OpenCode design/UI skills (banner-design, brand, design, design-system, slides, ui-styling, ui-ux-pro-max) under `.opencode/skills/` — reuse them for UI work before writing fresh styles.

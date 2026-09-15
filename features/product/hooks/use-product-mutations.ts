@@ -9,7 +9,13 @@ import {
   GenderEnum,
   ProductStatusEnum,
 } from "@/types/enums";
-import type { ProductFormInput } from "@/types/product";
+import type { ProductFormInput, ProductUpdateInput } from "@/types/product";
+import {
+  SIZE_GUIDE_FOLDER,
+  UploadRequestInput,
+  UploadRequestResponseSchema,
+  type UploadRequestResponse,
+} from "@/types/storage";
 
 const invalidateKeys = [queryKeys.products.all] as const;
 
@@ -30,12 +36,29 @@ export function useProductMutations() {
     successMessage: "Product deleted successfully!",
   });
 
-  const update = useAppMutation<void, { id: string; payload: ProductFormInput }>({
+const update = useAppMutation<void, { id: string; payload: ProductUpdateInput }>({
     mutationFn: ({ id, payload }) =>
       axiosClient.patch(API_ROUTES.PRODUCTS.BY_ID(id), payload).then((r) => r.data),
     invalidateKeys,
     successMessage: "Product updated successfully!",
   });
+
+  /**
+   * Asks the backend for a short-lived, single-use presigned upload URL for a
+   * size guide image. The caller PUTs the file to `signedUrl` and stores the
+   * returned `publicUrl` as the product's size guide URL.
+   */
+  const requestSizeGuideUpload = async (file: File): Promise<UploadRequestResponse> => {
+    const payload: UploadRequestInput = {
+      fileName: file.name,
+      contentType: file.type,
+      fileSize: file.size,
+      folder: SIZE_GUIDE_FOLDER,
+    };
+
+    const response = await axiosClient.post(API_ROUTES.STORAGE.UPLOAD_REQUESTS, payload);
+    return UploadRequestResponseSchema.parse(response.data);
+  };
 
   const toggleActiveStatus = useAppMutation<void, string>({
     mutationFn: (id) =>
@@ -82,6 +105,7 @@ export function useProductMutations() {
     create,
     remove,
     update,
+    requestSizeGuideUpload,
     toggleActiveStatus,
     toggleFeaturedStatus,
     changeGender,
