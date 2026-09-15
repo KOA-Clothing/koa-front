@@ -9,7 +9,7 @@ export function useAxiosClient() {
 
   // useMemo ensures we don't recreate the Axios instance on every render
   const axiosInstance = useMemo(() => {
-    const baseURL = process.env.NEXT_PUBLIC_API_URL;
+    const baseURL = process.env.NEXT_PUBLIC_API_URL || process.env.NEXT_API_URL;
 
     if (!baseURL) {
       throw new Error("NEXT_PUBLIC_API_URL is not set. Configure it in .env.local.");
