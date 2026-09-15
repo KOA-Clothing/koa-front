@@ -1,21 +1,11 @@
 "use client";
 
-import { useState } from "react";
+import { useRef, useState } from "react";
 import {
+  emptyProductForm,
   ProductFormInput,
   ProductFormInputSchema,
-  emptyProductForm,
 } from "@/types/product";
-import {
-  AgeGroupEnum,
-  GenderEnum,
-  ProductStatusEnum,
-} from "@/types/enums";
-import {
-  ageGroupLabels,
-  genderLabels,
-  productStatusLabels,
-} from "@/types/enum-labels";
 import {
   Dialog,
   DialogContent,
@@ -34,54 +24,21 @@ import {
 } from "@/components/ui/select";
 import KoaFormField from "@/components/general/koa-form-field";
 import KoaTextArea from "@/components/general/koa-text-area";
-import { KoaSwitch } from "@/components/general/koa-switch";
-import { useCategories } from "@/features/category/hooks/use-categories";
+import KoaImageInput from "@/components/general/koa-image-input";
+import KoaPercentage from "@/components/general/koa-percentage";
+import KoaPricingSummary from "@/components/general/koa-pricing-summary";
 import { useProductMutations } from "@/features/product/hooks/use-product-mutations";
+import { useActiveCategories } from "@/features/category/hooks/use-categories";
+import { uploadFileToPresignedUrl } from "@/lib/storage/direct-upload";
+import { getErrorMessage } from "@/lib/api/errors";
+import toast from "react-hot-toast";
 import KoaModalCancelButton from "@/components/general/koa-modal-cancel-button";
 import KoaModalSaveButton from "@/components/general/koa-modal-save-button";
 
 type FormErrors = Record<string, string>;
 
-const CATEGORIES_FOR_SELECT = { pageIndex: 0, pageSize: 100 };
-
-interface SelectFieldProps {
-  label: string;
-  id: string;
-  value: string;
-  placeholder: string;
-  options: { value: string; label: string }[];
-  onValueChange: (value: string) => void;
-  error?: string;
-}
-
-function SelectField({
-  label,
-  id,
-  value,
-  placeholder,
-  options,
-  onValueChange,
-  error,
-}: SelectFieldProps) {
-  return (
-    <div className="flex flex-col gap-2">
-      <Label htmlFor={id}>{label}</Label>
-      <Select value={value} onValueChange={(v) => v && onValueChange(v)}>
-        <SelectTrigger id={id} className="w-full">
-          <SelectValue placeholder={placeholder} />
-        </SelectTrigger>
-        <SelectContent>
-          {options.map((option) => (
-            <SelectItem key={option.value} value={option.value}>
-              {option.label}
-            </SelectItem>
-          ))}
-        </SelectContent>
-      </Select>
-      {error && <span className="text-xs text-destructive">{error}</span>}
-    </div>
-  );
-}
+const MAX_SIZE_MB = 10;
+const MAX_SIZE_BYTES = MAX_SIZE_MB * 1024 * 1024;
 
 interface CreateProductModalProps {
   open: boolean;
@@ -92,18 +49,25 @@ export default function CreateProductModal({
   open,
   onOpenChange,
 }: CreateProductModalProps) {
-  const { create } = useProductMutations();
-  const { data: categoriesData } = useCategories(CATEGORIES_FOR_SELECT, "");
-  const categories = categoriesData?.items ?? [];
+  const { create, requestSizeGuideUpload } = useProductMutations();
+  const { data: categories } = useActiveCategories();
 
   const [form, setForm] = useState<ProductFormInput>(emptyProductForm);
   const [errors, setErrors] = useState<FormErrors>({});
   const [prevOpen, setPrevOpen] = useState(open);
+  const [file, setFile] = useState<File | null>(null);
+  const [blobUrl, setBlobUrl] = useState<string | null>(null);
+  const [fileError, setFileError] = useState<string | null>(null);
+  const [isUploading, setIsUploading] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   if (open && prevOpen !== open) {
     setPrevOpen(open);
     setForm(emptyProductForm);
     setErrors({});
+    setFile(null);
+    setBlobUrl(null);
+    setFileError(null);
   }
 
   const handleFieldChange = <K extends keyof ProductFormInput>(
@@ -113,7 +77,33 @@ export default function CreateProductModal({
     setForm((prev) => ({ ...prev, [field]: value }));
   };
 
-  const handleSubmit = () => {
+  const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const selected = e.target.files?.[0];
+    if (!selected) return;
+
+    if (selected.size > MAX_SIZE_BYTES) {
+      setFileError(`File must be ${MAX_SIZE_MB}MB or smaller.`);
+      if (fileInputRef.current) fileInputRef.current.value = "";
+      return;
+    }
+
+    if (blobUrl) URL.revokeObjectURL(blobUrl);
+    setFileError(null);
+    setFile(selected);
+    setBlobUrl(URL.createObjectURL(selected));
+    if (fileInputRef.current) fileInputRef.current.value = "";
+  };
+
+  const handleRemoveFile = () => {
+    if (blobUrl) URL.revokeObjectURL(blobUrl);
+    setFile(null);
+    setBlobUrl(null);
+    setFileError(null);
+  };
+
+  const isPending = isUploading || create.isPending;
+
+  const handleSubmit = async () => {
     const result = ProductFormInputSchema.safeParse(form);
     if (!result.success) {
       const fieldErrors: FormErrors = {};
@@ -128,9 +118,30 @@ export default function CreateProductModal({
     }
 
     setErrors({});
-    create.mutate(result.data, {
-      onSuccess: () => onOpenChange(false),
-    });
+
+    let sizeGuide: string | null = null;
+    if (file) {
+      try {
+        setIsUploading(true);
+        const { uploadUrl, publicUrl } = await requestSizeGuideUpload(file);
+        await uploadFileToPresignedUrl(uploadUrl, file);
+        sizeGuide = publicUrl;
+      } catch (error) {
+        toast.error(getErrorMessage(error));
+        setIsUploading(false);
+        return;
+      }
+    }
+
+    create.mutate(
+      { ...result.data, sizeGuide },
+      {
+        onSuccess: () => {
+          setIsUploading(false);
+          onOpenChange(false);
+        },
+      }
+    );
   };
 
   return (
@@ -150,6 +161,32 @@ export default function CreateProductModal({
         </DialogHeader>
 
         <div className="flex flex-col gap-4 px-5">
+          <div className="flex flex-col gap-2">
+            <Label htmlFor="product-category">Category</Label>
+            <Select
+              value={form.categoryId}
+              onValueChange={(value) =>
+                value && handleFieldChange("categoryId", value)
+              }
+            >
+              <SelectTrigger id="product-category" className="w-full">
+                <SelectValue placeholder="Select a category" />
+              </SelectTrigger>
+              <SelectContent>
+                {(categories ?? []).map((category) => (
+                  <SelectItem key={category.id} value={category.id}>
+                    {category.name}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+            {errors.categoryId && (
+              <span className="text-xs text-destructive">
+                {errors.categoryId}
+              </span>
+            )}
+          </div>
+
           <KoaFormField
             label="Name"
             id="product-name"
@@ -169,125 +206,26 @@ export default function CreateProductModal({
             error={errors.description}
           />
 
-          <div className="grid gap-4 sm:grid-cols-2">
-            <SelectField
-              label="Category"
-              id="product-category"
-              value={form.categoryId}
-              placeholder="Select a category"
-              options={categories.map((category) => ({
-                value: category.id,
-                label: category.name,
-              }))}
-              onValueChange={(value) => handleFieldChange("categoryId", value)}
-              error={errors.categoryId}
-            />
+          <KoaImageInput
+            label="Size guide image"
+            file={file}
+            previewUrl={blobUrl}
+            error={fileError}
+            maxSizeMB={MAX_SIZE_MB}
+            fileInputRef={fileInputRef}
+            onChange={handleFileSelect}
+            onRemove={handleRemoveFile}
+            accept="image/jpeg,image/png,image/webp,image/gif"
+          />
 
-            <KoaFormField
-              label="Size guide"
-              id="product-size-guide"
-              placeholder="URL or reference to the size guide"
-              value={form.sizeGuide ?? ""}
-              onChange={(e) => handleFieldChange("sizeGuide", e.target.value)}
-              error={errors.sizeGuide}
-            />
-
-            <KoaFormField
-              label="Cost price ($)"
-              id="product-cost-price"
-              type="number"
-              min={0}
-              step="0.01"
-              value={form.costPrice}
-              onChange={(e) =>
-                handleFieldChange("costPrice", Number(e.target.value))
-              }
-              error={errors.costPrice}
-            />
-
-            <KoaFormField
-              label="Selling price ($)"
-              id="product-selling-price"
-              type="number"
-              min={0}
-              step="0.01"
-              value={form.sellingPrice}
-              onChange={(e) =>
-                handleFieldChange("sellingPrice", Number(e.target.value))
-              }
-              error={errors.sellingPrice}
-            />
-
-            <KoaFormField
-              label="Discount percentage"
-              id="product-discount-percentage"
-              type="number"
-              min={0}
-              max={100}
-              step="1"
-              value={form.discountPercentage}
-              onChange={(e) =>
-                handleFieldChange("discountPercentage", Number(e.target.value))
-              }
-              error={errors.discountPercentage}
-            />
-
-            <KoaFormField
-              label="Material"
-              id="product-material"
-              placeholder="e.g. 100% Cotton"
-              value={form.material ?? ""}
-              onChange={(e) => handleFieldChange("material", e.target.value)}
-              error={errors.material}
-            />
-
-            <SelectField
-              label="Gender"
-              id="product-gender"
-              value={String(form.gender)}
-              placeholder="Select gender"
-              options={Object.entries(genderLabels).map(([value, label]) => ({
-                value,
-                label,
-              }))}
-              onValueChange={(value) =>
-                handleFieldChange("gender", Number(value) as GenderEnum)
-              }
-              error={errors.gender}
-            />
-
-            <SelectField
-              label="Age group"
-              id="product-age-group"
-              value={String(form.ageGroup)}
-              placeholder="Select age group"
-              options={Object.entries(ageGroupLabels).map(([value, label]) => ({
-                value,
-                label,
-              }))}
-              onValueChange={(value) =>
-                handleFieldChange("ageGroup", Number(value) as AgeGroupEnum)
-              }
-              error={errors.ageGroup}
-            />
-
-            <SelectField
-              label="Status"
-              id="product-status"
-              value={String(form.status)}
-              placeholder="Select status"
-              options={Object.entries(productStatusLabels).map(
-                ([value, label]) => ({
-                  value,
-                  label,
-                })
-              )}
-              onValueChange={(value) =>
-                handleFieldChange("status", Number(value) as ProductStatusEnum)
-              }
-              error={errors.status}
-            />
-          </div>
+          <KoaFormField
+            label="Material"
+            id="product-material"
+            placeholder="e.g. 100% Cotton"
+            value={form.material ?? ""}
+            onChange={(e) => handleFieldChange("material", e.target.value)}
+            error={errors.material}
+          />
 
           <KoaTextArea
             label="Care instructions"
@@ -301,51 +239,87 @@ export default function CreateProductModal({
             error={errors.careInstructions}
           />
 
-          <div className="flex items-center gap-2">
-            <KoaSwitch
-              id="product-is-featured"
-              checked={form.isFeatured}
-              onCheckedChange={(checked) =>
-                handleFieldChange("isFeatured", checked)
+          <div className="flex flex-col gap-4 rounded-xl border p-4">
+            <div className="grid gap-4 sm:grid-cols-2">
+              <KoaFormField
+                label="Cost price (Rs)"
+                id="product-cost-price"
+                type="number"
+                min={0}
+                step="1"
+                value={form.costPrice}
+                onChange={(e) =>
+                  handleFieldChange("costPrice", Number(e.target.value))
+                }
+                error={errors.costPrice}
+              />
+
+              <KoaFormField
+                label="Selling price (Rs)"
+                id="product-selling-price"
+                type="number"
+                min={0}
+                step="1"
+                value={form.sellingPrice}
+                onChange={(e) =>
+                  handleFieldChange("sellingPrice", Number(e.target.value))
+                }
+                error={errors.sellingPrice}
+              />
+            </div>
+
+            <KoaPercentage
+              label="Discount percentage"
+              value={form.discountPercentage}
+              onValueChange={(value) =>
+                handleFieldChange("discountPercentage", value)
               }
             />
-            <Label htmlFor="product-is-featured" className="cursor-pointer">
-              Featured product
-            </Label>
+
+            <KoaPricingSummary
+              costPrice={form.costPrice}
+              sellingPrice={form.sellingPrice}
+              discountPercentage={form.discountPercentage}
+            />
           </div>
 
-          <KoaFormField
-            label="Meta title"
-            id="product-meta-title"
-            placeholder="SEO title"
-            value={form.metaTitle ?? ""}
-            onChange={(e) => handleFieldChange("metaTitle", e.target.value)}
-            error={errors.metaTitle}
-          />
+          <div className="flex flex-col gap-4 rounded-xl border p-4">
+            <Label className="flex items-center justify-center">Metadata</Label>
+            <KoaFormField
+              label="Meta title"
+              id="product-meta-title"
+              placeholder="SEO title"
+              value={form.metaTitle ?? ""}
+              onChange={(e) => handleFieldChange("metaTitle", e.target.value)}
+              error={errors.metaTitle}
+            />
 
-          <KoaTextArea
-            label="Meta description"
-            id="product-meta-description"
-            rows={2}
-            placeholder="SEO description..."
-            value={form.metaDescription ?? ""}
-            onChange={(e) =>
-              handleFieldChange("metaDescription", e.target.value)
-            }
-            error={errors.metaDescription}
-          />
+            <KoaTextArea
+              label="Meta description"
+              id="product-meta-description"
+              rows={2}
+              placeholder="SEO description..."
+              value={form.metaDescription ?? ""}
+              onChange={(e) =>
+                handleFieldChange("metaDescription", e.target.value)
+              }
+              error={errors.metaDescription}
+            />
+          </div>
         </div>
 
         <DialogFooter className="border-t">
           <KoaModalCancelButton
             onClick={() => onOpenChange(false)}
-            disabled={create.isPending}
+            disabled={isPending}
           />
           <KoaModalSaveButton
             onClick={handleSubmit}
-            isPending={create.isPending}
+            isPending={isPending}
+            isUploading={isUploading}
             label="Create product"
             loadingLabel="Creating..."
+            uploadingLabel="Uploading..."
           />
         </DialogFooter>
       </DialogContent>
