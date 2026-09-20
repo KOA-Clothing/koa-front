@@ -20,7 +20,7 @@ export default function KoaLinkedDesignItem({
   onRemove,
 }: KoaLinkedDesignItemProps) {
   return (
-    <Item variant="outline" size="sm">
+    <Item variant="outline" size="xs">
       <ItemContent>
         <ItemTitle>{design.name}</ItemTitle>
       </ItemContent>
