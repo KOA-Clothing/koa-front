@@ -42,6 +42,7 @@ export const API_ROUTES = {
     CHANGE_GENDER: (id: string) => `/api/v1/products/${id}/change-gender`,
     CHANGE_AGE_GROUP: (id: string) => `/api/v1/products/${id}/change-age-group`,
     CHANGE_PRODUCT_STATUS: (id: string) => `/api/v1/products/${id}/change-product-status`,
+    LINKED_DESIGNS: (id: string) => `/api/v1/products/${id}/linked-designs`
   },
   STORAGE: {
     UPLOAD_REQUESTS: "/api/v1/storage/upload-url",

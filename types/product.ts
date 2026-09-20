@@ -1,5 +1,6 @@
 import { z } from "zod";
 import { CategoryDtoSchema } from "./category";
+import { DesignDtoSchema } from "./design";
 import {
   AgeGroupSchema,
   GenderSchema,
@@ -11,6 +12,7 @@ export const ProductDtoSchema = z.object({
   name: z.string(),
   description: z.string().nullable().optional(),
   category: CategoryDtoSchema,
+  designs: z.array(DesignDtoSchema),
   sizeGuide: z.string().nullable().optional(),
   costPrice: z.number(),
   sellingPrice: z.number(),

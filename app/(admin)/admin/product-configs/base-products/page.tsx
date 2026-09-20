@@ -17,6 +17,7 @@ import CreateProductModal from "@/components/admin/product/modals/create-product
 import DeleteProductConfirmationModal from "@/components/admin/product/modals/delete-product-confirmation-modal";
 import UpdateProductModal from "@/components/admin/product/modals/update-product-modal";
 import ViewProductModal from "@/components/admin/product/modals/view-product-modal";
+import ManageLinkedDesignsModal from "@/components/admin/product/modals/manage-linked-designs-modal";
 
 export default function BaseProductsPage() {
   const { pagination, setPagination, search, setSearch } = useServerTableParams();
@@ -26,6 +27,7 @@ export default function BaseProductsPage() {
   const [productToView, setProductToView] = useState<ProductDto | null>(null);
   const [productToEdit, setProductToEdit] = useState<ProductDto | null>(null);
   const [productToDelete, setProductToDelete] = useState<ProductDto | null>(null);
+  const [productToManageDesigns, setProductToManageDesigns] = useState<ProductDto | null>(null);
 
   const { data, isLoading } = useProducts(pagination, search);
   const { 
@@ -57,7 +59,7 @@ export default function BaseProductsPage() {
   };
 
   const handleManageLinkedDesigns = (product: ProductDto) => {
-    console.log(product)
+    setProductToManageDesigns(product);
   }
 
   return (
@@ -122,6 +124,13 @@ export default function BaseProductsPage() {
         product={productToEdit}
         onOpenChange={(open) => {
           if (!open) setProductToEdit(null);
+        }}
+      />
+
+      <ManageLinkedDesignsModal
+        product={productToManageDesigns}
+        onOpenChange={(open) => {
+          if (!open) setProductToManageDesigns(null);
         }}
       />
     </div>
