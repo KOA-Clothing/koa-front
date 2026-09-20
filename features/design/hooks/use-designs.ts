@@ -36,7 +36,6 @@ export function useActiveDesigns() {
     queryKey: queryKeys.designs.active,
     queryFn: async () => {
       const response = await axiosClient.get(API_ROUTES.DESIGNS.ALL_ACTIVE);
-      console.log(response)
       return z.array(DesignDtoSchema).parse(response.data);
     },
   });

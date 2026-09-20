@@ -101,6 +101,24 @@ const update = useAppMutation<void, { id: string; payload: ProductUpdateInput }>
     successMessage: "Product status updated",
   });
 
+  const linkDesign = useAppMutation<void, { productId: string; designId: string }>({
+    mutationFn: ({ productId, designId }) =>
+      axiosClient
+        .post(API_ROUTES.PRODUCTS.LINKED_DESIGNS(productId), { productId, designId })
+        .then((r) => r.data),
+    invalidateKeys,
+    successMessage: "Design linked to product successfully!",
+  });
+
+  const unlinkDesign = useAppMutation<void, { productId: string; designId: string }>({
+    mutationFn: ({ productId, designId }) =>
+      axiosClient
+        .delete(API_ROUTES.PRODUCTS.LINKED_DESIGNS(productId), { data: { productId, designId } })
+        .then((r) => r.data),
+    invalidateKeys,
+    successMessage: "Design unlinked from product successfully!",
+  });
+
   return {
     create,
     remove,
@@ -111,5 +129,7 @@ const update = useAppMutation<void, { id: string; payload: ProductUpdateInput }>
     changeGender,
     changeAgeGroup,
     changeProductStatus,
+    linkDesign,
+    unlinkDesign,
   };
 }

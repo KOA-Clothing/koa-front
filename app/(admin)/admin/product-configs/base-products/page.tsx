@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useServerTableParams } from "@/hooks/use-server-table-params";
 import { useSearchField } from "@/hooks/use-search-field";
 import { useProducts } from "@/features/product/hooks/use-products";
@@ -46,7 +46,6 @@ export default function BaseProductsPage() {
   };
 
   const handleChangeGender = (product: ProductDto, gender: GenderEnum) => {
-    console.log(gender)
     changeGender.mutate({ id: product.id, gender });
   };
 

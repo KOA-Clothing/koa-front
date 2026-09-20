@@ -10,11 +10,13 @@ import type { DesignDto } from "@/types/design";
 
 interface KoaLinkedDesignItemProps {
   design: DesignDto;
+  disabled?: boolean;
   onRemove: (design: DesignDto) => void;
 }
 
 export default function KoaLinkedDesignItem({
   design,
+  disabled = false,
   onRemove,
 }: KoaLinkedDesignItemProps) {
   return (
@@ -27,6 +29,7 @@ export default function KoaLinkedDesignItem({
           variant="ghost"
           size="icon-sm"
           onClick={() => onRemove(design)}
+          disabled={disabled}
           title={`Unlink ${design.name}`}
           className="text-muted-foreground hover:bg-destructive/10 hover:text-destructive"
         >

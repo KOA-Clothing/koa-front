@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import {
   Dialog,
   DialogContent,
@@ -12,9 +12,11 @@ import {
 import { Button } from "@/components/ui/button";
 import { Link2 } from "lucide-react";
 import { useActiveDesigns } from "@/features/design/hooks/use-designs";
+import { useProductMutations } from "@/features/product/hooks/use-product-mutations";
 import KoaLinkedDesignItem from "@/components/general/koa-linked-design-item";
 import KoaSearchableSelect from "@/components/general/koa-searchable-select";
 import KoaModalCancelButton from "@/components/general/koa-modal-cancel-button";
+import type { DesignDto } from "@/types/design";
 import type { ProductDto } from "@/types/product";
 
 interface ManageLinkedDesignsModalProps {
@@ -27,27 +29,61 @@ export default function ManageLinkedDesignsModal({
   onOpenChange,
 }: ManageLinkedDesignsModalProps) {
   const { data: activeDesigns } = useActiveDesigns();
+  const { linkDesign, unlinkDesign } = useProductMutations();
+
   const [selectedDesignId, setSelectedDesignId] = useState("");
   const [prevProduct, setPrevProduct] = useState<ProductDto | null>(product);
+  const [linkedDesigns, setLinkedDesigns] = useState<DesignDto[]>(
+    product?.designs ?? []
+  );
 
   if (product && prevProduct !== product) {
     setPrevProduct(product);
     setSelectedDesignId("");
+    setLinkedDesigns(product.designs ?? []);
   }
 
-  const linkedDesigns = product?.designs ?? [];
-  const options = (activeDesigns ?? []).map((design) => ({
-    value: design.id,
-    label: design.name,
-  }));
+  const linkedIds = useMemo(
+    () => new Set(linkedDesigns.map((design) => design.id)),
+    [linkedDesigns]
+  );
+
+  // Active designs that are not already linked to this product.
+  const options = useMemo(
+    () =>
+      (activeDesigns ?? [])
+        .filter((design) => !linkedIds.has(design.id))
+        .map((design) => ({ value: design.id, label: design.name })),
+    [activeDesigns, linkedIds]
+  );
+
+  const isPending = linkDesign.isPending || unlinkDesign.isPending;
 
   const handleRemove = (designId: string) => {
-    console.log("Unlink design", designId);
+    if (!product) return;
+    unlinkDesign.mutate(
+      { productId: product.id, designId },
+      {
+        onSuccess: () => {
+          setLinkedDesigns((prev) => prev.filter((design) => design.id !== designId));
+        },
+      }
+    );
   };
 
   const handleLinkDesign = () => {
-    if (!selectedDesignId) return;
-    console.log("Link design", selectedDesignId);
+    if (!selectedDesignId || !product) return;
+    const design = activeDesigns?.find((item) => item.id === selectedDesignId);
+    if (!design) return;
+    linkDesign.mutate(
+      { productId: product.id, designId: selectedDesignId },
+      {
+        onSuccess: () => {
+          setLinkedDesigns((prev) => [...prev, design]);
+          setSelectedDesignId("");
+        },
+      }
+    );
   };
 
   return (
@@ -78,7 +114,7 @@ export default function ManageLinkedDesignsModal({
             />
             <Button
               onClick={handleLinkDesign}
-              disabled={!selectedDesignId}
+              disabled={!selectedDesignId || isPending}
               className="h-8 shrink-0 gap-1.5"
             >
               <Link2 className="size-3.5" />
@@ -96,6 +132,7 @@ export default function ManageLinkedDesignsModal({
                 <KoaLinkedDesignItem
                   key={design.id}
                   design={design}
+                  disabled={isPending}
                   onRemove={(item) => handleRemove(item.id)}
                 />
               ))
