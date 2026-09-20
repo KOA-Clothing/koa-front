@@ -53,12 +53,17 @@ export default function KoaSearchableSelect({
             render={<Button variant="outline" />}
             className="w-full flex items-center justify-between"
           >
-            {/* Label aligned to the left */}
-            <span className="truncate text-left">
+            {/* Conditional text-muted-foreground when displaying placeholder */}
+            <span
+              className={cn(
+                "truncate text-left",
+                !selected && "text-muted-foreground"
+              )}
+            >
               {selected?.label ?? placeholder}
             </span>
 
-            {/* Clear element using span instead of button to avoid invalid HTML nesting */}
+            {/* Clear element */}
             {value && (
               <span
                 role="button"
