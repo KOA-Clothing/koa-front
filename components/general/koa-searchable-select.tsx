@@ -80,7 +80,7 @@ export default function KoaSearchableSelect({
 
         <ComboboxContent>
           <ComboboxInput placeholder={placeholder} showTrigger={false} />
-          <ComboboxList className="mt-1 flex flex-col gap-1">
+          <ComboboxList className="flex flex-col gap-1 m-1">
             {options.length === 0 ? (
               <ComboboxEmpty>{emptyText}</ComboboxEmpty>
             ) : (
