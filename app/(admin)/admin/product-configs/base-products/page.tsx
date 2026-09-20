@@ -18,7 +18,7 @@ import DeleteProductConfirmationModal from "@/components/admin/product/modals/de
 import UpdateProductModal from "@/components/admin/product/modals/update-product-modal";
 import ViewProductModal from "@/components/admin/product/modals/view-product-modal";
 
-export default function ProductsPage() {
+export default function BaseProductsPage() {
   const { pagination, setPagination, search, setSearch } = useServerTableParams();
   const searchField = useSearchField({ value: search, onCommit: setSearch });
 
@@ -56,11 +56,15 @@ export default function ProductsPage() {
     changeProductStatus.mutate({ id: product.id, status });
   };
 
+  const handleManageLinkedDesigns = (product: ProductDto) => {
+    console.log(product)
+  }
+
   return (
     <div className="flex flex-col gap-4">
       <PageHeader
-        title={"Products"}
-        description={"Tangible apparel items built on a base category. Each product links a category to pricing, sizing, and display settings."}
+        title={"Base Products"}
+        description={"Tangible apparel items built on a base category. Each product links a category and multiple designs."}
         icon={<Shirt />}
       />
 
@@ -85,6 +89,7 @@ export default function ProductsPage() {
           onChangeGender: handleChangeGender,
           onChangeAgeGroup: handleChangeAgeGroup,
           onChangeProductStatus: handleChangeProductStatus,
+          manageLinkedDesigns: handleManageLinkedDesigns
         })}
         data={data?.items ?? []}
         rowCount={data?.totalRecords ?? 0}

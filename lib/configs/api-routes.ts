@@ -25,6 +25,7 @@ export const API_ROUTES = {
   },
   DESIGNS: {
     BASE: "/api/v1/designs",
+    ALL_ACTIVE: "/api/v1/designs/all-active",
     BY_ID: (id: string) => `/api/v1/designs/${id}`,
     TOGGLE_ACTIVE_STATUS: (id: string) => `/api/v1/designs/${id}/toggle-active-status`,
   },

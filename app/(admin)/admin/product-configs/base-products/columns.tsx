@@ -9,7 +9,7 @@ import {
   productStatusLabels,
 } from "@/types/enum-labels";
 import { AgeGroupEnum, GenderEnum, ProductStatusEnum } from "@/types/enums";
-import { ExternalLink, Eye, Pencil, Trash2 } from "lucide-react";
+import { DraftingCompass, ExternalLink, Eye, Pencil, Trash2 } from "lucide-react";
 import Link from "next/link";
 import { KoaSwitch } from "@/components/general/koa-switch";
 import KoaEnumChanger from "@/components/general/koa-enum-changer";
@@ -19,7 +19,7 @@ import {
   productStatusBadgeStyles,
 } from "@/lib/configs/enum-badge-styles";
 
-interface ProductColumnActions {
+interface BaseProductColumnActions {
   onEdit: (product: ProductDto) => void;
   onDelete: (product: ProductDto) => void;
   onView: (product: ProductDto) => void;
@@ -28,6 +28,7 @@ interface ProductColumnActions {
   onChangeGender: (product: ProductDto, gender: GenderEnum) => void;
   onChangeAgeGroup: (product: ProductDto, ageGroup: AgeGroupEnum) => void;
   onChangeProductStatus: (product: ProductDto, status: ProductStatusEnum) => void;
+  manageLinkedDesigns: (product: ProductDto) => void;
 }
 
 const columnHelper = createDataTableColumnHelper<ProductDto>();
@@ -37,7 +38,11 @@ const currencyFormatter = new Intl.NumberFormat("en-US", {
   currency: "USD",
 });
 
-export function getProductColumns({ onEdit, onDelete, onView, toggleFeaturedStatus, toggleActiveStatus, onChangeGender, onChangeAgeGroup, onChangeProductStatus }: ProductColumnActions) {
+export function getProductColumns({ 
+    onEdit, onDelete, onView, 
+    toggleFeaturedStatus, toggleActiveStatus, 
+    onChangeGender, onChangeAgeGroup, 
+    onChangeProductStatus, manageLinkedDesigns }: BaseProductColumnActions) {
   return columnHelper.columns([
     columnHelper.accessor("name", {
       header: () => <div className="text-center">Name</div>,
@@ -182,6 +187,16 @@ export function getProductColumns({ onEdit, onDelete, onView, toggleFeaturedStat
           >
             <Eye className="size-3.5" />
             <span className="sr-only">View product</span>
+          </Button>
+
+          <Button
+            variant="ghost"
+            size="icon-sm"
+            onClick={() => manageLinkedDesigns(row.original)}
+            title="Manage linked designs"
+          >
+            <DraftingCompass className="size-3.5" />
+            <span className="sr-only">Manage linked designs</span>
           </Button>
 
           <Button

@@ -42,8 +42,8 @@ const data = {
       isActive: true,
       items: [
         {
-          title: "Products",
-          url: "/admin/product-configs/products",
+          title: "Base Products",
+          url: "/admin/product-configs/base-products",
           icon: (<Shirt/>)
         },
         {
