@@ -15,7 +15,7 @@ export default function ColorSwatch({
   return (
     <span
       className={cn(
-        "size-3.5 shrink-0 rounded-full border border-border bg-cover bg-center",
+        "size-5 shrink-0 rounded-full border border-border bg-cover bg-center",
         className
       )}
       style={{

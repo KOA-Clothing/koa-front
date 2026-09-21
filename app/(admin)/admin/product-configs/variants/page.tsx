@@ -37,6 +37,7 @@ export default function ProductVariantsPage() {
       <KoaTable
         columns={getProductVariantColumns({
           onView: setProductToView,
+          onCreate: () => console.log("test")
         })}
         data={data?.items ?? []}
         rowCount={data?.totalRecords ?? 0}
@@ -50,6 +51,8 @@ export default function ProductVariantsPage() {
         onOpenChange={(open) => {
           if (!open) setProductToView(null);
         }}
+        toggleActiveStatus={(test) => console.log(test)}
+        onRemove={(test) => console.log(test)}
       />
     </div>
   )

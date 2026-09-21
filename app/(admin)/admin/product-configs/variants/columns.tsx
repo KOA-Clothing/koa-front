@@ -8,7 +8,7 @@ import { clothingSizeBadgeStyles } from "@/lib/configs/enum-badge-styles";
 import { createDataTableColumnHelper } from "@/lib/configs/table-configs";
 import { clothingSizeLabels } from "@/types/enum-labels";
 import { ProductVariantsCollectionDto } from "@/types/product-variant";
-import { Eye } from "lucide-react";
+import { CirclePlus, Eye } from "lucide-react";
 
 const columnHelper = createDataTableColumnHelper<ProductVariantsCollectionDto>();
 
@@ -25,9 +25,10 @@ function distinctBy<T>(items: T[], key: (item: T) => unknown): T[] {
 
 interface ProductVariantsColumnActions {
   onView: (product: ProductVariantsCollectionDto) => void;
+  onCreate: () => void;
 }
 
-export function getProductVariantColumns({ onView }: ProductVariantsColumnActions) {
+export function getProductVariantColumns({ onView, onCreate }: ProductVariantsColumnActions) {
   return columnHelper.columns([
     columnHelper.accessor("name", {
       header: () => <div className="text-center">Product Name</div>,
@@ -81,7 +82,7 @@ export function getProductVariantColumns({ onView }: ProductVariantsColumnAction
         return (
           <div className="grid grid-cols-4 gap-1.5 place-items-center max-w-fit mx-auto">
             {colors.map((color) => (
-              <Badge key={color.id} variant="outline" className="gap-1.5 w-full justify-start">
+              <Badge key={color.id} variant="outline" className="gap-1.5 h-7 w-full justify-start">
                 <ColorSwatch color={color} /> {color.name}
               </Badge>
             ))}
@@ -103,6 +104,15 @@ export function getProductVariantColumns({ onView }: ProductVariantsColumnAction
           >
             <Eye className="size-3.5" />
             <span className="sr-only">View variants</span>
+          </Button>
+          <Button
+            variant="ghost"
+            size="icon-sm"
+            onClick={() => onCreate()}
+            title="Create variant"
+          >
+            <CirclePlus className="size-3.5" />
+            <span className="sr-only">Create variant</span>
           </Button>
         </div>
       ),
