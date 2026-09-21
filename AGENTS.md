@@ -23,7 +23,8 @@ Shop/admin storefront against a .NET API. App Router, Next.js 16 (see block abov
 
 - Next 16 renamed `middleware.ts` → `proxy.ts`. Clerk middleware lives in `proxy.ts` — do not create or edit `middleware.ts`.
 - API base URL is `NEXT_PUBLIC_API_URL` in `.env.local` — a Visual Studio dev tunnel (`https://*.asse.devtunnels.ms`) that expires and changes. On API failures, the tunnel likely needs refreshing. Never log or commit `.env.local` (contains Clerk keys + tunnel token).
-- All server endpoints go through the backend's `ApiResponse` envelope — `{ isSuccess, error, errorCode }`. Prefer envelope-provided messages via `getErrorMessage`/`getSuccessMessage` in `lib/api/errors.ts`.
+- .NET endpoints return the `ApiResponse` envelope (`{ isSuccess, error, errorCode }`) only on failure. On success the backend unwraps the payload (`ResultExtensions.ToActionResult()` in the sibling `../koa-api` repo), so hooks parse `response.data` directly — e.g. `all-active` endpoints return raw `DesignDto[]`/`CategoryDto[]`, parsed with `z.array(...).parse(response.data)`. Use `getErrorMessage`/`getSuccessMessage` in `lib/api/errors.ts` for envelope messages.
+- `components/ui/` are shadcn components generated against `@base-ui/react@^1.8.0` — an older API than current shadcn docs (no `items` prop, no render-prop `ComboboxList`, etc.). Don't "fix" components against current shadcn output. Raw Base UI primitives are inert without wrapper parts: Slider needs `Slider.Control`, and `ComboboxInput` inside a Combobox popup needs `showTrigger={false}` or a stray nested trigger breaks the popup's positioning anchor.
 
 ## Architecture conventions
 

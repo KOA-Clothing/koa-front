@@ -1,4 +1,9 @@
-import { AgeGroupEnum, GenderEnum, ProductStatusEnum } from "./enums";
+import {
+  AgeGroupEnum,
+  ClothingSizeEnum,
+  GenderEnum,
+  ProductStatusEnum,
+} from "./enums";
 
 export const genderLabels: Record<GenderEnum, string> = {
   [GenderEnum.Male]: "Male",
@@ -19,4 +24,15 @@ export const productStatusLabels: Record<ProductStatusEnum, string> = {
   [ProductStatusEnum.Discontinued]: "Discontinued",
   [ProductStatusEnum.OutOfStock]: "Out of Stock",
   [ProductStatusEnum.Available]: "Available",
+};
+
+export const clothingSizeLabels: Record<ClothingSizeEnum, string> = {
+  [ClothingSizeEnum.XS]: "XS",
+  [ClothingSizeEnum.S]: "S",
+  [ClothingSizeEnum.M]: "M",
+  [ClothingSizeEnum.L]: "L",
+  [ClothingSizeEnum.XL]: "XL",
+  [ClothingSizeEnum.XXL]: "XXL",
+  [ClothingSizeEnum.XXXL]: "XXXL",
+  [ClothingSizeEnum.OS]: "OS",
 };

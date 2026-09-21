@@ -54,3 +54,16 @@ export enum ProductStatusEnum {
 }
 export const ProductStatusSchema = z.enum(ProductStatusEnum);
 export type ProductStatus = z.infer<typeof ProductStatusSchema>;
+
+export enum ClothingSizeEnum {
+  XS = 1, 
+  S = 2, 
+  M = 3, 
+  L = 4, 
+  XL = 5, 
+  XXL = 6, 
+  XXXL = 7, 
+  OS = 8
+}
+export const ClothingSizeSchema = z.enum(ClothingSizeEnum);
+export type ClothingSize = z.infer<typeof ClothingSizeSchema>;

@@ -44,6 +44,9 @@ export const API_ROUTES = {
     CHANGE_PRODUCT_STATUS: (id: string) => `/api/v1/products/${id}/change-product-status`,
     LINKED_DESIGNS: (id: string) => `/api/v1/products/${id}/linked-designs`
   },
+  PRODUCT_VARIANTS: {
+    BASE: "/api/v1/product-variants",
+  },
   STORAGE: {
     UPLOAD_REQUESTS: "/api/v1/storage/upload-url",
   }
