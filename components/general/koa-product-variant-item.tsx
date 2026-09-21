@@ -6,8 +6,6 @@ import { KoaSwitch } from "@/components/general/koa-switch";
 import { clothingSizeBadgeStyles } from "@/lib/configs/enum-badge-styles";
 import { clothingSizeLabels } from "@/types/enum-labels";
 import { ProductVariantDto } from "@/types/product-variant";
-
-// Import the new shadcn/ui item components
 import {
   Item,
   ItemActions,
@@ -29,17 +27,17 @@ export default function KoaProductVariantItem({
   onRemove,
 }: ProductVariantItemProps) {
   return (
-    // Added `items-center` here to align all children vertically along the horizontal axis
-    <Item variant="outline" className="items-center rounded-xl p-4">
-      {/* 1. Media (Left side) */}
-      <ItemMedia>
-        <ColorSwatch color={variant.color} className="size-8" />
+    <Item variant="outline" className="rounded-xl p-4">
+      {/* Media: vertically center the swatch against the content block.
+          `translate-y-0` cancels ItemMedia's description icon offset. */}
+      <ItemMedia className="translate-y-0 self-center">
+        <ColorSwatch color={variant.color} className="size-9" />
       </ItemMedia>
 
-      {/* 2. Content (Middle) */}
-      <ItemContent>
+      {/* Content: min-w-0 lets long color names truncate via line-clamp. */}
+      <ItemContent className="min-w-0">
         <ItemTitle>{variant.color.name}</ItemTitle>
-        <ItemDescription className="mt-1 flex items-center gap-1.5">
+        <ItemDescription className="mt-1 flex flex-wrap items-center gap-x-1.5 gap-y-1">
           <KoaEnumBadge
             labels={clothingSizeLabels}
             value={variant.size}
@@ -48,24 +46,29 @@ export default function KoaProductVariantItem({
           <code className="font-mono text-xs text-muted-foreground">
             {variant.sku}
           </code>
-        </ItemDescription>
-      </ItemContent>
-
-      {/* 3. Actions (Right side) */}
-      <ItemActions className="flex items-center gap-5">
-        <div className="flex flex-col items-end gap-1.5">
-          <span className="flex items-center gap-2 text-sm text-muted-foreground">
-            Active status
-            <KoaSwitch
-              checked={variant.isActive}
-              onCheckedChange={() => onToggleActive(variant)}
-            />
+          <span className="text-muted-foreground/60" aria-hidden="true">
+            ·
           </span>
           <span className="text-xs text-muted-foreground">
             Created {new Date(variant.createdAt).toLocaleDateString()}
           </span>
-        </div>
-        
+        </ItemDescription>
+      </ItemContent>
+
+      {/* Actions: single compact control row with a divider before the
+          destructive remove button. */}
+      <ItemActions className="shrink-0 gap-3">
+        <span className="flex items-center gap-2 text-xs text-muted-foreground">
+          Active
+          <KoaSwitch
+            checked={variant.isActive}
+            onCheckedChange={() => onToggleActive(variant)}
+            aria-label={`Toggle active status for ${variant.color.name} ${variant.sku}`}
+          />
+        </span>
+
+        <span className="h-5 w-px shrink-0 bg-border" aria-hidden="true" />
+
         <Button
           variant="ghost"
           size="icon-sm"
@@ -74,7 +77,7 @@ export default function KoaProductVariantItem({
           className="text-muted-foreground hover:bg-destructive/10 hover:text-destructive"
         >
           <X className="size-3.5" />
-          <span className="sr-only">Remove Variant</span>
+          <span className="sr-only">Remove variant</span>
         </Button>
       </ItemActions>
     </Item>
