@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import KoaAdminSearchBar from "@/components/admin/koa-admin-searchbar";
+import CreateVariantModal from "@/components/admin/product-variant/modals/create-variant-modal";
 import DeleteVariantConfirmationModal from "@/components/admin/product-variant/modals/delete-variant-confirmation-modal";
 import ViewProductVariantsModal from "@/components/admin/product-variant/modals/view-product-variants-modal";
 import { PageHeader } from "@/components/admin/page-header";
@@ -21,6 +22,7 @@ export default function ProductVariantsPage() {
   const { toggleActiveStatus } = useProductVariantMutations();
 
   const [productToView, setProductToView] = useState<ProductVariantsCollectionDto | null>(null);
+  const [productToCreate, setProductToCreate] = useState<ProductVariantsCollectionDto | null>(null);
   const [variantToDelete, setVariantToDelete] = useState<ProductVariantDto | null>(null);
 
   const handleToggleActiveStatus = (variant: ProductVariantDto) => {
@@ -71,7 +73,7 @@ export default function ProductVariantsPage() {
       <KoaTable
         columns={getProductVariantColumns({
           onView: setProductToView,
-          onCreate: (variationCollection) => console.log(variationCollection.id)
+          onCreate: setProductToCreate
         })}
         data={data?.items ?? []}
         rowCount={data?.totalRecords ?? 0}
@@ -87,6 +89,13 @@ export default function ProductVariantsPage() {
         }}
         toggleActiveStatus={handleToggleActiveStatus}
         onRemove={handleRemoveVariant}
+      />
+
+      <CreateVariantModal
+        product={productToCreate}
+        onOpenChange={(open) => {
+          if (!open) setProductToCreate(null);
+        }}
       />
 
       <DeleteVariantConfirmationModal

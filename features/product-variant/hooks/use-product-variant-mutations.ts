@@ -4,12 +4,24 @@ import { useAxiosClient } from "@/hooks/use-api-client";
 import { API_ROUTES } from "@/lib/configs/api-routes";
 import { queryKeys } from "@/lib/api/query-keys";
 import { useAppMutation } from "@/lib/api/use-app-mutation";
+import type { CreateProductVariantInput } from "@/types/product-variant";
 
 const invalidateKeys = [queryKeys.productVariants.all] as const;
 
-/** Product variant mutations (toggle active status, delete). */
+type CreateVariantVariables = CreateProductVariantInput & { productId: string };
+
+/** Product variant mutations (create, toggle active status, delete). */
 export function useProductVariantMutations() {
   const axiosClient = useAxiosClient();
+
+  const create = useAppMutation<void, CreateVariantVariables>({
+    mutationFn: ({ productId, colorId, size, sku }) =>
+      axiosClient
+        .post(API_ROUTES.PRODUCTS.VARIANTS(productId), { colorId, size, sku })
+        .then((r) => r.data),
+    invalidateKeys,
+    successMessage: "Variant created successfully!",
+  });
 
   const toggleActiveStatus = useAppMutation<void, string>({
     mutationFn: (id) =>
@@ -29,5 +41,5 @@ export function useProductVariantMutations() {
     successMessage: "Variant deleted successfully!",
   });
 
-  return { toggleActiveStatus, remove };
+  return { create, toggleActiveStatus, remove };
 }

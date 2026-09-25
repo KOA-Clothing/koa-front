@@ -28,3 +28,22 @@ export const ProductVariantsCollectionDtoSchema = z.object({
 });
 
 export type ProductVariantsCollectionDto = z.infer<typeof ProductVariantsCollectionDtoSchema>;
+
+/** Response of the "does this variant already exist?" check endpoint. */
+export const CheckVariationExistsResponseSchema = z.object({
+  isExist: z.boolean(),
+  variant: ProductVariantDtoSchema.nullable().optional(),
+});
+export type CheckVariationExistsResponse = z.infer<typeof CheckVariationExistsResponseSchema>;
+
+/** Payload for creating a product variant under an existing product. */
+export const CreateProductVariantInputSchema = z.object({
+  colorId: z.string().min(1, "Color is required"),
+  size: ClothingSizeSchema,
+  sku: z
+    .string()
+    .trim()
+    .min(1, "SKU is required")
+    .max(100, "SKU must not exceed 100 characters"),
+});
+export type CreateProductVariantInput = z.infer<typeof CreateProductVariantInputSchema>;

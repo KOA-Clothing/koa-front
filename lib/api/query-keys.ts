@@ -21,6 +21,7 @@ export const queryKeys = {
     all: ["colors"] as const,
     list: (params: Record<string, unknown>) => ["colors", "list", params] as const,
     detail: (id: string) => ["colors", "detail", id] as const,
+    active: ["colors", "active"] as const,
   },
   products: {
     all: ["products"] as const,
@@ -30,5 +31,6 @@ export const queryKeys = {
   productVariants: {
     all: ["product-variants"] as const,
     list: (params: Record<string, unknown>) => ["product-variants", "list", params] as const,
+    exists: (params: Record<string, unknown>) => ["product-variants", "exists", params] as const,
   },
 } as const;

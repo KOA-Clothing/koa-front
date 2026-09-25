@@ -31,7 +31,7 @@ export const API_ROUTES = {
   },
   COLORS: {
     BASE: "/api/v1/colors",
-    ALL_ACTIVE: "/api/v1/designs/all-active",
+    ALL_ACTIVE: "/api/v1/colors/all-active",
     BY_ID: (id: string) => `/api/v1/colors/${id}`,
     TOGGLE_ACTIVE_STATUS: (id: string) => `/api/v1/colors/${id}/toggle-active-status`,
   },

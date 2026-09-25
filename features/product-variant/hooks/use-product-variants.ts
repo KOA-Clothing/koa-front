@@ -5,7 +5,11 @@ import type { PaginationState } from "@tanstack/react-table";
 import { useAxiosClient } from "@/hooks/use-api-client";
 import { API_ROUTES } from "@/lib/configs/api-routes";
 import { paginatedListSchema } from "@/types/api-response";
-import { ProductVariantsCollectionDtoSchema } from "@/types/product-variant";
+import type { ClothingSize } from "@/types/enums";
+import {
+  CheckVariationExistsResponseSchema,
+  ProductVariantsCollectionDtoSchema,
+} from "@/types/product-variant";
 import { toApiPageParams } from "@/types/pagination";
 import { queryKeys } from "@/lib/api/query-keys";
 
@@ -35,5 +39,28 @@ export function useProductVariants(
       return productVariantsListSchema.parse(response.data);
     },
     placeholderData: (previousData) => previousData,
+  });
+}
+
+/**
+ * Checks whether a variant (product + color + size) already exists. The
+ * request only fires once a color and a size are both selected.
+ */
+export function useVariantExists(
+  productId: string,
+  colorId: string,
+  size: ClothingSize | null
+) {
+  const axiosClient = useAxiosClient();
+
+  return useQuery({
+    queryKey: queryKeys.productVariants.exists({ productId, colorId, size }),
+    queryFn: async () => {
+      const response = await axiosClient.get(
+        API_ROUTES.PRODUCT_VARIANTS.EXISTS(productId, colorId, size as ClothingSize)
+      );
+      return CheckVariationExistsResponseSchema.parse(response.data);
+    },
+    enabled: !!productId && !!colorId && size != null,
   });
 }
