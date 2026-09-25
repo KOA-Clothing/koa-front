@@ -38,3 +38,10 @@ Shop/admin storefront against a .NET API. App Router, Next.js 16 (see block abov
 - File uploads are direct-to-presigned-URL (`lib/storage/direct-upload.ts`) — no auth header on the PUT, the signed URL is self-contained.
 - Repo ships local OpenCode design/UI skills (banner-design, brand, design, design-system, slides, ui-styling, ui-ux-pro-max) under `.opencode/skills/` — reuse them for UI work before writing fresh styles.
 
+## UI Implementation Rules
+CRITICAL: Before changing, adding, or refactoring any user-facing component or route, you must read the `DESIGN.md` file in the root directory. 
+
+Instructions:
+- Use your file reading tool to inspect `DESIGN.md` as the visual source of truth.
+- Preserve existing primitives defined in the system.
+- Match generated styles strictly against the layout rules provided there.
