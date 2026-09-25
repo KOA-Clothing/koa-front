@@ -1,81 +1,51 @@
-'use client'
+import Image from "next/image";
+import Link from "next/link";
+import { ArrowDown } from "lucide-react";
 
-import BlurText from '@/components/BlurText'
-import ShinyText from '@/components/ShinyText';
-import TextType from '@/components/TextType';
-import EmblaCarousel from './embla/EmblaCarousel';
-import { EmblaOptionsType } from 'embla-carousel';
-
-// Extracted outside the component to prevent re-instantiation on renders
-const OPTIONS: EmblaOptionsType = {
-  axis: 'x', 
-  loop: true, 
-  direction: 'ltr', 
-  skipSnaps: true, 
-  align: 'center', 
-  containScroll: false
-}
-
-const SLIDES = [
-  '/hero-images/hero-1.jpg',
-  '/hero-images/hero-2.jpg',
-  '/hero-images/hero-3.jpg',
-]
+import { buttonVariants } from "@/components/ui/button";
+import heroImage from "@/public/hero-images/hero-1.jpg";
 
 export function Hero() {
   return (
-    <section className="relative h-screen overflow-hidden w-full">
-      <EmblaCarousel slides={SLIDES} options={OPTIONS} />
-      
-      {/* Overlay */}
-      <div className="absolute inset-0 bg-black/50 pointer-events-none" />
-      
-      {/* Content */}
-      <div className="absolute inset-0 flex flex-col items-center justify-center text-center px-4 pointer-events-none">
-        {/* Added pointer-events-auto so inner elements can be interacted with if needed, while allowing clicks through empty space to the carousel */}
-        <div className='flex flex-row gap-3 items-baseline justify-center flex-wrap pointer-events-auto'>
-          <BlurText
-            text="Be"
-            delay={200}
-            animateBy="words"
-            direction="top"
-            className="text-5xl md:text-7xl font-bold text-white mb-4 max-w-2xl"
-          />
-          <ShinyText
-            text="KOA"
-            speed={2}
-            delay={0}
-            color="#b5b5b5"
-            shineColor="#ffffff"
-            spread={120}
-            direction="left"
-            yoyo={false}
-            pauseOnHover={false}
-            disabled={false}
-            className='text-7xl md:text-9xl font-bold text-white mb-4 max-w-2xl'
-          />
-          <BlurText
-            text="(/kō-ə/)"
-            delay={200}
-            animateBy="words"
-            direction="top"
-            className="text-xl md:text-3xl font-bold text-white/80 mb-4 max-w-2xl"
-          />
-        </div>
-        <div className='flex flex-row gap-3 flex-wrap justify-center pointer-events-auto'>
-          <p className='text-2xl md:text-4xl font-mono text-white mb-4 max-w-2xl'>Be </p>
-          <TextType 
-            text={["Brave.", "Bold.", "Warrior."]}
-            typingSpeed={75}
-            pauseDuration={1500}
-            showCursor
-            cursorCharacter="|"
-            deletingSpeed={50}
-            cursorBlinkDuration={0.5}
-            className='text-2xl md:text-4xl font-mono text-white mb-4 max-w-2xl'
-          />
+    <section className="relative isolate grid min-h-[clamp(34rem,72svh,50rem)] w-full overflow-hidden bg-carbon">
+      <Image
+        src={heroImage}
+        alt="KOA campaign photograph"
+        fill
+        priority
+        sizes="100vw"
+        className="object-cover object-center"
+      />
+      <div
+        aria-hidden="true"
+        className="absolute inset-0 bg-carbon/50"
+      />
+
+      <div className="relative z-10 mx-auto flex w-full max-w-7xl items-end px-5 py-16 sm:px-8 sm:py-20 lg:px-10 lg:py-24">
+        <div className="max-w-4xl text-on-carbon">
+          <p className="mb-5 text-xs font-semibold uppercase tracking-[0.2em] text-on-carbon/80 sm:text-sm">
+            Sri Lankan menswear and activewear
+          </p>
+          <h1 className="max-w-4xl font-display text-display-campaign font-bold uppercase text-balance">
+            Quiet strength, built to move.
+          </h1>
+          <p className="mt-6 max-w-2xl text-lg leading-relaxed text-on-carbon/85 sm:text-xl">
+            A clear approach to clothing, shaped by purpose, clean lines, and
+            the rhythm of everyday movement.
+          </p>
+          <Link
+            href="/#collection"
+            className={buttonVariants({
+              variant: "storefront",
+              size: "storefront",
+              className: "mt-8 rounded-control",
+            })}
+          >
+            View the collection
+            <ArrowDown aria-hidden="true" />
+          </Link>
         </div>
       </div>
     </section>
-  )
+  );
 }

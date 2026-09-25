@@ -21,6 +21,7 @@ export default function KoaHexCodeInput({
   error,
 }: HexCodeInputProps) {
   const isHex = VALID_HEX.test(value);
+  const errorId = `${id}-error`;
 
   return (
     <div className="flex flex-col gap-2">
@@ -28,10 +29,14 @@ export default function KoaHexCodeInput({
       <div
         className={cn(
           "flex h-8 w-full min-w-0 items-center overflow-hidden rounded-lg border border-input bg-transparent transition-colors focus-within:border-ring focus-within:ring-3 focus-within:ring-ring/50 dark:bg-input/30",
-          error && "border-destructive focus-within:border-destructive focus-within:ring-destructive/20"
+          error &&
+            "border-destructive focus-within:border-destructive focus-within:ring-destructive/20",
         )}
       >
-        <span className="flex h-full items-center border-r border-input bg-input/50 px-2.5 text-sm font-medium text-muted-foreground">
+        <span
+          className="flex h-full items-center border-r border-input bg-input/50 px-2.5 text-sm font-medium text-muted-foreground"
+          aria-hidden="true"
+        >
           #
         </span>
         <input
@@ -40,16 +45,22 @@ export default function KoaHexCodeInput({
           value={value}
           maxLength={6}
           placeholder="FF0000"
-          onChange={(e) => onChange(e.target.value)}
+          onChange={(event) => onChange(event.target.value)}
+          aria-invalid={Boolean(error)}
+          aria-describedby={error ? errorId : undefined}
           className="h-full w-full min-w-0 flex-1 bg-transparent px-2.5 text-sm text-foreground outline-none placeholder:text-muted-foreground"
         />
         <span
-          aria-hidden
+          aria-hidden="true"
           className="mx-2 size-5 shrink-0 rounded-full border border-input"
           style={{ backgroundColor: isHex ? `#${value}` : "transparent" }}
         />
       </div>
-      {error && <span className="text-xs text-destructive">{error}</span>}
+      {error ? (
+        <p id={errorId} role="alert" className="text-xs text-destructive">
+          {error}
+        </p>
+      ) : null}
     </div>
   );
 }

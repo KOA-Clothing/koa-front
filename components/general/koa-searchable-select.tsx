@@ -40,8 +40,7 @@ export default function KoaSearchableSelect({
     }
   };
 
-  const handleClear = (e: React.MouseEvent | React.KeyboardEvent) => {
-    e.stopPropagation();
+  const handleClear = () => {
     onValueChange("");
   };
 
@@ -51,40 +50,35 @@ export default function KoaSearchableSelect({
         <div className="relative w-full">
           <ComboboxTrigger
             render={<Button variant="outline" />}
-            className="w-full flex items-center justify-between"
+            className="flex w-full items-center justify-between pr-10"
           >
-            {/* Conditional text-muted-foreground when displaying placeholder */}
             <span
               className={cn(
                 "truncate text-left",
-                !selected && "text-muted-foreground"
+                !selected && "text-muted-foreground",
               )}
             >
               {selected?.label ?? placeholder}
             </span>
-
-            {/* Clear element */}
-            {value && (
-              <span
-                role="button"
-                tabIndex={0}
-                onClick={handleClear}
-                onKeyDown={(e) => {
-                  if (e.key === "Enter" || e.key === " ") {
-                    handleClear(e);
-                  }
-                }}
-                className="ml-auto mr-1 flex h-4 w-4 items-center justify-center rounded-sm text-muted-foreground transition-colors hover:text-foreground focus:outline-none"
-                aria-label="Clear selection"
-              >
-                <X className="h-3.5 w-3.5" />
-              </span>
-            )}
           </ComboboxTrigger>
+          {value && (
+            <button
+              type="button"
+              onClick={handleClear}
+              aria-label="Clear selection"
+              className="absolute right-0 top-1/2 flex size-11 -translate-y-1/2 items-center justify-center rounded-md text-muted-foreground transition-colors hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/50"
+            >
+              <X className="size-3.5" aria-hidden="true" />
+            </button>
+          )}
         </div>
 
         <ComboboxContent>
-          <ComboboxInput placeholder={placeholder} showTrigger={false} />
+          <ComboboxInput
+            aria-label={placeholder}
+            placeholder={placeholder}
+            showTrigger={false}
+          />
           <ComboboxList className="flex flex-col gap-1 m-1">
             {options.length === 0 ? (
               <ComboboxEmpty>{emptyText}</ComboboxEmpty>

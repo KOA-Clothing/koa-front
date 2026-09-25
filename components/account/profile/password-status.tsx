@@ -1,8 +1,11 @@
-"use client"
+"use client";
 
 import { KeyRound, Pencil } from "lucide-react";
 import { useState } from "react";
-import { Button } from "../../ui/button";
+
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+
 import UpdatePasswordModal from "./modals/update-password-modal";
 
 interface PasswordStatusProps {
@@ -14,30 +17,27 @@ export default function PasswordStatus({ enabled }: PasswordStatusProps) {
 
   return (
     <div className="flex flex-col gap-2">
-      <span className="text-sm leading-none font-medium">Password</span>
-      <div
-        className={
-          "flex h-8 items-center gap-2 rounded-lg border px-2.5 text-sm pr-1 " +
-          (enabled
-            ? "border-border bg-background text-foreground"
-            : "border-dashed border-border bg-muted/30 text-muted-foreground")
-        }
-        aria-label={enabled ? "Password enabled" : "Password not enabled"}
-      >
-        <span
-          className={"size-2 rounded-full " + (enabled ? "bg-emerald-500" : "bg-muted-foreground/40")}
-          aria-hidden
-        />
-        <KeyRound className="size-3.5 shrink-0 text-muted-foreground" />
-        <span className="flex-1">{enabled ? "Password enabled" : "Password not set"}</span>
+      <span className="text-sm font-medium leading-none">Password</span>
+      <div className="flex min-h-11 items-center gap-2 rounded-lg border border-border bg-background px-2.5 pr-1 text-sm">
+        <KeyRound className="size-3.5 shrink-0 text-muted-foreground" aria-hidden="true" />
+        <Badge
+          variant="outline"
+          className={
+            enabled
+              ? "border-success/20 bg-success/10 text-success"
+              : "text-muted-foreground"
+          }
+        >
+          {enabled ? "Enabled" : "Not set"}
+        </Badge>
         <Button
           variant="ghost"
           size="icon-sm"
           onClick={() => setIsOpen(true)}
-          aria-label="Change password"
-          className="text-muted-foreground hover:text-foreground"
+          aria-label={enabled ? "Change password" : "Set password"}
+          className="ml-auto min-h-11 min-w-11 text-muted-foreground hover:text-foreground"
         >
-          <Pencil className="size-3.5" />
+          <Pencil className="size-3.5" aria-hidden="true" />
         </Button>
       </div>
 

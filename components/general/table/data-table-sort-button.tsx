@@ -39,6 +39,7 @@ export function DataTableSortButton({
     >
       {children}
       <SortIcon
+        aria-hidden="true"
         className={
           sortDir
             ? "size-3.5"

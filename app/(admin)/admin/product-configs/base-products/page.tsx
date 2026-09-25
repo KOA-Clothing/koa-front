@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useServerTableParams } from "@/hooks/use-server-table-params";
 import { useSearchField } from "@/hooks/use-search-field";
 import { useProducts } from "@/features/product/hooks/use-products";

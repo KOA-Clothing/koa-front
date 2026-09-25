@@ -8,12 +8,9 @@ import { useCategoryMutations } from "@/features/category/hooks/use-category-mut
 import { getCategoryColumns } from "./columns";
 import { CategoryDto } from "@/types/category";
 import { KoaTable } from "@/components/general/table/koa-table";
-import { RotateCcw, Shirt } from "lucide-react";
+import { Shirt } from "lucide-react";
 import { PageHeader } from "@/components/admin/page-header";
-import { Input } from "@/components/ui/input";
 import { AddNewButton } from "@/components/general/add-new-button";
-import { Item, ItemContent } from "@/components/ui/item";
-import { Button } from "@/components/ui/button";
 import CreateCategoryModal from "@/components/admin/category/modals/create-category-modal";
 import DeleteCategoryConfirmationModal from "@/components/admin/category/modals/delete-category-confirmation-modal";
 import UpdateCategoryModal from "@/components/admin/category/modals/update-category-modal";

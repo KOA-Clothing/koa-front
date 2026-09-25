@@ -22,9 +22,11 @@ export default function KoaModalSaveButton({
   ...props
 }: ModalSaveButtonProps) {
   
-  // Determine the display text based on priority of states
+  const isBusy = isPending || isUploading;
+
+  // Determine the display text based on priority of states.
   const renderText = () => {
-    if (isPending && isUploading) return uploadingLabel;
+    if (isUploading) return uploadingLabel;
     if (isPending) return loadingLabel;
     return children || label;
   };
@@ -32,10 +34,13 @@ export default function KoaModalSaveButton({
   return (
     <Button
       type={type}
-      disabled={isPending || disabled}
+      aria-busy={isBusy}
+      disabled={isBusy || disabled}
       {...props}
     >
-      {isPending && <Loader2 className="mr-2 size-4 animate-spin" />}
+      {isBusy && (
+        <Loader2 className="mr-2 size-4 animate-spin motion-reduce:animate-none" />
+      )}
       {renderText()}
     </Button>
   );

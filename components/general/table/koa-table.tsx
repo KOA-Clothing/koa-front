@@ -61,16 +61,43 @@ export function KoaTable<TData extends RowData>({
   });
 
   const skeletonRowCount = Math.min(pagination.pageSize, 10);
+  const rows = table.getRowModel().rows;
+  const liveMessage = isLoading
+    ? "Loading table data."
+    : rows.length > 0
+      ? `${rowCount} row${rowCount === 1 ? "" : "s"} available.`
+      : emptyMessage;
 
   return (
-    <div className={className}>
-      <div className="overflow-hidden rounded-xl border border-border">
+    <div className={className} aria-busy={isLoading}>
+      <p
+        role="status"
+        aria-live="polite"
+        aria-atomic="true"
+        className="sr-only"
+      >
+        {liveMessage}
+      </p>
+
+      <div className="overflow-hidden rounded-xl border border-border bg-background text-foreground">
         <Table>
           <TableHeader className="bg-muted/50">
             {table.getHeaderGroups().map((headerGroup) => (
               <TableRow key={headerGroup.id}>
                 {headerGroup.headers.map((header) => (
-                  <TableHead key={header.id} colSpan={header.colSpan}>
+                  <TableHead
+                    key={header.id}
+                    colSpan={header.colSpan}
+                    aria-sort={
+                      header.column.getCanSort()
+                        ? header.column.getIsSorted() === "asc"
+                          ? "ascending"
+                          : header.column.getIsSorted() === "desc"
+                            ? "descending"
+                            : "none"
+                        : undefined
+                    }
+                  >
                     {header.isPlaceholder ? null : header.column.getCanSort() ? (
                       <DataTableSortButton
                         sortDir={header.column.getIsSorted() || null}
@@ -94,13 +121,16 @@ export function KoaTable<TData extends RowData>({
                 <TableRow key={`skeleton-row-${rowIndex}`}>
                   {columns.map((_, colIndex) => (
                     <TableCell key={`skeleton-cell-${colIndex}`}>
-                      <Skeleton className="h-5 w-full" />
+                      <Skeleton
+                        aria-hidden="true"
+                        className="h-5 w-full motion-reduce:animate-none"
+                      />
                     </TableCell>
                   ))}
                 </TableRow>
               ))
-            ) : table.getRowModel().rows.length ? (
-              table.getRowModel().rows.map((row) => (
+            ) : rows.length > 0 ? (
+              rows.map((row) => (
                 <TableRow key={row.id}>
                   {row.getAllCells().map((cell) => (
                     <TableCell key={cell.id}>
@@ -121,30 +151,31 @@ export function KoaTable<TData extends RowData>({
             )}
           </TableBody>
         </Table>
-      </div>
 
-      {/*
-        Pagination state/APIs are read HERE, off the `table` value that
-        useTable() actually returned (correctly typed, including `.state`),
-        and handed down as plain props/callbacks. DataTablePagination never
-        touches a TanStack Table type itself.
-      */}
-      <DataTablePagination
-        pageIndex={table.state.pagination.pageIndex}
-        pageSize={table.state.pagination.pageSize}
-        pageCount={table.getPageCount()}
-        rowCount={rowCount}
-        canPreviousPage={table.getCanPreviousPage()}
-        canNextPage={table.getCanNextPage()}
-        canLastPage={table.getCanLastPage()}
-        onFirstPage={() => table.firstPage()}
-        onPreviousPage={() => table.previousPage()}
-        onNextPage={() => table.nextPage()}
-        onLastPage={() => table.lastPage()}
-        onPageSizeChange={(size) => table.setPageSize(size)}
-        isLoading={isLoading}
-        pageSizeOptions={pageSizeOptions}
-      />
+        {/*
+          Pagination state/APIs are read HERE, off the `table` value that
+          useTable() actually returned (correctly typed, including `.state`),
+          and handed down as plain props/callbacks. DataTablePagination never
+          touches a TanStack Table type itself. It renders inside the bordered
+          surface above so the table and its paginator read as one component.
+        */}
+        <DataTablePagination
+          pageIndex={table.state.pagination.pageIndex}
+          pageSize={table.state.pagination.pageSize}
+          pageCount={table.getPageCount()}
+          rowCount={rowCount}
+          canPreviousPage={table.getCanPreviousPage()}
+          canNextPage={table.getCanNextPage()}
+          canLastPage={table.getCanLastPage()}
+          onFirstPage={() => table.firstPage()}
+          onPreviousPage={() => table.previousPage()}
+          onNextPage={() => table.nextPage()}
+          onLastPage={() => table.lastPage()}
+          onPageSizeChange={(size) => table.setPageSize(size)}
+          isLoading={isLoading}
+          pageSizeOptions={pageSizeOptions}
+        />
+      </div>
     </div>
   );
 }

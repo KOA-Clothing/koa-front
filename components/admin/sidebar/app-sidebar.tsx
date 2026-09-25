@@ -10,7 +10,20 @@ import {
   SidebarHeader,
   SidebarRail,
 } from "@/components/ui/sidebar"
-import { TerminalSquareIcon, Columns3Cog, Shirt, Palette, DraftingCompass, ShelvingUnit, ChartLine, ChartLineIcon, ChartSpline, StickyNote, PersonStanding, TimerReset, ScissorsLineDashed, Scissors, UserRound, Users, FileCode, FileCog, Bolt, Images, BookImage, SwatchBook } from "lucide-react"
+import {
+  BookImage,
+  ChartSpline,
+  Columns3Cog,
+  DraftingCompass,
+  Palette,
+  ScissorsLineDashed,
+  ShelvingUnit,
+  Shirt,
+  StickyNote,
+  SwatchBook,
+  TimerReset,
+  Users,
+} from "lucide-react";
 import { CompanyHeader } from "./company-header"
 import { NavSingle } from "./nav-single"
 
@@ -35,7 +48,7 @@ const data = {
   SubItems: [
     {
       title: "Product Configurations",
-      url: "/admin/product-configs/products",
+      url: "/admin/product-configs/base-products",
       icon: (
         <Shirt/>
       ),

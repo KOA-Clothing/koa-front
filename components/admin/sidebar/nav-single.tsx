@@ -1,41 +1,43 @@
-"use client"
+"use client";
+
+import Link from "next/link";
+import { usePathname } from "next/navigation";
 
 import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu"
-import {
   SidebarGroup,
-  SidebarGroupLabel,
   SidebarMenu,
-  SidebarMenuAction,
   SidebarMenuButton,
   SidebarMenuItem,
-  useSidebar,
-} from "@/components/ui/sidebar"
-import { MoreHorizontalIcon, FolderIcon, ArrowRightIcon, Trash2Icon } from "lucide-react"
-import Link from "next/link"
+} from "@/components/ui/sidebar";
+
+function isRouteActive(pathname: string, href: string) {
+  return pathname === href || pathname.startsWith(`${href}/`);
+}
 
 export function NavSingle({
   projects,
 }: {
   projects: {
-    name: string
-    url: string
-    icon: React.ReactNode
-  }[]
+    name: string;
+    url: string;
+    icon: React.ReactNode;
+  }[];
 }) {
-  const { isMobile } = useSidebar()
+  const pathname = usePathname();
+
   return (
-    <SidebarGroup className="group-data-[collapsible=icon]:hidden">
-      {/* <SidebarGroupLabel>Projects</SidebarGroupLabel> */}
+    <SidebarGroup>
       <SidebarMenu>
         {projects.map((item) => (
           <SidebarMenuItem key={item.name}>
-            <SidebarMenuButton render={<Link href={item.url} />}>
+            <SidebarMenuButton
+              render={<Link href={item.url} />}
+              tooltip={item.name}
+              isActive={isRouteActive(pathname, item.url)}
+              aria-current={
+                isRouteActive(pathname, item.url) ? "page" : undefined
+              }
+            >
               {item.icon}
               <span>{item.name}</span>
             </SidebarMenuButton>
@@ -43,5 +45,5 @@ export function NavSingle({
         ))}
       </SidebarMenu>
     </SidebarGroup>
-  )
+  );
 }

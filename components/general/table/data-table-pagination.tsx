@@ -62,7 +62,7 @@ export function DataTablePagination({
   const controlsDisabled = isLoading;
 
   return (
-    <div className="flex flex-col-reverse items-center justify-between gap-4 border-t border-border px-4 py-3 sm:flex-row">
+    <div className="flex flex-col-reverse items-center justify-between gap-4 border-t border-border bg-background px-4 py-3 text-foreground sm:flex-row">
       <p className="text-sm text-muted-foreground">
         {rowCount === 0
           ? "No results"
@@ -80,7 +80,11 @@ export function DataTablePagination({
             onValueChange={(value) => onPageSizeChange(Number(value))}
             disabled={controlsDisabled}
           >
-            <SelectTrigger size="sm" className="w-17.5">
+            <SelectTrigger
+              size="sm"
+              aria-label="Rows per page"
+              className="w-17.5"
+            >
               <SelectValue placeholder={`${pageSize}`} />
             </SelectTrigger>
             <SelectContent side="top">
@@ -106,7 +110,7 @@ export function DataTablePagination({
             disabled={controlsDisabled || !canPreviousPage}
           >
             <span className="sr-only">Go to first page</span>
-            <ChevronsLeft />
+            <ChevronsLeft aria-hidden="true" />
           </Button>
           <Button
             variant="outline"
@@ -115,7 +119,7 @@ export function DataTablePagination({
             disabled={controlsDisabled || !canPreviousPage}
           >
             <span className="sr-only">Go to previous page</span>
-            <ChevronLeft />
+            <ChevronLeft aria-hidden="true" />
           </Button>
           <Button
             variant="outline"
@@ -124,7 +128,7 @@ export function DataTablePagination({
             disabled={controlsDisabled || !canNextPage}
           >
             <span className="sr-only">Go to next page</span>
-            <ChevronRight />
+            <ChevronRight aria-hidden="true" />
           </Button>
           <Button
             variant="outline"
@@ -134,7 +138,7 @@ export function DataTablePagination({
             disabled={controlsDisabled || !canLastPage}
           >
             <span className="sr-only">Go to last page</span>
-            <ChevronsRight />
+            <ChevronsRight aria-hidden="true" />
           </Button>
         </div>
       </div>

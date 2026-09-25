@@ -1,13 +1,19 @@
-'use client'
+"use client";
 
 interface Props {
-  error: Error
+  error: Error;
 }
 
-export default function Error(props : Props) {
+export default function Error({ error }: Props) {
+  const message =
+    error instanceof Error ? error.message : "An unknown error occurred.";
+
   return (
-    <div className="p-4 rounded-md bg-destructive/10 text-destructive border border-destructive/20">
-      Error : {props.error instanceof Error ? props.error.message : "Unknown error"}
+    <div
+      role="alert"
+      className="rounded-md border border-destructive/20 bg-destructive/10 p-4 text-destructive"
+    >
+      {message}
     </div>
-  )
+  );
 }

@@ -1,28 +1,39 @@
 import { AccountTabs } from "@/components/account/account-tabs";
 import BackButton from "@/components/general/back-button";
-import { Button } from "@/components/ui/button";
-import { ChevronLeft, Settings } from "lucide-react";
-import Link from "next/link";
 
 export default function AccountLayout({ children }: { children: React.ReactNode }) {
   return (
-    <div className="min-h-screen w-full bg-gray-50">
-      <div className="max-w-7xl mx-auto px-4 py-8">
-        <div className="flex flex-col gap-6">
-          <div className="flex flex-row items-start gap-4">
-            <BackButton />
-            <div>
-              <h1 className="text-2xl font-heading font-medium">My Account</h1>
-              <p className="text-sm text-muted-foreground mt-1">Manage your profile, addresses and more.</p>
-            </div>
+    <div className="min-h-svh w-full bg-background">
+      <a
+        href="#account-content"
+        className="sr-only z-50 rounded-md border border-border bg-background px-4 py-2 text-sm font-medium text-foreground focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:outline-none focus:ring-3 focus:ring-ring/50"
+      >
+        Skip to account content
+      </a>
+
+      <div className="mx-auto flex w-full max-w-6xl flex-col gap-8 px-4 py-8 sm:px-6 sm:py-10 lg:px-8">
+        <header className="flex flex-col gap-5 sm:flex-row sm:items-start">
+          <BackButton />
+          <div className="min-w-0">
+            <h1 className="text-3xl font-bold leading-tight tracking-tight text-foreground">
+              My account
+            </h1>
+            <p className="mt-1 text-sm text-muted-foreground">
+              Manage your profile, addresses, orders, and transactions.
+            </p>
           </div>
+        </header>
 
-          <AccountTabs />
+        <AccountTabs />
 
-          <main className="flex-1 border rounded-xl p-4 bg-background shadow-sm max-w-7xl w-7xl">
-            {children}
-          </main>
-        </div>
+        <main
+          id="account-content"
+          tabIndex={-1}
+          aria-label="Account content"
+          className="min-w-0 outline-none"
+        >
+          {children}
+        </main>
       </div>
     </div>
   );

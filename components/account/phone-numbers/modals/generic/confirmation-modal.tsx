@@ -47,6 +47,7 @@ export default function ConfirmationModal({
           <Button
             variant="outline"
             type="button"
+            className="min-h-11"
             onClick={onCancel}
             disabled={isPending}
           >
@@ -55,6 +56,7 @@ export default function ConfirmationModal({
           <Button
             variant={variant}
             type="button"
+            className="min-h-11"
             onClick={onConfirm}
             disabled={isPending}
           >

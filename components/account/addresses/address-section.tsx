@@ -1,15 +1,24 @@
-"use client"
+"use client";
 
-import { Plus } from "lucide-react";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "../../ui/card";
-import { Button } from "../../ui/button";
-import { AddressDto } from "@/types/address";
+import { MapPin, Plus } from "lucide-react";
 import { useState } from "react";
+
+import { AccountEmptyState } from "@/components/account/account-empty-state";
+import { Button } from "@/components/ui/button";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { AddressDto } from "@/types/address";
+
 import AddressCard from "./address-card";
-import CreateAddressModal from "./modals/create-address-modal";
-import UpdateAddressModal from "./modals/update-address-modal";
 import ChangeDefaultConfirmationModal from "./modals/change-default-confirmation-modal";
+import CreateAddressModal from "./modals/create-address-modal";
 import DeleteAddressConfirmationModal from "./modals/delete-address-confirmation-modal";
+import UpdateAddressModal from "./modals/update-address-modal";
 
 interface Props {
   addresses?: AddressDto[];
@@ -21,39 +30,62 @@ export default function AddressSection(props: Props) {
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
   const [addressToDelete, setAddressToDelete] = useState<string | null>(null);
   const [addressToEdit, setAddressToEdit] = useState<AddressDto | null>(null);
-  const [addressToSetDefault, setAddressToSetDefault] = useState<string | null>(null);
+  const [addressToSetDefault, setAddressToSetDefault] = useState<string | null>(
+    null,
+  );
 
   return (
-    <Card>
+    <Card className="border border-border bg-card ring-0">
       <CardHeader>
         <CardTitle>Addresses</CardTitle>
-        <CardDescription>Manage the addresses you use for shipping and billing.</CardDescription>
+        <CardDescription>
+          Manage the addresses you use for shipping and billing.
+        </CardDescription>
       </CardHeader>
-      
-      <CardContent className="flex flex-col gap-4">
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-          {addresses.map((address) => (
-            <AddressCard 
-              key={address.id} 
-              address={address} 
-              onEdit={setAddressToEdit}
-              onSetDefault={setAddressToSetDefault}
-              onRemove={setAddressToDelete} 
-            />
-          ))}
-        </div>
 
-        <div className="flex justify-start mt-2">
-          <Button
-            variant="outline"
-            size="sm"
-            className="gap-2"
-            onClick={() => setIsCreateModalOpen(true)}
+      <CardContent className="flex flex-col gap-4">
+        {addresses.length > 0 ? (
+          <>
+            <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
+              {addresses.map((address) => (
+                <AddressCard
+                  key={address.id}
+                  address={address}
+                  onEdit={setAddressToEdit}
+                  onSetDefault={setAddressToSetDefault}
+                  onRemove={setAddressToDelete}
+                />
+              ))}
+            </div>
+
+            <Button
+              variant="outline"
+              size="sm"
+              className="mt-2 min-h-11 self-start gap-2"
+              onClick={() => setIsCreateModalOpen(true)}
+            >
+              <Plus className="size-3.5" aria-hidden="true" />
+              Add address
+            </Button>
+          </>
+        ) : (
+          <AccountEmptyState
+            title="No saved addresses"
+            description="Add an address to use for shipping and billing."
+            icon={<MapPin className="size-8" />}
+            className="min-h-40 border-0 bg-transparent px-0 py-8"
           >
-            <Plus className="size-3.5" />
-            Add address
-          </Button>
-        </div>
+            <Button
+              variant="outline"
+              size="sm"
+              className="min-h-11 gap-2"
+              onClick={() => setIsCreateModalOpen(true)}
+            >
+              <Plus className="size-3.5" aria-hidden="true" />
+              Add address
+            </Button>
+          </AccountEmptyState>
+        )}
       </CardContent>
 
       <CreateAddressModal

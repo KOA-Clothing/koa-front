@@ -1,110 +1,82 @@
-'use client'
+import Image from "next/image";
+import Link from "next/link";
 
-import Link from "next/link"
-import KoaCard from "./koa-card"
+import logo from "@/public/logo/white/koa-logo.png";
+
+const exploreLinks = [
+  { href: "/", label: "Home" },
+  { href: "/#collection", label: "Collection" },
+  { href: "/#story", label: "Our story" },
+  { href: "/#principles", label: "Our standard" },
+] as const;
+
+const accountLinks = [
+  { href: "/account", label: "Account" },
+  { href: "/auth/signin", label: "Sign in" },
+  { href: "/about", label: "About KOA" },
+] as const;
+
+function FooterLinks({ links }: { links: readonly { href: string; label: string }[] }) {
+  return (
+    <ul className="space-y-1">
+      {links.map((link) => (
+        <li key={link.href}>
+          <Link
+            href={link.href}
+            className="inline-flex min-h-11 items-center text-sm text-on-carbon/75 outline-none transition-colors hover:text-on-carbon focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-action-on-dark"
+          >
+            {link.label}
+          </Link>
+        </li>
+      ))}
+    </ul>
+  );
+}
 
 export default function Footer() {
   return (
-    <footer className="bg-neutral-900 text-white w-full">
-      <div className="max-w-7xl mx-auto px-4 py-16">
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-8 mb-12">
-          
-          <KoaCard />
-
-          {/* Shop */}
-          <div>
-            <h4 className="font-semibold mb-4">Shop</h4>
-            <ul className="space-y-2 text-gray-400">
-              <li>
-                <Link href="/search" className="hover:text-[#3D79BE] transition">
-                  All Products
-                </Link>
-              </li>
-              <li>
-                <Link href="/search" className="hover:text-[#3D79BE] transition">
-                  New Arrivals
-                </Link>
-              </li>
-              <li>
-                <Link href="/search" className="hover:text-[#3D79BE] transition">
-                  Best Sellers
-                </Link>
-              </li>
-              <li>
-                <Link href="/collections" className="hover:text-[#3D79BE] transition">
-                  Collections
-                </Link>
-              </li>
-            </ul>
+    <footer className="w-full bg-carbon text-on-carbon">
+      <div className="mx-auto w-full max-w-7xl px-5 py-14 sm:px-8 sm:py-16 lg:px-10">
+        <div className="grid gap-12 md:grid-cols-[minmax(0,1.5fr)_1fr_1fr] md:gap-10">
+          <div className="max-w-sm">
+            <Link
+              href="/"
+              aria-label="KOA home"
+              className="inline-flex min-h-11 items-center rounded-control outline-none focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-action-on-dark"
+            >
+              <Image
+                src={logo}
+                alt=""
+                width={180}
+                height={67}
+                className="h-9 w-auto"
+              />
+            </Link>
+            <p className="mt-5 text-sm leading-relaxed text-on-carbon/70">
+              Sri Lankan menswear and activewear, shaped by purpose, clean
+              lines, and movement.
+            </p>
           </div>
 
-          {/* Company */}
-          <div>
-            <h4 className="font-semibold mb-4">Company</h4>
-            <ul className="space-y-2 text-gray-400">
-              <li>
-                <Link href="/about" className="hover:text-[#3D79BE] transition">
-                  About Us
-                </Link>
-              </li>
-              <li>
-                <Link href="/about" className="hover:text-[#3D79BE] transition">
-                  Our Story
-                </Link>
-              </li>
-              <li>
-                <Link href="/about" className="hover:text-[#3D79BE] transition">
-                  Contact
-                </Link>
-              </li>
-            </ul>
-          </div>
+          <nav aria-label="Explore KOA">
+            <h2 className="text-sm font-semibold text-on-carbon">Explore</h2>
+            <div className="mt-3">
+              <FooterLinks links={exploreLinks} />
+            </div>
+          </nav>
 
-          {/* Support */}
-          <div>
-            <h4 className="font-semibold mb-4">Support</h4>
-            <ul className="space-y-2 text-gray-400">
-              <li>
-                <Link href="/about" className="hover:text-[#3D79BE] transition">
-                  FAQ
-                </Link>
-              </li>
-              <li>
-                <Link href="/about" className="hover:text-[#3D79BE] transition">
-                  Shipping Info
-                </Link>
-              </li>
-              <li>
-                <Link href="/about" className="hover:text-[#3D79BE] transition">
-                  Returns &amp; Exchanges
-                </Link>
-              </li>
-              <li>
-                <Link href="/about" className="hover:text-[#3D79BE] transition">
-                  Privacy Policy
-                </Link>
-              </li>
-            </ul>
-          </div>
+          <nav aria-label="Account and company">
+            <h2 className="text-sm font-semibold text-on-carbon">KOA</h2>
+            <div className="mt-3">
+              <FooterLinks links={accountLinks} />
+            </div>
+          </nav>
         </div>
 
-        {/* Bottom Bar */}
-        <div className="flex flex-col md:flex-row justify-between items-center text-gray-400 text-sm border-t border-gray-700 pt-8">
-          <p>&copy; {new Date().getFullYear()} KOA Clothing. All rights reserved.</p>
-          <div className="flex gap-6 mt-4 md:mt-0">
-            <Link href="/about" className="hover:text-[#3D79BE] transition">
-              Terms of Service
-            </Link>
-            <Link href="/about" className="hover:text-[#3D79BE] transition">
-              Privacy Policy
-            </Link>
-            <Link href="/about" className="hover:text-[#3D79BE] transition">
-              Cookie Policy
-            </Link>
-          </div>
+        <div className="mt-12 border-t border-on-carbon/15 pt-6 text-sm text-on-carbon/60">
+          © {new Date().getFullYear()} KOA Clothing. All rights reserved.
         </div>
       </div>
     </footer>
-  )
-  
+  );
 }

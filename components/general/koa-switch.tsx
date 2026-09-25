@@ -7,7 +7,7 @@ function KoaSwitch({
 }: React.ComponentProps<typeof Switch>) {
   return (
     <Switch
-      className={cn("data-checked:bg-emerald-600 data-unchecked:bg-red-600", className)}
+      className={cn("data-checked:bg-success data-unchecked:bg-input", className)}
       {...props}
     />
   );

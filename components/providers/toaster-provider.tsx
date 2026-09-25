@@ -1,6 +1,6 @@
-'use client';
+"use client";
 
-import { Toaster } from 'react-hot-toast';
+import { Toaster } from "react-hot-toast";
 
 export const ToasterProvider = () => {
   return (
@@ -10,8 +10,10 @@ export const ToasterProvider = () => {
       toastOptions={{
         duration: 4000,
         style: {
-          background: '#363636',
-          color: '#fff',
+          background: "var(--popover)",
+          border: "1px solid var(--border)",
+          color: "var(--popover-foreground)",
+          boxShadow: "var(--koa-shadow-overlay)",
         },
       }}
     />

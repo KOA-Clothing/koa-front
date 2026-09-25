@@ -7,7 +7,7 @@ interface KoaBoolBadgeProps {
 
 export default function KoaBoolBadge({ active, label }: KoaBoolBadgeProps) {
   return active ? (
-    <Badge className="bg-emerald-600/10 text-emerald-600">{label}</Badge>
+    <Badge className="bg-success/10 text-success">{label}</Badge>
   ) : (
     <Badge variant="outline" className="text-muted-foreground">
       {label}

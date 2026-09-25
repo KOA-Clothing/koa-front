@@ -67,7 +67,7 @@ export default function UpdatePasswordModal({
         }
       }}
     >
-      <DialogContent className="max-h-[90vh] overflow-y-auto">
+      <DialogContent className="max-h-[90vh] overflow-y-auto [&_input]:min-h-11">
         <DialogHeader className="border-b pb-2">
           <DialogTitle>Update password</DialogTitle>
           <DialogDescription>
@@ -91,6 +91,7 @@ export default function UpdatePasswordModal({
           <Button
             variant="outline"
             type="button"
+            className="min-h-11"
             onClick={closeAndReset}
             disabled={updatePassword.isPending}
           >
@@ -98,6 +99,7 @@ export default function UpdatePasswordModal({
           </Button>
           <Button
             type="button"
+            className="min-h-11"
             onClick={handleSubmit}
             disabled={updatePassword.isPending}
           >

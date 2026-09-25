@@ -32,7 +32,7 @@ export default function VariantAvailabilityIndicator({
 }: VariantAvailabilityIndicatorProps) {
   if (isChecking) {
     return (
-      <p className="text-xs text-muted-foreground">
+      <p role="status" aria-live="polite" className="text-xs text-muted-foreground">
         Checking if this variant already exists...
       </p>
     );
@@ -46,7 +46,7 @@ export default function VariantAvailabilityIndicator({
 
   if (isExist) {
     return (
-      <div className="flex items-center gap-2.5 rounded-lg border border-destructive/30 bg-destructive/5 p-3 text-sm">
+      <div role="status" aria-live="polite" className="flex items-center gap-2.5 rounded-control border border-destructive/30 bg-destructive/5 p-3 text-sm">
         <TriangleAlert className="size-4 shrink-0 text-destructive" />
         {color && size && <ColorSwatch color={color} className="size-4" />}
         <span className="text-destructive">
@@ -58,10 +58,10 @@ export default function VariantAvailabilityIndicator({
   }
 
   return (
-    <div className="flex items-center gap-2.5 rounded-lg border border-emerald-600/30 bg-emerald-600/5 p-3 text-sm">
-      <CheckCircle2 className="size-4 shrink-0 text-emerald-600" />
+    <div role="status" aria-live="polite" className="flex items-center gap-2.5 rounded-control border border-success/30 bg-success/5 p-3 text-sm">
+      <CheckCircle2 className="size-4 shrink-0 text-success" />
       {color && size && <ColorSwatch color={color} className="size-4" />}
-      <span className="text-emerald-700 dark:text-emerald-400">
+      <span className="text-success">
         {colorName} / {sizeLabel} is available — enter a SKU to create it.
       </span>
     </div>

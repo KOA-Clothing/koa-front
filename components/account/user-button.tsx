@@ -1,11 +1,11 @@
-"use client"
+"use client";
 
-import { useRouter } from "next/navigation";
-import Link from "next/link";
 import { useClerk, useUser } from "@clerk/nextjs";
-import { Settings, LogOut, Plus } from "lucide-react";
+import { LogOut, Settings } from "lucide-react";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
+
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -19,66 +19,65 @@ export default function UserButton() {
   const router = useRouter();
 
   const initials = user
-    ? `${user.firstName?.[0] ?? ""}${user.lastName?.[0] ?? ""}`.toUpperCase() || "U"
+    ? `${user.firstName?.[0] ?? ""}${user.lastName?.[0] ?? ""}`.toUpperCase() ||
+      "U"
     : "U";
-  
-  const fullName = user ? `${user.firstName ?? ""} ${user.lastName ?? ""}`.trim() : "User";
+  const fullName = user
+    ? `${user.firstName ?? ""} ${user.lastName ?? ""}`.trim()
+    : "User";
   const primaryEmail = user?.primaryEmailAddress?.emailAddress;
 
   return (
     <DropdownMenu>
-      <DropdownMenuTrigger className="rounded-full outline-none cursor-pointer">
+      <DropdownMenuTrigger
+        aria-label={`Open account menu for ${fullName}`}
+        className="flex min-h-11 min-w-11 items-center justify-center rounded-full outline-none focus-visible:ring-3 focus-visible:ring-ring/50"
+      >
         <Avatar className="size-9">
-          <AvatarImage
-            src={user?.imageUrl ?? undefined}
-            alt={fullName}
-          />
+          <AvatarImage src={user?.imageUrl ?? undefined} alt="" />
           <AvatarFallback>{initials}</AvatarFallback>
         </Avatar>
       </DropdownMenuTrigger>
 
-      <DropdownMenuContent align="end" sideOffset={8} className="w-[320px] p-0 rounded-xl shadow-lg border-border">
-        {/* User Info Header */}
-        <div className="px-5 pt-5 pb-4 flex items-center gap-4">
-          <Avatar className="size-11">
-            <AvatarImage
-              src={user?.imageUrl ?? undefined}
-              alt={fullName}
-            />
+      <DropdownMenuContent
+        align="end"
+        sideOffset={8}
+        className="w-72 rounded-xl p-1.5"
+      >
+        <div className="flex items-center gap-3 px-3 pb-3 pt-2">
+          <Avatar className="size-11 shrink-0">
+            <AvatarImage src={user?.imageUrl ?? undefined} alt={fullName} />
             <AvatarFallback>{initials}</AvatarFallback>
           </Avatar>
-          <div className="flex flex-col truncate">
-            <span className="font-medium text-[15px] leading-none text-foreground mb-1 truncate">
+          <div className="flex min-w-0 flex-col">
+            <span className="truncate text-sm font-semibold text-foreground">
               {fullName}
             </span>
-            <span className="text-[13px] text-muted-foreground truncate">
-              {primaryEmail}
-            </span>
+            {primaryEmail ? (
+              <span className="truncate text-xs text-muted-foreground">
+                {primaryEmail}
+              </span>
+            ) : null}
           </div>
         </div>
 
-        {/* Action Buttons */}
-        <div className="flex flex-col px-5 pb-5 gap-2">
-          <DropdownMenuItem className="p-0 flex-1 focus:bg-transparent">
-            <Button 
-              variant="outline" 
-              size="sm" 
-              className="w-full gap-2 h-9 text-muted-foreground font-medium shadow-none hover:text-foreground hover:bg-muted/50">
-              <Link href="/account/profile" className="flex flex-row gap-2">
-                <Settings className="size-4" />
-                Manage account
-              </Link>
-            </Button>
+        <div className="flex flex-col gap-1 border-t border-border pt-1.5">
+          <DropdownMenuItem
+            render={<Link href="/account/profile" />}
+            className="min-h-11 gap-2 px-2 text-muted-foreground"
+          >
+            <Settings className="size-4" aria-hidden="true" />
+            Manage account
           </DropdownMenuItem>
-          <DropdownMenuItem className="p-0 flex-1 focus:bg-transparent">
-            <Button 
-              variant="outline" 
-              size="sm" 
-              className="w-full gap-2 h-9 text-muted-foreground font-medium shadow-none hover:text-red-600 hover:bg-muted/50" 
-              onClick={() => signOut(() => router.push("/"))}>
-              <LogOut className="size-4 flex flex-row gap-2" />
-              Sign out
-            </Button>
+          <DropdownMenuItem
+            variant="destructive"
+            className="min-h-11 gap-2 px-2"
+            onClick={() => {
+              void signOut(() => router.push("/"));
+            }}
+          >
+            <LogOut className="size-4" aria-hidden="true" />
+            Sign out
           </DropdownMenuItem>
         </div>
       </DropdownMenuContent>

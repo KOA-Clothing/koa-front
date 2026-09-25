@@ -1,15 +1,24 @@
-"use client"
+"use client";
 
-import { Card, CardAction, CardContent, CardDescription, CardHeader, CardTitle } from "../../ui/card";
-import { Button } from "../../ui/button";
 import { Pencil } from "lucide-react";
 import { useState } from "react";
-import { BasicProfileDto } from "@/types/user";
+
+import { Button } from "@/components/ui/button";
+import {
+  Card,
+  CardAction,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import KoaFormField from "@/components/general/koa-form-field";
-import UpdateUserProfileModal from "./modals/update-user-profile";
+import { BasicProfileDto } from "@/types/user";
+
 import PasswordStatus from "./password-status";
-import SsoAccounts from "./sso-accounts";
 import ProfileImage from "./profile-image";
+import SsoAccounts from "./sso-accounts";
+import UpdateUserProfileModal from "./modals/update-user-profile";
 
 interface Props {
   profile?: BasicProfileDto;
@@ -36,7 +45,7 @@ export default function ProfileSection(props: Props) {
   const initials = `${firstInitial}${lastInitial}` || "U";
 
   return (
-    <Card>
+    <Card className="border border-border bg-card ring-0">
       <CardHeader>
         <CardTitle>Profile</CardTitle>
         <CardDescription>Your basic personal information.</CardDescription>
@@ -44,25 +53,26 @@ export default function ProfileSection(props: Props) {
           <Button
             variant="ghost"
             size="icon-sm"
-            className="text-muted-foreground hover:text-foreground"
+            className="min-h-11 min-w-11 text-muted-foreground hover:text-foreground"
             onClick={() => setIsEditOpen(true)}
             aria-label="Edit profile"
           >
-            <Pencil className="size-3.5" />
+            <Pencil className="size-3.5" aria-hidden="true" />
           </Button>
         </CardAction>
       </CardHeader>
-      
+
       <CardContent className="flex flex-col gap-6">
-        <div className="flex flex-wrap items-center justify-between gap-6">
-          <ProfileImage profileImageUrl={profile.profileImageUrl} initials={initials} />
-          <SsoAccounts providers={profile.externalAccounts.map(a => a.provider)} />
+        <div className="flex flex-col gap-6 lg:flex-row lg:items-start lg:justify-between">
+          <ProfileImage
+            profileImageUrl={profile.profileImageUrl}
+            initials={initials}
+          />
+          <SsoAccounts providers={profile.externalAccounts.map((a) => a.provider)} />
         </div>
 
-        {/* <Separator /> */}
-
-        <div className="relative flex flex-col gap-3 rounded-xl border border-border bg-muted/30 p-4">
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <div className="flex flex-col gap-3 rounded-xl border border-border bg-background p-4 [&_input]:min-h-11">
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
             <KoaFormField
               readOnly
               id="firstName"
@@ -70,7 +80,7 @@ export default function ProfileSection(props: Props) {
               label="First name"
               value={profile.firstName || ""}
             />
-            
+
             <KoaFormField
               readOnly
               id="lastName"
@@ -79,8 +89,8 @@ export default function ProfileSection(props: Props) {
               value={profile.lastName || ""}
             />
           </div>
-          
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
             <KoaFormField
               readOnly
               id="email"

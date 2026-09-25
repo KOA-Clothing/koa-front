@@ -89,7 +89,7 @@ export default function PhoneNumberFormModal({
         onOpenChange(nextOpen);
       }}
     >
-      <DialogContent className="max-h-[90vh] overflow-y-auto">
+      <DialogContent className="max-h-[90vh] overflow-y-auto [&_input]:min-h-11">
         <DialogHeader className="border-b pb-2">
           <DialogTitle>{title}</DialogTitle>
           <DialogDescription>{description}</DialogDescription>
@@ -124,18 +124,24 @@ export default function PhoneNumberFormModal({
             error={errors.phoneNo}
           />
 
-          <div className="flex flex-col gap-2">
-            <span className="text-sm leading-none font-medium">
+          <fieldset
+            className="flex flex-col gap-2"
+            aria-describedby={
+              errors.type ? "phone-number-type-error" : undefined
+            }
+          >
+            <legend className="text-sm leading-none font-medium">
               Phone number type
-            </span>
+            </legend>
             <div className="flex flex-wrap items-center gap-2">
               {phoneNumberTypes.map(({ label, value }) => (
                 <button
                   key={value}
                   type="button"
                   onClick={() => handleFieldChange("type", value)}
+                  aria-pressed={form.type === value}
                   className={cn(
-                    "rounded-lg border px-3 py-1.5 text-sm font-medium transition-colors outline-none focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50",
+                    "min-h-11 rounded-lg border px-3 py-1.5 text-sm font-medium transition-colors outline-none focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50",
                     form.type === value
                       ? "border-primary bg-primary text-primary-foreground"
                       : "border-border bg-background text-foreground hover:bg-muted"
@@ -146,15 +152,22 @@ export default function PhoneNumberFormModal({
               ))}
             </div>
             {errors.type && (
-              <span className="text-xs text-destructive">{errors.type}</span>
+              <span
+                id="phone-number-type-error"
+                role="alert"
+                className="text-xs text-destructive"
+              >
+                {errors.type}
+              </span>
             )}
-          </div>
+          </fieldset>
         </div>
 
         <DialogFooter className="border-t">
           <Button
             variant="outline"
             type="button"
+            className="min-h-11"
             onClick={() => onOpenChange(false)}
             disabled={isPending}
           >
@@ -162,6 +175,7 @@ export default function PhoneNumberFormModal({
           </Button>
           <Button
             type="button"
+            className="min-h-11"
             onClick={handleSubmit}
             disabled={isPending}
           >

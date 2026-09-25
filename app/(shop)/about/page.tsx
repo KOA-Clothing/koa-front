@@ -1,297 +1,302 @@
 import type { Metadata } from "next";
 import Image from "next/image";
-import logo from "@/public/logo/black/koa-logo.png"
-import warrior_face from "@/public/logo/black/warrior-face.png"
-import owner from "@/public/others/user.png"
-import journey from "@/public/others/time-line.png"
-import { Button } from "@/components/ui/button";
 import Link from "next/link";
+import { ArrowRight } from "lucide-react";
+
+import { buttonVariants } from "@/components/ui/button";
+import campaignImage from "@/public/hero-images/hero-1.jpg";
+import founderImage from "@/public/others/user.png";
+import timelineGraphic from "@/public/others/time-line.png";
+import warriorFace from "@/public/logo/black/warrior-face.png";
 
 export const metadata: Metadata = {
-  title: "About | KOA Clothing",
+  title: "About KOA",
   description:
-    "KOA means warrior in Hawaiian. Learn the story behind the brand — built for men who move with purpose.",
+    "Learn about KOA, a Sri Lankan menswear and activewear brand shaped by garment-making experience and purposeful design.",
 };
 
 const values = [
   {
-    label: "Crafted for movement",
-    body: "Every cut, weight, and stitch is chosen for men who don't sit still. Whether it's the gym, the street, or in between — KOA moves with you.",
+    label: "Purpose in the cut",
+    body: "We consider the cut, weight, and stitch so each piece works beyond a single setting.",
   },
   {
-    label: "No noise",
-    body: "We don't chase trends. We build pieces that carry themselves — clean lines, honest materials, nothing extra.",
+    label: "Less, but better",
+    body: "Clean lines and honest materials take priority over trends and extra detail.",
   },
   {
-    label: "Built in Sri Lanka",
-    body: "Designed and produced close to home, by people who take the craft seriously. Local roots, global standard.",
+    label: "Sri Lankan perspective",
+    body: "KOA grew from hands-on garment-making experience and a close connection to home.",
   },
   {
-    label: "Direct to you",
-    body: "No middlemen, no markups. We sell directly so every piece stays accessible and every relationship stays real.",
+    label: "Direct focus",
+    body: "We keep the brand clear, approachable, and close to the people who wear it.",
   },
 ];
 
 const timeline = [
   {
     year: "2019",
-    event: "The workshop",
+    title: "The workshop begins",
     detail:
-      "Kalindu starts a small-scale garment manufacturing operation, accepting custom orders by word of mouth.",
+      "A small garment operation starts with custom orders and relationships built through referrals.",
   },
   {
     year: "2022",
-    event: "Custom printing takes off",
+    title: "Custom printing grows",
     detail:
-      "A T-shirt printing venture for university clubs and corporates grows rapidly, proving the demand for a distinct brand.",
+      "Work for university clubs and corporate teams builds practical knowledge and a clearer point of view.",
   },
   {
     year: "2024",
-    event: "KOA is born",
+    title: "KOA takes shape",
     detail:
-      "The decision to launch a standalone menswear and activewear brand — a clean-slate digital-first operation, completely separate from the manufacturing side.",
+      "The decision is made to launch an independent menswear and activewear label with a focused identity.",
   },
   {
     year: "2025",
-    event: "The platform",
+    title: "The digital platform",
     detail:
-      "KOA Clothing launches its e-commerce platform, bringing the full catalog online with direct-to-consumer ordering.",
+      "The KOA storefront brings the brand online, creating a direct home for its clothing and story.",
   },
 ];
 
 export default function AboutPage() {
   return (
-    <main className="min-h-screen bg-background text-foreground">
-      <div className="max-w-7xl mx-auto px-4 md:px-8">
-        <div className="pt-8">
-          {/* <Breadcrumbs items={[{ label: 'About Us' }]} /> */}
-        </div>
-
-        {/* ── HERO ── */}
-        <section className="pb-16 md:pb-24">
-          <div className="grid md:grid-cols-[1fr_auto] gap-12 items-end">
-            <div>
-              <p className="text-xs tracking-[0.2em] uppercase text-muted-foreground mb-4 font-medium">
-                KOA — Hawaiian · /ˈkoʊ.ɑː/ · Warrior
-              </p>
-
-              <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold leading-tight tracking-tight text-foreground mb-6">
-                Dressed
-                <br />
-                for the{" "}
-                <span className="text-primary">
-                  battle.
-                </span>
-              </h1>
-            </div>
-
-            {/* Decorative logo */}
-            <div
-              aria-hidden="true"
-              className="hidden md:block select-none leading-none"
-            >
-              <Image src={logo} alt="KOA logo" width={500} height={500} className="object-contain" />
-            </div>
-          </div>
-
-          <div className="mt-6 max-w-xl">
-            <p className="text-lg text-muted-foreground leading-relaxed">
-              KOA is a Sri Lankan menswear and activewear brand. We make
-              clothing for men who move with intention — built clean, worn hard,
-              built to last.
+    <main id="main-content" tabIndex={-1} className="bg-background text-ink outline-none">
+      <section className="border-b border-hairline bg-surface py-16 sm:py-20 lg:py-24">
+        <div className="mx-auto grid w-full max-w-7xl gap-12 px-5 sm:px-8 lg:grid-cols-[minmax(0,0.9fr)_minmax(0,1.1fr)] lg:items-center lg:gap-16 lg:px-10">
+          <div className="max-w-2xl">
+            <p className="text-xs font-semibold uppercase tracking-[0.2em] text-pewter">
+              About KOA
+            </p>
+            <h1 className="mt-5 font-display text-display-campaign font-bold uppercase text-ink-strong">
+              Dressed for movement.
+            </h1>
+            <p className="mt-7 text-lg leading-relaxed text-graphite sm:text-xl">
+              KOA is a Sri Lankan menswear and activewear brand built from
+              hands-on garment-making experience and a focus on purposeful,
+              uncomplicated design.
             </p>
           </div>
-        </section>
-      </div>
 
-      {/* ── BRAND STATEMENT ── */}
-      <section className="border-y border-border bg-muted/30">
-        <div className="max-w-7xl mx-auto px-4 md:px-8 py-16 md:py-24">
-          <div className="grid md:grid-cols-[1fr_2fr] gap-12 items-start">
-            <div className="md:sticky md:top-24 h-full flex flex-col">
-              <p className="text-xs tracking-[0.2em] uppercase text-muted-foreground font-medium">
-                The origin
-              </p>
-              <div className="flex-1 flex items-center justify-center">
-                <Image src={warrior_face} alt={"Warrior Face"} width={200} height={200} />
-              </div>
-            </div>
+          <div className="relative aspect-[4/3] overflow-hidden rounded-card bg-product-stage">
+            <Image
+              src={campaignImage}
+              alt="KOA campaign photograph"
+              fill
+              priority
+              sizes="(max-width: 1024px) 100vw, 52vw"
+              className="object-cover"
+            />
+          </div>
+        </div>
+      </section>
 
-            <div className="space-y-6">
-              <p className="text-xl md:text-2xl font-medium leading-snug text-foreground">
-                The name comes from the Hawaiian word for warrior. We chose it
-                deliberately.
+      <section
+        aria-labelledby="origin-heading"
+        className="border-b border-hairline bg-parchment py-16 sm:py-20 lg:py-24"
+      >
+        <div className="mx-auto grid w-full max-w-7xl gap-12 px-5 sm:px-8 lg:grid-cols-[minmax(0,0.75fr)_minmax(0,1.25fr)] lg:items-center lg:gap-16 lg:px-10">
+          <figure className="mx-auto w-full max-w-sm rounded-card bg-product-stage p-8 sm:p-12">
+            <Image
+              src={warriorFace}
+              alt=""
+              width={320}
+              height={320}
+              className="h-auto w-full"
+            />
+          </figure>
+
+          <div className="max-w-2xl">
+            <p className="text-xs font-semibold uppercase tracking-[0.18em] text-pewter">
+              The origin
+            </p>
+            <h2
+              id="origin-heading"
+              className="mt-4 text-3xl font-semibold leading-tight tracking-[-0.02em] text-ink-strong sm:text-4xl"
+            >
+              A name chosen for resolve.
+            </h2>
+            <div className="mt-6 space-y-5 text-base leading-relaxed text-graphite sm:text-lg">
+              <p>
+                KOA comes from the Hawaiian word for warrior. The name reflects
+                resilience, purpose, and the determination to keep moving
+                forward.
               </p>
-              <div className="space-y-4 text-muted-foreground text-base leading-relaxed">
-                <p>
-                  KOA started as a small garment manufacturing operation in Sri
-                  Lanka. Custom T-shirt printing for university clubs and
-                  corporate teams. Word of mouth. Real relationships. No
-                  website, no ads — just quality that travelled.
-                </p>
-                <p>
-                  What grew out of that was a clear signal: there was demand for
-                  something more. A brand. A distinct identity built around
-                  menswear and activewear that didn&apos;t compromise on
-                  material or cut.
-                </p>
-                <p>
-                  KOA Clothing is the result. A standalone brand, built from the
-                  ground up, digital-first, direct-to-consumer. Everything that
-                  the word{" "}
-                  <em className="font-medium text-foreground not-italic">
-                    warrior
-                  </em>{" "}
-                  implies — resilience, purpose, a refusal to be generic.
-                </p>
-              </div>
+              <p>
+                Before KOA was a standalone brand, Kalindu Dilranga built a
+                small garment operation in Sri Lanka. Custom printing for
+                clubs, teams, and businesses grew through word of mouth and
+                repeat relationships.
+              </p>
+              <p>
+                KOA Clothing grew from that practical foundation: a clear idea,
+                an independent identity, and clothing designed around movement
+                rather than noise.
+              </p>
             </div>
           </div>
         </div>
       </section>
 
-      {/* ── VALUES GRID ── */}
-      <section className="border-b border-border">
-        <div className="max-w-7xl mx-auto px-4 md:px-8 py-16 md:py-24">
-          <div className="mb-12 flex items-baseline gap-6">
-            <p className="text-xs tracking-[0.2em] uppercase text-muted-foreground font-medium shrink-0">
-              What we stand for
+      <section
+        aria-labelledby="values-heading"
+        className="border-b border-hairline bg-background py-16 sm:py-20 lg:py-24"
+      >
+        <div className="mx-auto w-full max-w-7xl px-5 sm:px-8 lg:px-10">
+          <div className="max-w-2xl">
+            <p className="text-xs font-semibold uppercase tracking-[0.18em] text-pewter">
+              What guides us
             </p>
-            <div className="h-px bg-border flex-1" aria-hidden="true" />
+            <h2
+              id="values-heading"
+              className="mt-4 text-3xl font-semibold leading-tight tracking-[-0.02em] text-ink-strong sm:text-4xl"
+            >
+              Quiet principles, clearly held.
+            </h2>
           </div>
 
-          <div className="grid sm:grid-cols-2 gap-x-12 gap-y-10">
-            {values.map((v, i) => (
-              <div key={v.label} className="group">
-                <div className="flex items-start gap-5">
-                  <span className="text-xs font-medium tabular-nums shrink-0 mt-1 text-primary">
-                    0{i + 1}
-                  </span>
-                  <div className="space-y-2">
-                    <h3 className="text-base font-semibold text-foreground">
-                      {v.label}
-                    </h3>
-                    <p className="text-sm text-muted-foreground leading-relaxed">
-                      {v.body}
-                    </p>
-                  </div>
-                </div>
-              </div>
+          <div className="mt-10 grid border-y border-hairline sm:grid-cols-2">
+            {values.map((value, index) => (
+              <article
+                key={value.label}
+                className={`py-7 sm:p-8 lg:min-h-56 ${
+                  index < values.length - 1
+                    ? "border-b border-hairline sm:border-b-0 sm:border-r"
+                    : ""
+                } ${index % 2 === 0 ? "sm:pl-0" : ""}`}
+              >
+                <h3 className="text-lg font-semibold text-ink-strong">
+                  {value.label}
+                </h3>
+                <p className="mt-3 max-w-md text-base leading-relaxed text-pewter">
+                  {value.body}
+                </p>
+              </article>
             ))}
           </div>
         </div>
       </section>
 
-      {/* ── TIMELINE ── */}
-      <section className="border-b border-border">
-        <div className="max-w-7xl mx-auto px-4 md:px-8 py-16 md:py-24">
-          <div className="grid md:grid-cols-[1fr_2fr] gap-12 items-start">
-            <div className="md:sticky md:top-24 h-full flex flex-col">
-              <p className="text-xs tracking-[0.2em] uppercase text-muted-foreground font-medium">
-                The timeline
-              </p>
-              <div className="flex-1 flex items-center justify-center">
-                <Image src={journey} alt={"Joruney"} width={250} height={250} />
-              </div>
-            </div>
-
-            <div className="relative">
-              <div
-                className="absolute left-13 top-2 bottom-2 w-px bg-border hidden sm:block"
-                aria-hidden="true"
+      <section
+        aria-labelledby="timeline-heading"
+        className="border-b border-hairline bg-surface py-16 sm:py-20 lg:py-24"
+      >
+        <div className="mx-auto grid w-full max-w-7xl gap-12 px-5 sm:px-8 lg:grid-cols-[minmax(0,0.65fr)_minmax(0,1.35fr)] lg:gap-16 lg:px-10">
+          <div>
+            <p className="text-xs font-semibold uppercase tracking-[0.18em] text-pewter">
+              The journey
+            </p>
+            <h2
+              id="timeline-heading"
+              className="mt-4 text-3xl font-semibold leading-tight tracking-[-0.02em] text-ink-strong sm:text-4xl"
+            >
+              Built one step at a time.
+            </h2>
+            <div className="mt-8 hidden max-w-xs rounded-card bg-product-stage p-8 sm:block">
+              <Image
+                src={timelineGraphic}
+                alt=""
+                width={256}
+                height={256}
+                className="h-auto w-full"
               />
-
-              <div className="space-y-10">
-                {timeline.map((entry) => (
-                  <div key={entry.year} className="relative flex gap-8 items-start">
-                    <div className="shrink-0 w-22 text-right text-xs font-semibold text-primary tabular-nums pt-0.5">
-                      {entry.year}
-                    </div>
-
-                    <div
-                      className="relative shrink-0 w-3 h-3 rounded-full border-2 border-primary bg-background z-10 mt-1"
-                      aria-hidden="true"
-                    />
-
-                    <div className="space-y-1 pb-2">
-                      <p className="font-semibold text-foreground text-sm">
-                        {entry.event}
-                      </p>
-                      <p className="text-sm text-muted-foreground leading-relaxed">
-                        {entry.detail}
-                      </p>
-                    </div>
-                  </div>
-                ))}
-              </div>
             </div>
           </div>
-        </div>
-      </section>
 
-      {/* ── FOUNDER SECTION ── */}
-      <section className="border-b border-border">
-        <div className="max-w-7xl mx-auto px-4 md:px-8 py-16 md:py-24">
-          <div className="grid md:grid-cols-2 gap-12 items-center">
-            <div className="space-y-5">
-              <p className="text-xs tracking-[0.2em] uppercase text-muted-foreground font-medium">
-                The founder
-              </p>
-              <h2 className="text-2xl md:text-3xl font-bold text-foreground leading-snug">
-                Kalindu Dilranga
-              </h2>
-              <div className="space-y-4 text-muted-foreground leading-relaxed">
-                <p>
-                  Kalindu built his first garment operation from referrals and
-                  handshakes. No marketing budget, no investors — just a
-                  consistent product that people kept coming back for.
+          <ol className="border-t border-hairline">
+            {timeline.map((entry) => (
+              <li
+                key={entry.year}
+                className="grid gap-3 border-b border-hairline py-7 sm:grid-cols-[6rem_minmax(0,1fr)] sm:gap-8"
+              >
+                <p className="font-mono text-sm font-medium tabular-nums text-pewter">
+                  {entry.year}
                 </p>
-                <p>
-                  KOA Clothing is his next move: taking everything he learned
-                  from years in the manufacturing floor and building a brand
-                  that doesn&apos;t compromise. One that earns the name warrior.
-                </p>
-              </div>
-            </div>
-
-            <div className="flex justify-center md:justify-end">
-              <div className="relative w-64 h-80 rounded-2xl overflow-hidden flex items-end bg-muted">
-                <div className="w-full z-10">
-                  <Image src={owner} alt="Mr. Kalindu Dilranga" />
-                  <div className="bg-foreground/80 backdrop-blur-sm px-4 py-4">
-                    <p className="text-white font-semibold text-sm text-center">
-                      Kalindu Dilranga
-                    </p>
-                    <p className="text-xs mt-0.5 text-center text-primary-foreground/80">
-                      Founder, KOA Clothing
-                    </p>
-                  </div>
+                <div>
+                  <h3 className="text-lg font-semibold text-ink-strong">
+                    {entry.title}
+                  </h3>
+                  <p className="mt-2 max-w-2xl text-base leading-relaxed text-pewter">
+                    {entry.detail}
+                  </p>
                 </div>
-              </div>
+              </li>
+            ))}
+          </ol>
+        </div>
+      </section>
+
+      <section
+        aria-labelledby="founder-heading"
+        className="bg-parchment py-16 sm:py-20 lg:py-24"
+      >
+        <div className="mx-auto grid w-full max-w-7xl gap-12 px-5 sm:px-8 lg:grid-cols-2 lg:items-center lg:gap-16 lg:px-10">
+          <figure>
+            <div className="relative aspect-square overflow-hidden rounded-card bg-product-stage">
+              <Image
+                src={founderImage}
+                alt="Kalindu Dilranga, founder of KOA"
+                fill
+                sizes="(max-width: 1024px) 100vw, 42vw"
+                className="object-cover"
+              />
+            </div>
+            <figcaption className="mt-4 text-sm text-pewter">
+              Kalindu Dilranga, founder of KOA Clothing
+            </figcaption>
+          </figure>
+
+          <div className="max-w-xl">
+            <p className="text-xs font-semibold uppercase tracking-[0.18em] text-pewter">
+              The founder
+            </p>
+            <h2
+              id="founder-heading"
+              className="mt-4 text-3xl font-semibold leading-tight tracking-[-0.02em] text-ink-strong sm:text-4xl"
+            >
+              Kalindu Dilranga
+            </h2>
+            <div className="mt-6 space-y-5 text-base leading-relaxed text-graphite sm:text-lg">
+              <p>
+                Kalindu built the earlier garment operation through referrals,
+                repeat customers, and hands-on attention to the work.
+              </p>
+              <p>
+                KOA carries that experience into an independent brand focused on
+                material, cut, and a clear identity that people can recognize.
+              </p>
             </div>
           </div>
         </div>
       </section>
 
-      {/* ── CLOSING CTA ── */}
-      <section>
-        <div className="max-w-7xl mx-auto px-4 md:px-8 py-20 md:py-28 text-center">
-          <p className="text-xs tracking-[0.25em] uppercase text-muted-foreground font-medium mb-6">
-            Ready to wear KOA?
+      <section
+        aria-labelledby="about-cta-heading"
+        className="bg-carbon py-20 text-on-carbon sm:py-24"
+      >
+        <div className="mx-auto w-full max-w-4xl px-5 text-center sm:px-8">
+          <p className="text-xs font-semibold uppercase tracking-[0.18em] text-on-carbon/70">
+            The KOA point of view
           </p>
-          <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-foreground leading-tight mb-8">
-            The collection is live.
-            <br />
-            <span className="text-primary">Start shopping.</span>
+          <h2
+            id="about-cta-heading"
+            className="mt-4 text-3xl font-semibold leading-tight tracking-[-0.02em] sm:text-5xl"
+          >
+            Purpose in every detail. Movement in every line.
           </h2>
-
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Button size="lg" className="px-8">
-              <Link href="/search">
-                Browse the collection
-              </Link>
-            </Button>
-          </div>
+          <Link
+            href="/#collection"
+            className={buttonVariants({
+              variant: "storefront",
+              size: "storefront",
+              className: "mt-8 rounded-control",
+            })}
+          >
+            Explore the collection
+            <ArrowRight aria-hidden="true" />
+          </Link>
         </div>
       </section>
     </main>

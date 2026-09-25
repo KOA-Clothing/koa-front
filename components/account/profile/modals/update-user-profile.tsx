@@ -75,7 +75,7 @@ export default function UpdateUserProfileModal({
         }
       }}
     >
-      <DialogContent className="max-h-[90vh] overflow-y-auto">
+      <DialogContent className="max-h-[90vh] overflow-y-auto [&_input]:min-h-11">
         <DialogHeader className="border-b pb-2">
           <DialogTitle>Edit profile</DialogTitle>
           <DialogDescription>
@@ -108,6 +108,7 @@ export default function UpdateUserProfileModal({
           <Button
             variant="outline"
             type="button"
+            className="min-h-11"
             onClick={closeAndReset}
             disabled={updateProfile.isPending}
           >
@@ -115,6 +116,7 @@ export default function UpdateUserProfileModal({
           </Button>
           <Button
             type="button"
+            className="min-h-11"
             onClick={handleSubmit}
             disabled={updateProfile.isPending}
           >

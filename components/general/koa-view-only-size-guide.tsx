@@ -29,6 +29,8 @@ export default function KoaViewOnlySizeGuide({
       </span>
       {src ? (
         <div className="flex min-h-40 items-center justify-center rounded-lg border border-input p-3">
+          {/* Size guides are operator-supplied image URLs on unconfigured hosts. */}
+          {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
             src={src}
             alt="Size guide"

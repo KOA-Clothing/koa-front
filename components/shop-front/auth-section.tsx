@@ -1,46 +1,68 @@
 import { Show, SignInButton, SignUpButton } from "@clerk/nextjs";
-import UserButton from "@/components/account/user-button";
 
-interface Props {
-  isSolidActive : boolean
+import UserButton from "@/components/account/user-button";
+import { buttonVariants } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
+
+interface AuthSectionProps {
+  showSignUp?: boolean;
+  fullWidth?: boolean;
+  className?: string;
 }
 
-export default function AuthSection({isSolidActive} : Props) {
+export default function AuthSection({
+  showSignUp = true,
+  fullWidth = false,
+  className,
+}: AuthSectionProps) {
+  const widthClass = fullWidth ? "w-full" : "";
+
   return (
-    <div className="flex items-center gap-2">
+    <div
+      className={cn(
+        "flex items-center gap-2",
+        fullWidth && "flex-col items-stretch",
+        className,
+      )}
+    >
       <Show when="signed-out">
         <SignInButton>
-          <button 
-            // Added 'border' to the base classes so the width is always present
-            className={`border rounded-full font-medium text-sm sm:text-base h-10 sm:h-10 px-4 sm:px-4 cursor-pointer transition duration-300 ${
-              isSolidActive 
-                ? 'text-foreground hover:bg-muted border-neutral-500' 
-                // Added 'border-transparent' to the inactive state
-                : 'text-white border-transparent hover:bg-white/10'
-            }`}
+          <button
+            type="button"
+            className={buttonVariants({
+              variant: "outline",
+              size: "lg",
+              className: cn(
+                "min-h-11 cursor-pointer rounded-control border-hairline bg-surface px-4 text-ink-strong hover:bg-cloud",
+                widthClass,
+              ),
+            })}
           >
-            Sign In
+            Sign in
           </button>
         </SignInButton>
 
-        <SignUpButton>
-          <button 
-            className={`border border-transparent rounded-full font-medium text-sm sm:text-base h-10 sm:h-10 px-4 sm:px-4 cursor-pointer transition duration-300 ${
-              isSolidActive 
-                ? 'bg-foreground text-background hover:bg-foreground/90' 
-                : 'bg-white text-black hover:bg-white/90'
-            }`}
-          >
-            Sign Up
-          </button>
-        </SignUpButton>
+        {showSignUp ? (
+          <SignUpButton>
+            <button
+              type="button"
+              className={buttonVariants({
+                variant: "storefront",
+                size: "storefront",
+                className: cn("cursor-pointer rounded-control", widthClass),
+              })}
+            >
+              Sign up
+            </button>
+          </SignUpButton>
+        ) : null}
       </Show>
 
       <Show when="signed-in">
-        <div className={`flex p-1 rounded-full transition duration-300 ${isSolidActive ? 'hover:bg-muted' : 'hover:bg-white/10'}`}>
+        <div className="flex min-h-11 min-w-11 items-center justify-center [&>button:first-child]:size-11">
           <UserButton />
         </div>
       </Show>
     </div>
-  )
+  );
 }

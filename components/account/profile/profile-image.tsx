@@ -1,10 +1,12 @@
 "use client";
 
-import { useRef, useState } from "react";
 import { useUser } from "@clerk/nextjs";
+import { Camera, Loader2, Trash2 } from "lucide-react";
+import { useRef, useState } from "react";
+
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
-import { Camera, Loader2, Trash2 } from "lucide-react";
+
 import { CropImageDialog } from "./modals/image-crop/crop-image-modal";
 
 interface ProfileImageProps {
@@ -20,8 +22,8 @@ export default function ProfileImage(props: ProfileImageProps) {
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
   const [isCropDialogOpen, setIsCropDialogOpen] = useState(false);
 
-  const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
+  const handleFileSelect = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
     if (!file) return;
 
     const imageUrl = URL.createObjectURL(file);
@@ -46,7 +48,7 @@ export default function ProfileImage(props: ProfileImageProps) {
       closeDialogAndCleanup();
     } catch (error) {
       console.error("Failed to upload image:", error);
-      throw error; // Throwing allows the dialog to catch it if needed
+      throw error;
     }
   };
 
@@ -64,18 +66,18 @@ export default function ProfileImage(props: ProfileImageProps) {
 
   return (
     <>
-      <div className="flex items-center gap-4">
-        <Avatar className="size-16">
+      <div className="flex min-w-0 flex-col items-start gap-4 sm:flex-row sm:items-center">
+        <Avatar className="size-16 shrink-0">
           <AvatarImage
             src={user?.imageUrl ?? props.profileImageUrl ?? undefined}
-            alt="Profile Photo"
+            alt="Profile photo"
           />
-          <AvatarFallback className="text-lg bg-muted">
+          <AvatarFallback className="bg-muted text-lg">
             {props.initials}
           </AvatarFallback>
         </Avatar>
 
-        <div>
+        <div className="min-w-0">
           <input
             type="file"
             accept="image/jpeg, image/png, image/gif"
@@ -84,15 +86,15 @@ export default function ProfileImage(props: ProfileImageProps) {
             onChange={handleFileSelect}
           />
 
-          <div className="flex gap-2">
+          <div className="flex flex-wrap gap-2">
             <Button
               variant="outline"
               size="sm"
-              className="gap-2"
+              className="min-h-11 gap-2"
               onClick={() => fileInputRef.current?.click()}
               disabled={isRemoving || !user}
             >
-              <Camera className="size-3.5" />
+              <Camera className="size-3.5" aria-hidden="true" />
               Change photo
             </Button>
 
@@ -100,21 +102,21 @@ export default function ProfileImage(props: ProfileImageProps) {
               <Button
                 variant="ghost"
                 size="sm"
-                className="gap-2 text-destructive hover:bg-destructive/10"
+                className="min-h-11 gap-2 text-destructive hover:bg-destructive/10 hover:text-destructive"
                 onClick={handleRemoveImage}
                 disabled={isRemoving}
               >
                 {isRemoving ? (
-                  <Loader2 className="size-3.5 animate-spin" />
+                  <Loader2 className="size-3.5 animate-spin motion-reduce:animate-none" />
                 ) : (
-                  <Trash2 className="size-3.5" />
+                  <Trash2 className="size-3.5" aria-hidden="true" />
                 )}
                 {isRemoving ? "Removing..." : "Remove"}
               </Button>
             )}
           </div>
 
-          <p className="text-xs text-muted-foreground mt-2">
+          <p className="mt-2 text-xs text-muted-foreground">
             JPG, PNG or GIF. Max 2MB.
           </p>
         </div>

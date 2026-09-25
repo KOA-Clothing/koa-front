@@ -1,7 +1,9 @@
-import { Label } from "../ui/label";
-import { ComponentPropsWithoutRef } from "react";
+import type { ComponentPropsWithoutRef } from "react";
 
-interface KoaTextAreaProps extends ComponentPropsWithoutRef<"textarea"> {
+import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
+
+interface KoaTextAreaProps extends ComponentPropsWithoutRef<typeof Textarea> {
   label: string;
   id: string;
   containerClassName?: string;
@@ -13,20 +15,28 @@ export default function KoaTextArea({
   id,
   containerClassName = "flex flex-col gap-2",
   error,
-  className,
   ...textareaProps
 }: KoaTextAreaProps) {
-  const baseClassName =
-    "w-full rounded-lg border border-input bg-transparent px-2.5 py-1 text-base outline-none placeholder:text-muted-foreground focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50 md:text-sm dark:bg-input/30";
-  const finalClassName = className
-    ? `${baseClassName} ${className}`
-    : baseClassName;
+  const errorId = `${id}-error`;
+  const describedBy =
+    [textareaProps["aria-describedby"], error ? errorId : undefined]
+      .filter(Boolean)
+      .join(" ") || undefined;
 
   return (
     <div className={containerClassName}>
       <Label htmlFor={id}>{label}</Label>
-      <textarea id={id} className={finalClassName} {...textareaProps} />
-      {error && <span className="text-xs text-destructive">{error}</span>}
+      <Textarea
+        {...textareaProps}
+        id={id}
+        aria-invalid={Boolean(error)}
+        aria-describedby={describedBy}
+      />
+      {error ? (
+        <p id={errorId} role="alert" className="text-xs text-destructive">
+          {error}
+        </p>
+      ) : null}
     </div>
   );
 }
