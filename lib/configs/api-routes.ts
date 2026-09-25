@@ -48,6 +48,7 @@ export const API_ROUTES = {
   },
   PRODUCT_VARIANTS: {
     BASE: "/api/v1/product-variants",
+    EXISTS: (productId: string, colorId: string, size: string | number) => `/api/v1/product-variants/exists?productId=${productId}&colorId=${colorId}&size=${size}`,
     BY_ID: (id: string) => `/api/v1/product-variants/${id}`,
     TOGGLE_ACTIVE_STATUS: (id: string) => `/api/v1/product-variants/${id}/toggle-active-status`,
   },

@@ -71,7 +71,7 @@ export default function ProductVariantsPage() {
       <KoaTable
         columns={getProductVariantColumns({
           onView: setProductToView,
-          onCreate: () => console.log("test")
+          onCreate: (variationCollection) => console.log(variationCollection.id)
         })}
         data={data?.items ?? []}
         rowCount={data?.totalRecords ?? 0}

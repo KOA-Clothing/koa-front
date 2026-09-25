@@ -25,7 +25,7 @@ function distinctBy<T>(items: T[], key: (item: T) => unknown): T[] {
 
 interface ProductVariantsColumnActions {
   onView: (product: ProductVariantsCollectionDto) => void;
-  onCreate: () => void;
+  onCreate: (product: ProductVariantsCollectionDto) => void;
 }
 
 export function getProductVariantColumns({ onView, onCreate }: ProductVariantsColumnActions) {
@@ -108,7 +108,7 @@ export function getProductVariantColumns({ onView, onCreate }: ProductVariantsCo
           <Button
             variant="ghost"
             size="icon-sm"
-            onClick={() => onCreate()}
+            onClick={() => onCreate(row.original)}
             title="Create variant"
           >
             <CirclePlus className="size-3.5" />
