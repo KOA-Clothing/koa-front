@@ -21,6 +21,7 @@ import KoaFormField from "@/components/general/koa-form-field";
 import KoaModalCancelButton from "@/components/general/koa-modal-cancel-button";
 import KoaModalSaveButton from "@/components/general/koa-modal-save-button";
 import KoaSearchableSelect from "@/components/general/koa-searchable-select";
+import ColorSwatch from "@/components/general/koa-color-badge";
 import AvailableVariantSummary from "@/components/general/available-variant-summary";
 import VariantAvailabilityIndicator from "@/components/general/variant-availability-indicator";
 import { useActiveColors } from "@/features/color/hooks/use-colors";
@@ -134,34 +135,60 @@ export default function CreateVariantModal({
         <div className="flex flex-col gap-4 px-5">
           {product && <AvailableVariantSummary product={product} />}
 
-          <div className="flex flex-col gap-2">
-            <Label>Color</Label>
-            <KoaSearchableSelect
-              value={selectedColorId}
-              onValueChange={setSelectedColorId}
-              options={colorOptions}
-              placeholder="Select a color..."
-              emptyText="No colors found."
-            />
-          </div>
+          <div className="grid gap-4 sm:grid-cols-[3fr_1fr]">
+            <div className="flex flex-col gap-2">
+              <Label>Color</Label>
+              <div className="flex items-center gap-2">
+                <KoaSearchableSelect
+                  className="flex-1"
+                  value={selectedColorId}
+                  onValueChange={setSelectedColorId}
+                  options={colorOptions}
+                  placeholder="Select a color..."
+                  emptyText="No colors found."
+                />
+                {selectedColor && (
+                  <div
+                    className="flex shrink-0 items-center gap-2 rounded-lg border px-2.5 py-2"
+                    title={selectedColor.name}
+                  >
+                    <ColorSwatch color={selectedColor} className="size-5" />
+                    <span className="text-xs text-muted-foreground">
+                      {selectedColor.hexCode
+                        ? `#${selectedColor.hexCode}`
+                        : selectedColor.swatchImageUrl
+                          ? "Image swatch"
+                          : "No swatch"}
+                    </span>
+                  </div>
+                )}
+              </div>
+            </div>
 
-          <div className="flex flex-col gap-2">
-            <Label htmlFor="variant-size">Size</Label>
-            <Select
-              value={selectedSize}
-              onValueChange={(value) => setSelectedSize(value ?? "")}
-            >
-              <SelectTrigger id="variant-size" className="w-full">
-                <SelectValue placeholder="Select a size" />
-              </SelectTrigger>
-              <SelectContent>
-                {sizeOptions.map((option) => (
-                  <SelectItem key={option} value={String(option)}>
-                    {clothingSizeLabels[option]}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
+            <div className="flex flex-col gap-2">
+              <Label htmlFor="variant-size">Size</Label>
+              <Select
+                value={selectedSize}
+                onValueChange={(value) => setSelectedSize(value ?? "")}
+              >
+                <SelectTrigger id="variant-size" className="w-full">
+                  <SelectValue placeholder="Select a size">
+                    {(value) =>
+                      value
+                        ? clothingSizeLabels[Number(value) as ClothingSizeEnum]
+                        : "Select a size"
+                    }
+                  </SelectValue>
+                </SelectTrigger>
+                <SelectContent>
+                  {sizeOptions.map((option) => (
+                    <SelectItem key={option} value={String(option)}>
+                      {clothingSizeLabels[option]}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
           </div>
 
           {hasBothSelected && (
