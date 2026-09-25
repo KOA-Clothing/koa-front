@@ -39,9 +39,12 @@ Shop/admin storefront against a .NET API. App Router, Next.js 16 (see block abov
 - Repo ships local OpenCode design/UI skills (banner-design, brand, design, design-system, slides, ui-styling, ui-ux-pro-max) under `.opencode/skills/` — reuse them for UI work before writing fresh styles.
 
 ## UI Implementation Rules
-CRITICAL: Before changing, adding, or refactoring any user-facing component or route, you must read the `DESIGN.md` file in the root directory. 
+
+**CRITICAL:** Before changing, adding, or refactoring any user-facing component or route, read `DESIGN.md` from the repository root in full.
 
 Instructions:
-- Use your file reading tool to inspect `DESIGN.md` as the visual source of truth.
-- Preserve existing primitives defined in the system.
-- Match generated styles strictly against the layout rules provided there.
+- Treat `DESIGN.md` as the source of truth for visual style, layout, responsive behavior, and component states.
+- Keep `AGENTS.md` focused on architecture and engineering rules; put durable styling decisions in `DESIGN.md`.
+- Preserve the existing design tokens, primitives, and established component patterns before introducing anything new.
+- Match generated styles strictly against the rules in `DESIGN.md`; do not create an isolated visual treatment for a single route.
+- When introducing a reusable visual decision, update `DESIGN.md` in the same change.
