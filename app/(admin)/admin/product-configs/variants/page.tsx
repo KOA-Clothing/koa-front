@@ -14,8 +14,10 @@ import { useServerTableParams } from "@/hooks/use-server-table-params";
 import { ProductVariantDto, ProductVariantsCollectionDto } from "@/types/product-variant";
 import { ScissorsLineDashed } from "lucide-react";
 import { getProductVariantColumns } from "./columns";
+import { useRouter } from "next/navigation";
 
 export default function ProductVariantsPage() {
+  const router = useRouter();
   const { pagination, setPagination, search, setSearch } = useServerTableParams();
   const searchField = useSearchField({ value: search, onCommit: setSearch });
   const { data, isLoading } = useProductVariants(pagination, search);
@@ -55,6 +57,10 @@ export default function ProductVariantsPage() {
     );
   };
 
+  const handleBaseProductView = (variant: ProductVariantsCollectionDto) => {
+    router.push(`/admin/product-configs/base-products?search=${encodeURIComponent(variant.name)}`);
+  }
+
   return (
     <div className="flex flex-col gap-4">
       <PageHeader
@@ -73,7 +79,8 @@ export default function ProductVariantsPage() {
       <KoaTable
         columns={getProductVariantColumns({
           onView: setProductToView,
-          onCreate: setProductToCreate
+          onCreate: setProductToCreate,
+          onBaseProductView: handleBaseProductView
         })}
         data={data?.items ?? []}
         rowCount={data?.totalRecords ?? 0}

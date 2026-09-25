@@ -8,7 +8,7 @@ import { clothingSizeBadgeStyles } from "@/lib/configs/enum-badge-styles";
 import { createDataTableColumnHelper } from "@/lib/configs/table-configs";
 import { clothingSizeLabels } from "@/types/enum-labels";
 import { ProductVariantsCollectionDto } from "@/types/product-variant";
-import { CirclePlus, Eye } from "lucide-react";
+import { Baseline, CirclePlus, Eye, ScissorsLineDashed } from "lucide-react";
 
 const columnHelper = createDataTableColumnHelper<ProductVariantsCollectionDto>();
 
@@ -26,9 +26,10 @@ function distinctBy<T>(items: T[], key: (item: T) => unknown): T[] {
 interface ProductVariantsColumnActions {
   onView: (product: ProductVariantsCollectionDto) => void;
   onCreate: (product: ProductVariantsCollectionDto) => void;
+  onBaseProductView: (product: ProductVariantsCollectionDto) => void;
 }
 
-export function getProductVariantColumns({ onView, onCreate }: ProductVariantsColumnActions) {
+export function getProductVariantColumns({ onView, onCreate, onBaseProductView }: ProductVariantsColumnActions) {
   return columnHelper.columns([
     columnHelper.accessor("name", {
       header: () => <div className="text-center">Product Name</div>,
@@ -113,6 +114,15 @@ export function getProductVariantColumns({ onView, onCreate }: ProductVariantsCo
           >
             <CirclePlus className="size-3.5" />
             <span className="sr-only">Create variant</span>
+          </Button>
+          <Button
+            variant="ghost"
+            size="icon-sm"
+            onClick={() => onBaseProductView(row.original)}
+            title="View Base Product"
+          >
+            <Baseline className="size-3.5" />
+            <span className="sr-only">View Base Product</span>
           </Button>
         </div>
       ),
