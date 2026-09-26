@@ -11,6 +11,7 @@ import { useProductVariantMutations } from "@/features/product-variant/hooks/use
 import { useProductVariants } from "@/features/product-variant/hooks/use-product-variants";
 import { useSearchField } from "@/hooks/use-search-field";
 import { useServerTableParams } from "@/hooks/use-server-table-params";
+import { adminListHrefs } from "@/lib/configs/page-routes";
 import { ProductVariantDto, ProductVariantsCollectionDto } from "@/types/product-variant";
 import { ScissorsLineDashed } from "lucide-react";
 import { getProductVariantColumns } from "./columns";
@@ -57,9 +58,11 @@ export default function ProductVariantsPage() {
     );
   };
 
-  const handleBaseProductView = (variant: ProductVariantsCollectionDto) => {
-    router.push(`/admin/product-configs/base-products?search=${encodeURIComponent(variant.name)}`);
-  }
+  const handleBaseProductView = (product: ProductVariantsCollectionDto) => {
+    // `productId` here is the base product's own id - the collection is a
+    // product with its variants nested, not a variant.
+    router.push(adminListHrefs.baseProducts({ productId: product.id }));
+  };
 
   return (
     <div className="flex flex-col gap-4">
