@@ -9,6 +9,7 @@ export const PAGE_ROUTES = {
     PRODUCT_VARIANTS: "/admin/product-configs/variants",
     CATEGORIES: "/admin/facets/category",
     DESIGNS: "/admin/facets/design",
+    COLORS: "/admin/facets/color",
   },
 } as const;
 
@@ -46,4 +47,6 @@ export const adminListHrefs = {
     withQuery(PAGE_ROUTES.ADMIN.CATEGORIES, params),
   designs: (params: { designId?: string } = {}) =>
     withQuery(PAGE_ROUTES.ADMIN.DESIGNS, params),
+  colors: (params: { colorId?: string } = {}) =>
+    withQuery(PAGE_ROUTES.ADMIN.COLORS, params),
 };
