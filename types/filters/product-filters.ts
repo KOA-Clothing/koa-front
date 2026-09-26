@@ -8,8 +8,10 @@ import {
   type ProductStatus,
 } from "../enums";
 import {
+  BOOLEAN_OPTIONS,
   booleanParser,
   enumParser,
+  formatBoolean,
   guidParser,
   toOptions,
   type FilterSpecs,
@@ -37,13 +39,6 @@ export interface ProductFilters {
   /** Tri-state: unset shows both featured and non-featured products. */
   isFeatured?: boolean;
 }
-
-const BOOLEAN_OPTIONS = [
-  { value: true, label: "True" },
-  { value: false, label: "False" },
-] as const;
-
-const formatBoolean = (value: boolean) => (value ? "True" : "False");
 
 /**
  * Runtime metadata for `ProductFilters`. Keep this at module level — a stable

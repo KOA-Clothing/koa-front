@@ -107,6 +107,21 @@ export function booleanParser(raw: string): boolean | null {
   return null;
 }
 
+/**
+ * The option list for any boolean filter, and its display text.
+ *
+ * Shared so every route's boolean control reads the same way. Kept next to
+ * `booleanParser` because the three must agree: an option list and a formatter
+ * that disagree produce a control whose trigger text doesn't match its own
+ * dropdown.
+ */
+export const BOOLEAN_OPTIONS = [
+  { value: true, label: "True" },
+  { value: false, label: "False" },
+] as const;
+
+export const formatBoolean = (value: boolean) => (value ? "True" : "False");
+
 /** Turns an existing `Record<Enum, string>` label map into select options. */
 export function toOptions<V extends number>(labels: Record<V, string>) {
   return (Object.entries(labels) as [string, string][]).map(([value, label]) => ({
