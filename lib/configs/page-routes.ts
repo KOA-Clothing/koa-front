@@ -8,6 +8,7 @@ export const PAGE_ROUTES = {
     BASE_PRODUCTS: "/admin/product-configs/base-products",
     PRODUCT_VARIANTS: "/admin/product-configs/variants",
     CATEGORIES: "/admin/facets/category",
+    DESIGNS: "/admin/facets/design",
   },
 } as const;
 
@@ -43,4 +44,6 @@ export const adminListHrefs = {
     withQuery(PAGE_ROUTES.ADMIN.PRODUCT_VARIANTS, params),
   categories: (params: { categoryId?: string } = {}) =>
     withQuery(PAGE_ROUTES.ADMIN.CATEGORIES, params),
+  designs: (params: { designId?: string } = {}) =>
+    withQuery(PAGE_ROUTES.ADMIN.DESIGNS, params),
 };
