@@ -10,7 +10,7 @@ import {
   SidebarHeader,
   SidebarRail,
 } from "@/components/ui/sidebar"
-import { TerminalSquareIcon, Columns3Cog, Shirt, Palette, DraftingCompass, ShelvingUnit, ChartLine, ChartLineIcon, ChartSpline, StickyNote, PersonStanding, TimerReset, ScissorsLineDashed, Scissors, UserRound, Users, FileCode, FileCog, Bolt, Images, BookImage, SwatchBook, Baseline } from "lucide-react"
+import { Columns3Cog, Shirt, Palette, DraftingCompass, ShelvingUnit, ChartSpline, StickyNote, TimerReset, Users, BookImage, SwatchBook, Baseline } from "lucide-react"
 import { CompanyHeader } from "./company-header"
 import { NavSingle } from "./nav-single"
 

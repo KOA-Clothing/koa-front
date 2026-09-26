@@ -21,6 +21,8 @@ import DeleteProductConfirmationModal from "@/components/admin/product/modals/de
 import UpdateProductModal from "@/components/admin/product/modals/update-product-modal";
 import ViewProductModal from "@/components/admin/product/modals/view-product-modal";
 import ManageLinkedDesignsModal from "@/components/admin/product/modals/manage-linked-designs-modal";
+import { useRouter } from "next/navigation";
+import { adminListHrefs } from "@/lib/configs/page-routes";
 
 export default function BaseProductsPage() {
   const {
@@ -33,6 +35,7 @@ export default function BaseProductsPage() {
     clearFilters,
     hasActiveFilters,
   } = useServerTableParams({ filters: productFilterSpecs });
+  const router = useRouter();
   const searchField = useSearchField({ value: search, onCommit: setSearch });
 
   const [isCreateOpen, setIsCreateOpen] = useState(false);
@@ -71,6 +74,14 @@ export default function BaseProductsPage() {
 
   const handleManageLinkedDesigns = (product: ProductDto) => {
     setProductToManageDesigns(product);
+  }
+
+  const handleVariantsView = (product: ProductDto) => {
+    router.push(adminListHrefs.productVariants({ productId: product.id }));
+  }
+
+  const handleCategoryView = (product: ProductDto) => {
+    router.push(adminListHrefs.categories({ categoryId: product.category.id }));
   }
 
   /**
@@ -125,7 +136,9 @@ export default function BaseProductsPage() {
           onChangeGender: handleChangeGender,
           onChangeAgeGroup: handleChangeAgeGroup,
           onChangeProductStatus: handleChangeProductStatus,
-          manageLinkedDesigns: handleManageLinkedDesigns
+          manageLinkedDesigns: handleManageLinkedDesigns,
+          onVariantsView: handleVariantsView,
+          onCategoryView: handleCategoryView
         })}
         data={data?.items ?? []}
         rowCount={data?.totalRecords ?? 0}

@@ -9,7 +9,7 @@ import {
   productStatusLabels,
 } from "@/types/enum-labels";
 import { AgeGroupEnum, GenderEnum, ProductStatusEnum } from "@/types/enums";
-import { DraftingCompass, ExternalLink, Eye, Pencil, Trash2 } from "lucide-react";
+import { DraftingCompass, ExternalLink, Eye, Notebook, Pencil, StickyNote, SwatchBook, Trash2 } from "lucide-react";
 import Link from "next/link";
 import { KoaSwitch } from "@/components/general/koa-switch";
 import KoaEnumChanger from "@/components/general/koa-enum-changer";
@@ -29,6 +29,8 @@ interface BaseProductColumnActions {
   onChangeAgeGroup: (product: ProductDto, ageGroup: AgeGroupEnum) => void;
   onChangeProductStatus: (product: ProductDto, status: ProductStatusEnum) => void;
   manageLinkedDesigns: (product: ProductDto) => void;
+  onVariantsView: (product: ProductDto) => void;
+  onCategoryView: (product: ProductDto) => void;
 }
 
 const columnHelper = createDataTableColumnHelper<ProductDto>();
@@ -42,7 +44,7 @@ export function getProductColumns({
     onEdit, onDelete, onView, 
     toggleFeaturedStatus, toggleActiveStatus, 
     onChangeGender, onChangeAgeGroup, 
-    onChangeProductStatus, manageLinkedDesigns }: BaseProductColumnActions) {
+    onChangeProductStatus, manageLinkedDesigns, onVariantsView, onCategoryView }: BaseProductColumnActions) {
   return columnHelper.columns([
     columnHelper.accessor("name", {
       header: () => <div className="text-center">Name</div>,
@@ -197,6 +199,26 @@ export function getProductColumns({
           >
             <DraftingCompass className="size-3.5" />
             <span className="sr-only">Manage linked designs</span>
+          </Button>
+
+          <Button
+            variant="ghost"
+            size="icon-sm"
+            onClick={() => onVariantsView(row.original)}
+            title="View product variants"
+          >
+            <SwatchBook className="size-3.5" />
+            <span className="sr-only">View product variants</span>
+          </Button>
+
+          <Button
+            variant="ghost"
+            size="icon-sm"
+            onClick={() => onCategoryView(row.original)}
+            title="View category"
+          >
+            <StickyNote className="size-3.5" />
+            <span className="sr-only">View category</span>
           </Button>
 
           <Button
