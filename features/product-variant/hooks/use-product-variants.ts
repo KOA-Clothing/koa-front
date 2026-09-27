@@ -1,16 +1,16 @@
 "use client";
 
 import { useQuery } from "@tanstack/react-query";
-import type { PaginationState } from "@tanstack/react-table";
 import { useAxiosClient } from "@/hooks/use-api-client";
 import { API_ROUTES } from "@/lib/configs/api-routes";
 import { paginatedListSchema } from "@/types/api-response";
 import type { ClothingSize } from "@/types/enums";
+import type { ProductVariantFilters } from "@/types/filters/product-variant-filters";
 import {
   CheckVariationExistsResponseSchema,
   ProductVariantsCollectionDtoSchema,
 } from "@/types/product-variant";
-import { toApiPageParams } from "@/types/pagination";
+import { toApiListParams, type ListParams } from "@/types/pagination";
 import { queryKeys } from "@/lib/api/query-keys";
 
 const productVariantsListSchema = paginatedListSchema(
@@ -19,21 +19,24 @@ const productVariantsListSchema = paginatedListSchema(
 
 /**
  * Server-paginated list of products grouped with their variants.
- * `search` is sent as the `?search=` API param.
+ *
+ * Takes the whole request as one `ListParams` object (pagination + `search` +
+ * this route's filter bag) so adding a filter to `ProductVariantFilters` doesn't
+ * change this signature. `toApiListParams` resolves it to the .NET endpoint's
+ * query params and doubles as the query key, so two different filter
+ * combinations can never share a cache entry.
  */
-export function useProductVariants(
-  pagination: PaginationState,
-  search: string
-) {
+export function useProductVariants(params: ListParams<ProductVariantFilters>) {
   const axiosClient = useAxiosClient();
+  const apiParams = toApiListParams(params);
 
   return useQuery({
-    queryKey: queryKeys.productVariants.list({ pagination, search }),
+    queryKey: queryKeys.productVariants.list(apiParams),
     queryFn: async () => {
       const response = await axiosClient.get(
         API_ROUTES.PRODUCT_VARIANTS.BASE,
         {
-          params: toApiPageParams(pagination, search),
+          params: apiParams,
         }
       );
       return productVariantsListSchema.parse(response.data);

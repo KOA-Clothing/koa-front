@@ -20,7 +20,7 @@ Shop/admin storefront against a .NET API (`../koa-api`, sibling repo). App Route
 - `npm run lint` / `npm run lint:fix` — ESLint (flat config, `eslint.config.mjs`; only `eslint-config-next`, no extra plugins).
 - `npm run build` — production build; runs typecheck but **not** lint (Next 16 removed linting from `next build`).
 - **No test framework and no CI** (no `.github/`, no `test` script, no runner in devDependencies). Verify with `npx tsc --noEmit` + `npm run lint`.
-- Lint does **not** pass clean, and isn't meant to. Baseline is **15 errors / 46 warnings, all errors `@typescript-eslint/no-require-imports`**. Compare against that number instead of expecting zero; a green run means you fixed something unrelated. The warnings are mostly `no-unused-vars` on pre-existing unused imports in the facet pages.
+- Lint does **not** pass clean, and isn't meant to. Baseline is **15 errors / 37 warnings, all errors `@typescript-eslint/no-require-imports`**. Compare against that number instead of expecting zero; a green run means you fixed something unrelated. The warnings are all pre-existing `no-unused-vars` on unused imports in `components/ui/sidebar.tsx`, the category/design facet pages, and a few marketing pages.
 
 For pure-logic checks (filter parsers, param serialization) there is no test runner — write a throwaway `__verify.ts` and run it with `node --experimental-transform-types`, plus a small `node:module` `register()` hook that resolves extensionless relative imports (and `@/` → repo root) since the repo has no such resolver. Delete both afterwards. This is how the filter system was verified; it's the only option here.
 
@@ -62,7 +62,13 @@ Do not re-implement any of this; import it.
 
 ### Recipe — adding filters to a list route
 
-Done for `base-products` (productId, gender, ageGroup, status, isActive, isFeatured), `facets/category` (categoryId, isActive) and `facets/design` (designId, isActive). Copy the nearest of those.
+**Every** server-paginated admin table is migrated — there is no legacy `useX(pagination, search)` hook left, and `toApiPageParams` has been deleted so there's only one way to build list params.
+
+- `base-products` — productId, gender, ageGroup, status, isActive, isFeatured (**richest example**)
+- `facets/category` (categoryId, isActive), `facets/design` (designId, isActive), `facets/color` (colorId, isActive) — **nearest example for a simple id + boolean route**
+- `product-configs/variants` (productId, colorId, size) — the one route whose rows are products with nested variants; see "semi-joins" below
+
+Copy the nearest of those.
 
 1. **`types/filters/<route>-filters.ts`** — export the bag interface (`<Route>Filters`, all members optional) and a **module-level** `<route>FilterSpecs` object. `as const satisfies FilterSpecs<Bag>`.
 2. **`components/admin/<domain>/filters/<route>-filter-controls.tsx`** — the route's controls, rendered as the `children` of `KoaAdminFiltersBar`. Derive the prop types from the specs (`SpecsToBag<typeof specs>`) instead of restating them.
@@ -83,6 +89,8 @@ Reusable pieces (never route-specific): `KoaAdminFiltersBar` (filter-blind shell
 - **The filter bar's Clear must not clear `search`.** They're independent controls that happen to feed one request.
 - **Select option values are strings.** `toSelectOptions()` stringifies spec option values and the route stringifies the bag value, so the label lookup in `KoaFilterSelect` compares strings on both sides. Keep both sides stringified.
 - **Id filters are navigation, not exploration** — set by a deep link from another page, so they get no control, only `KoaIdFilterIndicator` while active. Resolve their display label for free from the list response by **matching on id, not row index**, so a stale `placeholderData` page can't name the wrong record for a frame.
+- **`spec.options` is a static list only.** It's for enums (`toOptions(labelMap)`) and the shared booleans. A filter whose options come from an API call (variants' `colorId`, from `useActiveColors`) must **omit** `options` from its spec and build the list in the controls component — a spec is a plain `.ts` data object and can't call a hook. Don't "fix" this by making `options` a loader.
+- **Know what a row actually is before writing a filter.** On `product-configs/variants` a row is a *product* with `variants[]` nested, so `colorId`/`size` are semi-joins. They are defined as **independent existence checks** (product has ≥1 variant in that color AND ≥1 in that size), not "one variant matches both" — the stricter reading would hide a product stocked Navy/M + Black/L when filtering Navy+L. `types/filters/product-variant-filters.ts` documents this at the top; **the backend must implement the same reading.**
 
 ### Backend contract (`../koa-api`)
 
@@ -91,12 +99,14 @@ Reusable pieces (never route-specific): `KoaAdminFiltersBar` (filter-blind shell
 - Adding an unrecognised query param is ignored by model binding, so the page won't error before the backend lands — it just won't filter.
 - Soft delete is a **global query filter** (`ApplicationDbContext.OnModelCreating`), so an id filter on a soft-deleted row correctly yields an empty page; no extra `DeletedAt` clause needed.
 - Filtering belongs *before* `CountAsync` in the repository so `TotalCount` reflects the filters.
+- The variants endpoint returns `ProductVariantsCollectionDto[]` (products with *nested* variants), so `colorId`/`size` are semi-joins and need `.Any(v => v.ColorId == colorId)`-style predicates in the repository. Read the semantics note in `types/filters/product-variant-filters.ts` before writing them.
+- Only `/colors/all-active` exists — no "all colors" endpoint — so the variants color filter can only offer *active* colors. Filtering by a deactivated color isn't possible until the backend adds one.
 
-### Not done yet
+### Open / known gaps
 
-- `facets/color` and `product-configs/variants` still use the legacy `useX(pagination, search)` + `toApiPageParams` signature (which stays until they're migrated). Variants will need `colorId` + `size`.
-- **Open backend question for variants:** that endpoint returns `ProductVariantsCollectionDto[]` (products with *nested* variants), so `colorId`/`size` are semi-joins — unclear whether color+size must AND on a *single* variant or be intersected across the product's variants. Settle this before writing the filter.
-- `adminListHrefs.categories()` / `.designs()` have no callers yet — those `categoryId`/`designId` filters are currently only reachable by hand-editing the URL. `adminListHrefs.baseProducts()` is used by the variants page's "View Base Product" button.
+- **None of these filters are backed by the backend yet.** The front end is complete for all six routes; unrecognised query params are ignored by model binding, so pages render fine and simply don't filter. The backend work is the user's, in `../koa-api` — guidance above.
+- `adminListHrefs.designs()` is the only builder with no caller, so the `designId` filter is only reachable by hand-editing the URL. The other four are wired: `baseProducts` ← variants "View Base Product", `productVariants` ← base-products actions, `categories` ← base-products actions, `colors` ← `koa-product-variant-item.tsx`.
+- Admin filter bars have never been visually verified — `app/(admin)/layout.tsx` Clerk-gates server-side, so bar wrapping on narrow viewports is unconfirmed. The user has to eyeball it.
 
 ## UI Implementation Rules
 
