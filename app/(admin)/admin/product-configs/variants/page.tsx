@@ -16,7 +16,7 @@ import { useServerTableParams } from "@/hooks/use-server-table-params";
 import { adminListHrefs } from "@/lib/configs/page-routes";
 import { productVariantFilterSpecs } from "@/types/filters/product-variant-filters";
 import { ProductVariantDto, ProductVariantsCollectionDto } from "@/types/product-variant";
-import { ScissorsLineDashed } from "lucide-react";
+import { SwatchBook } from "lucide-react";
 import { getProductVariantColumns } from "./columns";
 import { useRouter } from "next/navigation";
 
@@ -93,7 +93,7 @@ export default function ProductVariantsPage() {
       <PageHeader
         title={"Product Variants"}
         description={"Every size/color variation of a base product, grouped per product."}
-        icon={<ScissorsLineDashed />}
+        icon={<SwatchBook />}
       />
 
       <div className="flex flex-col gap-3">
