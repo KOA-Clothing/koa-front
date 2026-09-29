@@ -10,7 +10,7 @@ import {
   SidebarHeader,
   SidebarRail,
 } from "@/components/ui/sidebar"
-import { DraftingCompass, ShelvingUnit, ChartSpline, TimerReset, Users, BookImage, SwatchBook, FileCog, PaintBucket, File } from "lucide-react"
+import { ShelvingUnit, ChartSpline, TimerReset, Users, BookImage, SwatchBook, FileCog, PaintBucket, File, SplinePointer } from "lucide-react"
 import { CompanyHeader } from "./company-header"
 import { NavSingle } from "./nav-single"
 import { BaseShirtIcon } from "@/components/general/custom-icons/base-shirt-icon"
@@ -76,7 +76,7 @@ const data = {
         {
           title: "Designs",
           url: "/admin/facets/design",
-          icon: (<DraftingCompass/>)
+          icon: (<SplinePointer/>)
         },
         {
           title: "Colors",

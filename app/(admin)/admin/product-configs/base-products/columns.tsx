@@ -9,7 +9,7 @@ import {
   productStatusLabels,
 } from "@/types/enum-labels";
 import { AgeGroupEnum, GenderEnum, ProductStatusEnum } from "@/types/enums";
-import { DraftingCompass, ExternalLink, Eye, File, Pencil, SwatchBook, Trash2 } from "lucide-react";
+import { ExternalLink, Eye, File, Pencil, SplinePointer, SwatchBook, Trash2 } from "lucide-react";
 import Link from "next/link";
 import { KoaSwitch } from "@/components/general/koa-switch";
 import KoaEnumChanger from "@/components/general/koa-enum-changer";
@@ -197,7 +197,7 @@ export function getProductColumns({
             onClick={() => manageLinkedDesigns(row.original)}
             title="Manage linked designs"
           >
-            <DraftingCompass className="size-3.5" />
+            <SplinePointer className="size-3.5" />
             <span className="sr-only">Manage linked designs</span>
           </Button>
 
