@@ -9,7 +9,7 @@ import { getColorColumns } from "./columns";
 import { ColorDto } from "@/types/color";
 import { colorFilterSpecs } from "@/types/filters/color-filters";
 import { KoaTable } from "@/components/general/table/koa-table";
-import { Palette } from "lucide-react";
+import { PaintBucket } from "lucide-react";
 import { PageHeader } from "@/components/admin/page-header";
 import KoaAdminSearchBar from "@/components/admin/koa-admin-searchbar";
 import KoaAdminFiltersBar from "@/components/admin/koa-admin-filters-bar";
@@ -60,7 +60,7 @@ export default function ColorPage() {
       <PageHeader
         title={"Color"}
         description={"The visual colorway of an apparel item, defined by its hex code or swatch image."}
-        icon={<Palette />}
+        icon={<PaintBucket />}
       />
 
       <div className="flex flex-col gap-3">

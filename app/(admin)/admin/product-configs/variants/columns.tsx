@@ -1,5 +1,6 @@
 "use client";
 
+import { BaseShirtIcon } from "@/components/general/custom-icons/base-shirt-icon";
 import ColorSwatch from "@/components/general/koa-color-badge";
 import KoaEnumBadge from "@/components/general/koa-enum-badge";
 import { Badge } from "@/components/ui/badge";
@@ -121,7 +122,7 @@ export function getProductVariantColumns({ onView, onCreate, onBaseProductView }
             onClick={() => onBaseProductView(row.original)}
             title="View Base Product"
           >
-            <Baseline className="size-3.5" />
+            <BaseShirtIcon className="size-3.5" />
             <span className="sr-only">View Base Product</span>
           </Button>
         </div>

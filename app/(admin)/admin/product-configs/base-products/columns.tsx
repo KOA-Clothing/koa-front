@@ -9,7 +9,7 @@ import {
   productStatusLabels,
 } from "@/types/enum-labels";
 import { AgeGroupEnum, GenderEnum, ProductStatusEnum } from "@/types/enums";
-import { DraftingCompass, ExternalLink, Eye, Notebook, Pencil, StickyNote, SwatchBook, Trash2 } from "lucide-react";
+import { DraftingCompass, ExternalLink, Eye, File, Pencil, SwatchBook, Trash2 } from "lucide-react";
 import Link from "next/link";
 import { KoaSwitch } from "@/components/general/koa-switch";
 import KoaEnumChanger from "@/components/general/koa-enum-changer";
@@ -217,7 +217,7 @@ export function getProductColumns({
             onClick={() => onCategoryView(row.original)}
             title="View category"
           >
-            <StickyNote className="size-3.5" />
+            <File className="size-3.5" />
             <span className="sr-only">View category</span>
           </Button>
 

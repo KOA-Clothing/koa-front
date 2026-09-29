@@ -1,5 +1,5 @@
 import { Button } from "@/components/ui/button";
-import { PaintBucket, Palette, X } from "lucide-react";
+import { PaintBucket, X } from "lucide-react";
 import ColorSwatch from "@/components/general/koa-color-badge";
 import KoaEnumBadge from "@/components/general/koa-enum-badge";
 import { KoaSwitch } from "@/components/general/koa-switch";
@@ -51,7 +51,7 @@ export default function KoaProductVariantItem({
             onClick={handleViewColor}
             title="View category"
           >
-            <Palette className="size-3.5" />
+            <PaintBucket className="size-3.5" />
             <span className="sr-only">View color</span>
           </Button>
           <ItemTitle>{variant.color.name}</ItemTitle>

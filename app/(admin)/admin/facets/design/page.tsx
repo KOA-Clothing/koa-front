@@ -9,12 +9,9 @@ import { getDesignColumns } from "./columns";
 import { DesignDto } from "@/types/design";
 import { designFilterSpecs } from "@/types/filters/design-filters";
 import { KoaTable } from "@/components/general/table/koa-table";
-import { RotateCcw, Palette } from "lucide-react";
+import { PaintBucket } from "lucide-react";
 import { PageHeader } from "@/components/admin/page-header";
-import { Input } from "@/components/ui/input";
 import { AddNewButton } from "@/components/general/add-new-button";
-import { Item, ItemContent } from "@/components/ui/item";
-import { Button } from "@/components/ui/button";
 import CreateDesignModal from "@/components/admin/design/modals/create-design-modal";
 import DeleteDesignConfirmationModal from "@/components/admin/design/modals/delete-design-confirmation-modal";
 import UpdateDesignModal from "@/components/admin/design/modals/update-design-modal";
@@ -63,7 +60,7 @@ export default function DesignsPage() {
       <PageHeader
         title={"Design"}
         description={"The visual pattern, artwork, or print applied to a garment."}
-        icon={<Palette />}
+        icon={<PaintBucket />}
       />
 
       <div className="flex flex-col gap-3">
