@@ -37,6 +37,19 @@ export function getProductVariantColumns({ onView, onCreate, onBaseProductView }
       enableSorting: true,
     }),
     columnHelper.display({
+      id: "availableVariantCount",
+      header: () => <div className="text-center">Total Variant Count</div>,
+      cell: ({ row }) => {
+        
+        return (
+          <div className="text-center">
+            {row.original.variants.length}
+          </div>
+        );
+      },
+      enableSorting: false,
+    }),
+    columnHelper.display({
       id: "availableSizes",
       header: () => <div className="text-center">Available Sizes</div>,
       cell: ({ row }) => {
@@ -52,7 +65,7 @@ export function getProductVariantColumns({ onView, onCreate, onBaseProductView }
         }
 
         return (
-          <div className="flex flex-wrap items-center justify-center gap-1.5">
+          <div className="grid grid-cols-4 gap-1.5 place-items-center justify-center max-w-fit mx-auto">
             {sizes.map((size) => (
               <KoaEnumBadge
                 key={size}
