@@ -10,9 +10,13 @@ import { useSearchField } from "@/hooks/use-search-field";
 import { useServerTableParams } from "@/hooks/use-server-table-params";
 import { adminHrefs, adminListHrefs } from "@/lib/configs/page-routes";
 import { ProductImageTableDetailsDto } from "@/types/product-image";
+import type { ColorDto } from "@/types/color";
 import { BookImage } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { getProductImageColumns } from "./columns";
+
+/** Stable empty list, so the modal's `availableColors` prop never changes identity. */
+const EMPTY_COLORS: ColorDto[] = [];
 
 export default function ProductImagesPage() {
   const router = useRouter();
@@ -73,6 +77,9 @@ export default function ProductImagesPage() {
 
       <CreateProductImageModal
         product={productToCreate}
+        // The row already carries the product's variant colors, so the modal makes
+        // no request of its own here — the cheapest of the two callers.
+        availableColors={productToCreate?.availableColors ?? EMPTY_COLORS}
         onOpenChange={(open) => {
           if (!open) setProductToCreate(null);
         }}

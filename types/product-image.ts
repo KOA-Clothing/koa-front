@@ -24,6 +24,17 @@ export type ProductImageDto = z.infer<typeof ProductImageDtoSchema>;
  *
  * A *product* with its images nested, not an image. `id` is therefore the
  * product's own id, which is what "View Base Product" navigates with.
+ *
+ * Deliberately carries no color list. Each image already names its own
+ * `color`, and the colors a product is *stocked in* are variant data — a
+ * different concern from its images. The "Add image" modal needs that list, but
+ * it asks for it directly via `useProductColors(productId)`, keyed off
+ * `/colors/by-product/{productId}`.
+ *
+ * That is also the only correct source: `images[].color` is a **subset** of the
+ * product's variant colors. A product with a Navy variant and no Navy shot yet
+ * would offer no Navy at all, which is precisely the shot an admin needs to
+ * upload.
  */
 export const ProductImagesCollectionDtoSchema = z.object({
   id: z.string(), // Product Id
@@ -31,9 +42,7 @@ export const ProductImagesCollectionDtoSchema = z.object({
   images: z.array(ProductImageDtoSchema),
 });
 
-export type ProductImagesCollectionDto = z.infer<
-  typeof ProductImagesCollectionDtoSchema
->;
+export type ProductImagesCollectionDto = z.infer<typeof ProductImagesCollectionDtoSchema>;
 
 /**
  * `ProductImageTableDetailsDto` — one row of the product-images table.
@@ -51,9 +60,7 @@ export const ProductImageTableDetailsDtoSchema = z.object({
   availableColors: z.array(ColorDtoSchema),
 });
 
-export type ProductImageTableDetailsDto = z.infer<
-  typeof ProductImageTableDetailsDtoSchema
->;
+export type ProductImageTableDetailsDto = z.infer<typeof ProductImageTableDetailsDtoSchema>;
 
 /**
  * Payload for `POST /api/v1/product-images` — mirrors

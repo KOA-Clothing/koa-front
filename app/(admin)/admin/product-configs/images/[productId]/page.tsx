@@ -7,6 +7,7 @@ import { BaseShirtIcon } from "@/components/general/custom-icons/base-shirt-icon
 import KoaProductImageItem from "@/components/general/koa-product-image-item";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
+import { useProductColors } from "@/features/color/hooks/use-colors";
 import { useProductImagesByProduct } from "@/features/product-image/hooks/use-product-images";
 import { getErrorMessage, isNotFoundError } from "@/lib/api/errors";
 import {
@@ -14,12 +15,16 @@ import {
   PAGE_ROUTES,
 } from "@/lib/configs/page-routes";
 import { ProductImageDto } from "@/types/product-image";
+import type { ColorDto } from "@/types/color";
 import { BookImage, ChevronLeft, ImageOff, ImagePlus } from "lucide-react";
 import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
 
 /** Cards per row: one on mobile, widening to four on very wide screens. */
 const GALLERY_GRID = "grid gap-4 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4";
+
+/** Stable empty list, so the modal's `availableColors` prop never changes identity. */
+const EMPTY_COLORS: ColorDto[] = [];
 
 /** How many placeholder cards to draw while the request is in flight. */
 const SKELETON_COUNT = 8;
@@ -45,6 +50,13 @@ export default function ProductImagesDetailPage() {
   // The modal is driven by the product it's adding an image to, so opening it
   // is a single boolean rather than a subject + flag pair.
   const [isCreateOpen, setIsCreateOpen] = useState(false);
+
+  // The product's variant colors, for the modal's color select. Gated on the
+  // dialog being open: this page has no other use for them, and paying for the
+  // request on every gallery visit to populate a select nobody opened is the
+  // waste. The dialog still works while this is in flight — `colorId` is
+  // nullable, so an image can be added untagged and tagged later.
+  const productColors = useProductColors(productId, { enabled: isCreateOpen });
 
   // A product that exists with zero images comes back 200 + empty `images[]`, so
   // `isError` here means the id genuinely didn't resolve. Worth separating from
@@ -132,11 +144,16 @@ export default function ProductImagesDetailPage() {
       )}
 
       <CreateProductImageModal
-        // The gallery already holds the full collection, so the modal gets its
-        // product from here rather than refetching one just to show a name.
-        // The `&& product` guard matters: a cold mount has `product` undefined,
-        // and the button that opens this is disabled in that state anyway.
+        // The gallery already holds the collection, so the modal gets its product
+        // from here rather than refetching one just to show a name. The
+        // `&& product` guard matters: a cold mount has `product` undefined, and
+        // the button that opens this is disabled in that state anyway.
         product={isCreateOpen && product ? product : null}
+        // The collection carries no color list — the colors a product is stocked
+        // in are variant data. Fetched here and only while the dialog is open,
+        // so merely visiting a gallery costs no extra request. Cached per
+        // product, so reopening the dialog is free.
+        availableColors={productColors.data ?? EMPTY_COLORS}
         onOpenChange={setIsCreateOpen}
       />
     </div>

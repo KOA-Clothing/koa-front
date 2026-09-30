@@ -22,6 +22,8 @@ export const queryKeys = {
     list: (params: Record<string, unknown>) => ["colors", "list", params] as const,
     detail: (id: string) => ["colors", "detail", id] as const,
     active: ["colors", "active"] as const,
+    // Per product, so the caches of two products can never collide.
+    byProduct: (productId: string) => ["colors", "by-product", productId] as const,
   },
   products: {
     all: ["products"] as const,

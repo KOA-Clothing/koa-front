@@ -49,3 +49,36 @@ export function useActiveColors() {
     },
   });
 }
+
+/**
+ * The distinct colors a product has variants in — `GET /colors/by-product/{id}`.
+ *
+ * The scoped replacement for `useActiveColors` on any screen that edits one
+ * product. A global list lets an admin pick a colorway the product has no variant
+ * for, and a color-specific image on a product that isn't stocked in that color
+ * can never be selected on the storefront.
+ *
+ * A **superset** of the colors on a product's images: a product can be stocked in
+ * Navy and have no Navy shot yet. Deriving the same list from its images would
+ * hide exactly the colorway an admin opens this screen to upload a shot for.
+ *
+ * `enabled` is `false` while no product is in hand, so the hook is safe to call
+ * unconditionally. Callers that already hold the list (a table row carrying
+ * `availableColors`) should pass it down instead and not call this at all.
+ */
+export function useProductColors(productId: string | undefined, options?: { enabled?: boolean }) {
+  const axiosClient = useAxiosClient();
+
+  return useQuery({
+    queryKey: queryKeys.colors.byProduct(productId ?? ""),
+    enabled: !!productId && options?.enabled !== false,
+    queryFn: async () => {
+      // `enabled` above guarantees an id before this runs, but TypeScript can't
+      // follow that into the fetcher — so this is a real guard rather than a cast
+      // that would send a request to `/by-product/` if it were ever reached.
+      if (!productId) throw new Error("useProductColors requires a productId");
+      const response = await axiosClient.get(API_ROUTES.COLORS.BY_PRODUCT(productId));
+      return z.array(ColorDtoSchema).parse(response.data);
+    },
+  });
+}

@@ -16,10 +16,10 @@ import KoaModalCancelButton from "@/components/general/koa-modal-cancel-button";
 import KoaModalSaveButton from "@/components/general/koa-modal-save-button";
 import KoaSearchableSelect from "@/components/general/koa-searchable-select";
 import KoaTextArea from "@/components/general/koa-text-area";
-import { useActiveColors } from "@/features/color/hooks/use-colors";
 import { useProductImageMutations } from "@/features/product-image/hooks/use-product-image-mutations";
 import { getErrorMessage } from "@/lib/api/errors";
 import { uploadFileToPresignedUrl } from "@/lib/storage/direct-upload";
+import type { ColorDto } from "@/types/color";
 import {
   CreateProductImageInputSchema,
   emptyProductImageForm,
@@ -39,11 +39,25 @@ interface CreateProductImageModalProps {
    * Structural, not one of the product-image DTOs: the table row
    * (`ProductImageTableDetailsDto`) and the gallery's collection
    * (`ProductImagesCollectionDto`) are different shapes, and this modal needs
-   * only the product's id (the command's `ProductId`) and its name (the
-   * description line). Typing it this way lets both pages pass what they
-   * already hold without either one being reshaped to suit the other.
+   * the product's id (the command's `ProductId`) and its name (the description
+   * line). Typing it this way lets both pages pass the object they already hold,
+   * unreshaped.
    */
   product: { id: string; name: string } | null;
+  /**
+   * The colors this product is stocked in — the only colors an image here may be
+   * tagged with. Never the global color list: that lets an admin tag a shot with
+   * a colorway the product has no variant for.
+   *
+   * Required, and passed in rather than fetched, so the two callers can each use
+   * the cheaper source. The table row already carries `availableColors`, so the
+   * list page makes no request; the gallery page calls `useProductColors`, lazily,
+   * only when the modal is actually opened.
+   *
+   * An empty list is a real state (the product has no color variants), and the
+   * form still works — `colorId` is nullable, so the image saves untagged.
+   */
+  availableColors: ColorDto[];
   onOpenChange: (open: boolean) => void;
 }
 
@@ -58,9 +72,9 @@ interface CreateProductImageModalProps {
  */
 export default function CreateProductImageModal({
   product,
+  availableColors,
   onOpenChange,
 }: CreateProductImageModalProps) {
-  const { data: activeColors } = useActiveColors();
   const { create, requestProductImageUpload } = useProductImageMutations();
 
   const [form, setForm] = useState<ProductImageFormInput>(emptyProductImageForm);
@@ -72,7 +86,7 @@ export default function CreateProductImageModal({
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   // Reset the form whenever a different product opens the modal.
-  const [prevProduct, setPrevProduct] = useState<{ id: string; name: string } | null>(
+  const [prevProduct, setPrevProduct] = useState<CreateProductImageModalProps["product"]>(
     product
   );
   if (product && prevProduct !== product) {
@@ -84,13 +98,15 @@ export default function CreateProductImageModal({
     setFileError(null);
   }
 
-  const colorOptions = (activeColors ?? []).map((color) => ({
+  // Only the colors this product is actually stocked in. Offering the global
+  // `/colors/all-active` list let an admin tag a shot with a colorway the
+  // product has no variant for, producing an image that can never be selected
+  // on the storefront.
+  const colorOptions = availableColors.map((color) => ({
     value: color.id,
     label: color.name,
   }));
-  const selectedColor = activeColors?.find(
-    (color) => color.id === form.colorId
-  );
+  const selectedColor = availableColors.find((color) => color.id === form.colorId);
 
   const handleFieldChange = <K extends keyof ProductImageFormInput>(
     field: K,
@@ -213,7 +229,14 @@ export default function CreateProductImageModal({
                 onValueChange={(value) => handleFieldChange("colorId", value)}
                 options={colorOptions}
                 placeholder="Select a color..."
-                emptyText="No colors found."
+                // Cause-neutral on purpose: an empty list, a request still in
+                // flight and a failed request all look identical here, and only
+                // the first is something the admin can act on inside this dialog.
+                emptyText={
+                  availableColors.length === 0
+                    ? "No colors to choose from."
+                    : "No colors found."
+                }
               />
               {selectedColor && (
                 <div
@@ -231,9 +254,12 @@ export default function CreateProductImageModal({
                 </div>
               )}
             </div>
+            {/* Says *why* the list is what it is, rather than leaving an admin to
+                wonder whether the dropdown is broken. */}
             <span className="text-xs text-muted-foreground">
-              Tag the shot with a colorway when it is color-specific, or leave
-              it empty for an image that applies to every color.
+              {availableColors.length === 0
+                ? "This image will be saved without a color tag. Add color variants to the product to tag images by colorway."
+                : "Only colors this product has a variant in. Tag the shot with a colorway when it is color-specific, or leave it empty for an image that applies to every color."}
             </span>
           </div>
 
