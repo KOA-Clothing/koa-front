@@ -10,7 +10,10 @@ import {
   UploadRequestResponseSchema,
   type UploadRequestResponse,
 } from "@/types/storage";
-import type { CreateProductImageInput } from "@/types/product-image";
+import type {
+  ChangePrimaryImageInput,
+  CreateProductImageInput,
+} from "@/types/product-image";
 
 /**
  * `["product-images"]` is the prefix of both the list and the detail keys, so
@@ -19,7 +22,7 @@ import type { CreateProductImageInput } from "@/types/product-image";
  */
 const invalidateKeys = [queryKeys.productImages.all] as const;
 
-/** Product image mutations (create) plus its presigned-upload handshake. */
+/** Product image mutations (create, change primary) plus its upload handshake. */
 export function useProductImageMutations() {
   const axiosClient = useAxiosClient();
 
@@ -28,6 +31,23 @@ export function useProductImageMutations() {
       axiosClient.post(API_ROUTES.PRODUCT_IMAGES.BASE, payload).then((r) => r.data),
     invalidateKeys,
     successMessage: "Product image added successfully!",
+  });
+
+  /**
+   * Makes one image the product's primary — the shot the shop-front will show in
+   * the cart. Exactly one image is primary at a time, so the backend demotes the
+   * previous one in the same call; the gallery refetches and the badge moves.
+   */
+  const changePrimary = useAppMutation<void, ChangePrimaryImageInput>({
+    mutationFn: ({ productId, newPrimaryImageId }) =>
+      axiosClient
+        .patch(API_ROUTES.PRODUCT_IMAGES.CHANGE_PRIMARY(productId), {
+          productId,
+          newPrimaryImageId,
+        })
+        .then((r) => r.data),
+    invalidateKeys,
+    successMessage: "Primary image updated!",
   });
 
   /**
@@ -52,5 +72,5 @@ export function useProductImageMutations() {
     return UploadRequestResponseSchema.parse(response.data);
   };
 
-  return { create, requestProductImageUpload };
+  return { create, changePrimary, requestProductImageUpload };
 }

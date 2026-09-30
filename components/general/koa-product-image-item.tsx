@@ -11,9 +11,10 @@ import {
   ItemDescription,
   ItemTitle,
 } from "@/components/ui/item";
+import { useProductImageMutations } from "@/features/product-image/hooks/use-product-image-mutations";
 import { adminListHrefs } from "@/lib/configs/page-routes";
 import { ProductImageDto } from "@/types/product-image";
-import { ExternalLink, ImageOff, PaintBucket } from "lucide-react";
+import { ExternalLink, ImageOff, Loader2, PaintBucket, Star } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 
@@ -29,14 +30,37 @@ interface ProductImageItemProps {
  * with are right. So the image is the full card width at a 4:3 crop, and the
  * color it belongs to is the loudest piece of metadata under it.
  *
- * Read-only by design: the product-images API exposes create but no update or
- * delete route, so a card's only per-image affordances are navigation — the
- * paint bucket drills into the color facet, and the external link opens the
- * stored file. Adding an image is a product-level action, so it lives in the
- * page header rather than on every card.
+ * Read-only apart from one action: the product-images API exposes create and
+ * change-primary, but no update or delete route, so a card's other affordances
+ * are navigation — the paint bucket drills into the color facet, the external
+ * link opens the stored file. Adding an image is a product-level action, so it
+ * lives in the page header rather than on every card.
+ *
+ * ## Where "Make primary" lives, and why
+ *
+ * In the content block, below the metadata — not floated over the picture. The
+ * image is what the admin is here to judge, and an overlay covers the exact
+ * thing being judged; on a grid, that cost is paid on every card at once. Below
+ * the image the button also sits with the card's other controls instead of
+ * competing with them from a different layer.
+ *
+ * The "Primary" badge stays on the image, which makes the split deliberate
+ * rather than arbitrary: the media carries the *status* ("this is the one"), and
+ * the controls below carry the *actions*. A stamp over a picture is the
+ * conventional place for that.
+ *
+ * Two things that stay true wherever it sits:
+ *
+ * - **Always visible, not revealed on hover.** A hover-revealed control is
+ *   undiscoverable and unreachable on touch. This grid is scanned, not explored.
+ * - **A text label, not a bare icon.** Setting the storefront's hero image is a
+ *   consequential one-click change, which is exactly what an unlabelled glyph
+ *   communicates badly. The buttons beside it are pure navigation, so icons are
+ *   right for those; this one is different in kind.
  */
 export default function KoaProductImageItem({ image }: ProductImageItemProps) {
   const router = useRouter();
+  const { changePrimary } = useProductImageMutations();
 
   // A presigned storage URL can 404 after expiry, and a gallery is exactly
   // where that shows up — one dead tile in a grid of live ones reads as a bug
@@ -48,6 +72,13 @@ export default function KoaProductImageItem({ image }: ProductImageItemProps) {
     // rendered at all rather than navigating to a filter with no id.
     if (!image.color) return;
     router.push(adminListHrefs.colors({ colorId: image.color.id }));
+  };
+
+  const handleChangePrimary = () => {
+    changePrimary.mutate({
+      productId: image.productId,
+      newPrimaryImageId: image.id,
+    });
   };
 
   return (
@@ -76,6 +107,10 @@ export default function KoaProductImageItem({ image }: ProductImageItemProps) {
           />
         )}
 
+        {/* Status stays on the image, not in the content block: "this is the
+            one" is a property of the picture, and a stamp over the media is the
+            conventional place for it. The action that *changes* that status
+            lives below with the other controls. */}
         {image.isPrimary && (
           <Badge className="absolute right-2 top-2 shadow-sm">Primary</Badge>
         )}
@@ -128,6 +163,26 @@ export default function KoaProductImageItem({ image }: ProductImageItemProps) {
         <span className="text-xs text-muted-foreground">
           Added {new Date(image.createdAt).toLocaleDateString()}
         </span>
+
+        {/* Not on the current primary: offering "make primary" on the image that
+            already is would be a no-op at best. */}
+        {!image.isPrimary && (
+          <Button
+            variant="secondary"
+            size="sm"
+            onClick={handleChangePrimary}
+            disabled={changePrimary.isPending}
+            title="Use this image as the product's primary — the one the shop-front shows in the cart"
+            className="w-fit gap-1.5"
+          >
+            {changePrimary.isPending ? (
+              <Loader2 className="size-3.5 animate-spin" />
+            ) : (
+              <Star className="size-3.5" />
+            )}
+            Make primary
+          </Button>
+        )}
       </ItemContent>
     </Item>
   );

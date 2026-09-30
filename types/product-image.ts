@@ -78,6 +78,22 @@ export const CreateProductImageInputSchema = z.object({
 
 export type CreateProductImageInput = z.infer<typeof CreateProductImageInputSchema>;
 
+/**
+ * Payload for `PATCH /api/v1/product-images/{productId}/change-primary` —
+ * mirrors `ChangePrimaryImageCommand(Guid ProductId, Guid NewPrimaryImageId)`.
+ *
+ * `productId` goes in the **body** as well as the route. The command declares it
+ * as a non-nullable `Guid`, and the controller is meant to overwrite it from the
+ * route value (`command with { ProductId = productId }`), so sending both is
+ * correct whichever way that lands. Omitting the body field wouldn't fail loudly
+ * either: a non-nullable value type with no matching property binds to
+ * `Guid.Empty`, which is a silent wrong-target bug rather than a 400.
+ */
+export interface ChangePrimaryImageInput {
+  productId: string;
+  newPrimaryImageId: string;
+}
+
 /** The form's own state — what the modal holds before a file has been uploaded. */
 export const productImageFormSchema = z.object({
   colorId: z.string(),
