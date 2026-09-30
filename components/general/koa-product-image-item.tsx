@@ -1,3 +1,7 @@
+"use client";
+
+import { useState } from "react";
+import ColorSwatch from "@/components/general/koa-color-badge";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
@@ -5,13 +9,11 @@ import {
   ItemActions,
   ItemContent,
   ItemDescription,
-  ItemMedia,
   ItemTitle,
 } from "@/components/ui/item";
-import ColorSwatch from "@/components/general/koa-color-badge";
 import { adminListHrefs } from "@/lib/configs/page-routes";
 import { ProductImageDto } from "@/types/product-image";
-import { ExternalLink, PaintBucket } from "lucide-react";
+import { ExternalLink, ImageOff, PaintBucket } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 
@@ -20,72 +22,93 @@ interface ProductImageItemProps {
 }
 
 /**
- * One row of the "view product images" modal.
+ * One image card in the product-images gallery.
  *
- * Read-only by design — the product-images API currently exposes no
- * create/update/delete route, so there is nothing to mutate here yet. The two
- * affordances it does have are navigation, matching `KoaProductVariantItem`:
- * the color name drills into the color facet, and the thumbnail opens the
- * stored file at full size.
+ * Image-first on purpose: this replaced a 10px thumbnail in a list row, because
+ * the admin's job here is judging whether the shot and the color it's labelled
+ * with are right. So the image is the full card width at a 4:3 crop, and the
+ * color it belongs to is the loudest piece of metadata under it.
+ *
+ * Read-only by design — the product-images API exposes no create/update/delete
+ * route yet, so the only affordances are navigation: the paint bucket drills
+ * into the color facet, and the external link opens the stored file.
  */
 export default function KoaProductImageItem({ image }: ProductImageItemProps) {
   const router = useRouter();
+
+  // A presigned storage URL can 404 after expiry, and a gallery is exactly
+  // where that shows up — one dead tile in a grid of live ones reads as a bug
+  // rather than a missing file, so it gets an explicit empty state.
+  const [hasFailed, setHasFailed] = useState(false);
 
   const handleViewColor = () => {
     router.push(adminListHrefs.colors({ colorId: image.color.id }));
   };
 
   return (
-    <Item variant="outline" className="rounded-xl p-4">
-      {/* Media: `variant="image"` gives the rounded/cover treatment for a
-          thumbnail. A plain <img> is used rather than `next/image` because
-          these URLs are presigned storage hosts and `next.config.ts` declares
-          no `images.remotePatterns` for them. */}
-      <ItemMedia variant="image" className="translate-y-0 self-center">
-        <img
-          src={image.imageUrl}
-          alt={image.altText ?? `${image.color.name} product image`}
-          className="size-full object-cover"
-        />
-      </ItemMedia>
+    <Item
+      variant="outline"
+      className="flex-col items-stretch gap-0 overflow-hidden rounded-xl p-0"
+    >
+      <div className="relative aspect-4/3 w-full overflow-hidden bg-muted">
+        {hasFailed ? (
+          <div className="flex size-full flex-col items-center justify-center gap-2 text-muted-foreground">
+            <ImageOff className="size-6" />
+            <span className="text-xs">Image unavailable</span>
+          </div>
+        ) : (
+          /* A plain <img> rather than `next/image`: these are presigned storage
+             hosts and `next.config.ts` declares no `images.remotePatterns` for
+             them, which `next/image` requires. */
+          <img
+            src={image.imageUrl}
+            alt={image.altText ?? `${image.color.name} product image`}
+            onError={() => setHasFailed(true)}
+            className="size-full object-cover transition-transform duration-300 hover:scale-[1.02]"
+          />
+        )}
 
-      {/* Content: min-w-0 lets a long alt text truncate via line-clamp. */}
-      <ItemContent className="min-w-0">
+        {image.isPrimary && (
+          <Badge className="absolute right-2 top-2 shadow-sm">Primary</Badge>
+        )}
+      </div>
+
+      <ItemContent className="gap-1.5 p-4">
         <div className="flex items-center gap-2">
-          <Button
-            variant="ghost"
-            size="icon-sm"
-            onClick={handleViewColor}
-            title="View color"
-          >
-            <PaintBucket className="size-3.5" />
-            <span className="sr-only">View color</span>
-          </Button>
           <ColorSwatch color={image.color} className="size-4" />
-          <ItemTitle>{image.color.name}</ItemTitle>
-          {image.isPrimary && <Badge variant="secondary">Primary</Badge>}
+          <ItemTitle className="min-w-0 flex-1">{image.color.name}</ItemTitle>
+
+          <ItemActions className="shrink-0 gap-1">
+            <Button
+              variant="ghost"
+              size="icon-sm"
+              onClick={handleViewColor}
+              title="View color"
+            >
+              <PaintBucket className="size-3.5" />
+              <span className="sr-only">View color</span>
+            </Button>
+            <Button variant="ghost" size="icon-sm" title="Open image">
+              <Link
+                href={image.imageUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                <ExternalLink className="size-3.5" />
+                <span className="sr-only">Open image in new tab</span>
+              </Link>
+            </Button>
+          </ItemActions>
         </div>
-        <ItemDescription className="mt-1">
+
+        <ItemDescription className="line-clamp-2">
           {image.altText ?? "No alt text"}
         </ItemDescription>
-      </ItemContent>
 
-      <ItemActions className="shrink-0">
-        <Button
-          variant="ghost"
-          size="icon-sm"
-          title="Open image"
-        >
-          <Link
-            href={image.imageUrl}
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <ExternalLink className="size-3.5" />
-            <span className="sr-only">Open image in new tab</span>
-          </Link>
-        </Button>
-      </ItemActions>
+        <span className="text-xs text-muted-foreground">
+          Added {new Date(image.createdAt).toLocaleDateString()}
+        </span>
+      </ItemContent>
     </Item>
   );
 }

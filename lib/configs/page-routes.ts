@@ -7,6 +7,7 @@ export const PAGE_ROUTES = {
   ADMIN: {
     BASE_PRODUCTS: "/admin/product-configs/base-products",
     PRODUCT_VARIANTS: "/admin/product-configs/variants",
+    PRODUCT_IMAGES: "/admin/product-configs/images",
     CATEGORIES: "/admin/facets/category",
     DESIGNS: "/admin/facets/design",
     COLORS: "/admin/facets/color",
@@ -49,4 +50,18 @@ export const adminListHrefs = {
     withQuery(PAGE_ROUTES.ADMIN.DESIGNS, params),
   colors: (params: { colorId?: string } = {}) =>
     withQuery(PAGE_ROUTES.ADMIN.COLORS, params),
+};
+
+/**
+ * Builders for admin routes that take a **path param** rather than a
+ * querystring.
+ *
+ * The counterpart to `adminListHrefs` for `/admin/.../{id}` drilldowns, so
+ * those URLs are assembled in one place too instead of at each call site. The
+ * `{id}` builders take the id the list row already carries.
+ */
+export const adminHrefs = {
+  /** One product's image gallery, keyed by product id. */
+  productImages: (productId: string) =>
+    `${PAGE_ROUTES.ADMIN.PRODUCT_IMAGES}/${productId}`,
 };
