@@ -1,22 +1,21 @@
 "use client"
 
-import { useQueryClient } from "@tanstack/react-query";
+import { useState } from "react";
 import KoaAdminSearchBar from "@/components/admin/koa-admin-searchbar";
 import { PageHeader } from "@/components/admin/page-header";
+import CreateProductImageModal from "@/components/admin/product-image/modals/create-product-image-modal";
 import { KoaTable } from "@/components/general/table/koa-table";
 import { useProductImages } from "@/features/product-image/hooks/use-product-images";
 import { useSearchField } from "@/hooks/use-search-field";
 import { useServerTableParams } from "@/hooks/use-server-table-params";
-import { queryKeys } from "@/lib/api/query-keys";
 import { adminHrefs, adminListHrefs } from "@/lib/configs/page-routes";
-import { ProductImageCollectionDto } from "@/types/product-image";
+import { ProductImageTableDetailsDto } from "@/types/product-image";
 import { BookImage } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { getProductImageColumns } from "./columns";
 
 export default function ProductImagesPage() {
   const router = useRouter();
-  const queryClient = useQueryClient();
   // No filter specs yet - the endpoint takes only search and pagination, so
   // `filters` is empty and contributes no query params. It's still passed
   // through so adding a filter bag later is a one-line change in the hook.
@@ -24,22 +23,20 @@ export default function ProductImagesPage() {
   const searchField = useSearchField({ value: search, onCommit: setSearch });
   const { data, isLoading } = useProductImages({ pagination, search, filters });
 
-  const handleViewImages = (product: ProductImageCollectionDto) => {
-    // The whole row - name and every image - is already on screen, so hand it
-    // to the gallery's query key before navigating. The detail page reads it
-    // straight out of the cache and paints immediately instead of flashing a
-    // skeleton for data we were just looking at. On a refresh or a pasted link
-    // the cache is cold and the hook fetches it instead.
-    queryClient.setQueryData(
-      queryKeys.productImages.detail(product.id),
-      product
-    );
+  const [productToCreate, setProductToCreate] =
+    useState<ProductImageTableDetailsDto | null>(null);
+
+  // No cache seeding here, unlike the variants route: a row is a summary with
+  // counts, so there are no images to hand over. The gallery fetches its own
+  // detail, and a brief skeleton is the honest cost of not shipping every
+  // image of every row to draw a 5-column table.
+  const handleViewImages = (product: ProductImageTableDetailsDto) => {
     router.push(adminHrefs.productImages(product.id));
   };
 
-  const handleBaseProductView = (product: ProductImageCollectionDto) => {
-    // `productId` here is the base product's own id - the collection is a
-    // product with its images nested, not an image.
+  const handleBaseProductView = (product: ProductImageTableDetailsDto) => {
+    // `productId` here is the base product's own id - the row is a product
+    // summary, not an image.
     router.push(adminListHrefs.baseProducts({ productId: product.id }));
   };
 
@@ -61,6 +58,7 @@ export default function ProductImagesPage() {
       <KoaTable
         columns={getProductImageColumns({
           onView: handleViewImages,
+          onCreate: setProductToCreate,
           onBaseProductView: handleBaseProductView,
         })}
         data={data?.items ?? []}
@@ -71,6 +69,13 @@ export default function ProductImagesPage() {
         emptyMessage={
           search ? "No products match the current search." : undefined
         }
+      />
+
+      <CreateProductImageModal
+        product={productToCreate}
+        onOpenChange={(open) => {
+          if (!open) setProductToCreate(null);
+        }}
       />
     </div>
   )

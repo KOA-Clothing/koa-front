@@ -29,9 +29,11 @@ interface ProductImageItemProps {
  * with are right. So the image is the full card width at a 4:3 crop, and the
  * color it belongs to is the loudest piece of metadata under it.
  *
- * Read-only by design — the product-images API exposes no create/update/delete
- * route yet, so the only affordances are navigation: the paint bucket drills
- * into the color facet, and the external link opens the stored file.
+ * Read-only by design: the product-images API exposes create but no update or
+ * delete route, so a card's only per-image affordances are navigation — the
+ * paint bucket drills into the color facet, and the external link opens the
+ * stored file. Adding an image is a product-level action, so it lives in the
+ * page header rather than on every card.
  */
 export default function KoaProductImageItem({ image }: ProductImageItemProps) {
   const router = useRouter();
@@ -42,6 +44,9 @@ export default function KoaProductImageItem({ image }: ProductImageItemProps) {
   const [hasFailed, setHasFailed] = useState(false);
 
   const handleViewColor = () => {
+    // An untagged image has no color to drill into, so the button is not
+    // rendered at all rather than navigating to a filter with no id.
+    if (!image.color) return;
     router.push(adminListHrefs.colors({ colorId: image.color.id }));
   };
 
@@ -62,7 +67,10 @@ export default function KoaProductImageItem({ image }: ProductImageItemProps) {
              them, which `next/image` requires. */
           <img
             src={image.imageUrl}
-            alt={image.altText ?? `${image.color.name} product image`}
+            alt={
+              image.altText ??
+              (image.color ? `${image.color.name} product image` : "Product image")
+            }
             onError={() => setHasFailed(true)}
             className="size-full object-cover transition-transform duration-300 hover:scale-[1.02]"
           />
@@ -75,19 +83,31 @@ export default function KoaProductImageItem({ image }: ProductImageItemProps) {
 
       <ItemContent className="gap-1.5 p-4">
         <div className="flex items-center gap-2">
-          <ColorSwatch color={image.color} className="size-4" />
-          <ItemTitle className="min-w-0 flex-1">{image.color.name}</ItemTitle>
+          {image.color ? (
+            <>
+              <ColorSwatch color={image.color} className="size-4" />
+              <ItemTitle className="min-w-0 flex-1">{image.color.name}</ItemTitle>
+            </>
+          ) : (
+            /* `color` is nullable, so an untagged image is a real state on this
+               screen and gets named rather than left blank. */
+            <ItemTitle className="min-w-0 flex-1 text-muted-foreground">
+              No color
+            </ItemTitle>
+          )}
 
           <ItemActions className="shrink-0 gap-1">
-            <Button
-              variant="ghost"
-              size="icon-sm"
-              onClick={handleViewColor}
-              title="View color"
-            >
-              <PaintBucket className="size-3.5" />
-              <span className="sr-only">View color</span>
-            </Button>
+            {image.color && (
+              <Button
+                variant="ghost"
+                size="icon-sm"
+                onClick={handleViewColor}
+                title="View color"
+              >
+                <PaintBucket className="size-3.5" />
+                <span className="sr-only">View color</span>
+              </Button>
+            )}
             <Button variant="ghost" size="icon-sm" title="Open image">
               <Link
                 href={image.imageUrl}

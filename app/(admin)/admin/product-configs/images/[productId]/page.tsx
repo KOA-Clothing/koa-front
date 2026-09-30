@@ -1,19 +1,20 @@
 "use client";
 
-import { ReactNode } from "react";
+import { ReactNode, useState } from "react";
 import { PageHeader } from "@/components/admin/page-header";
+import CreateProductImageModal from "@/components/admin/product-image/modals/create-product-image-modal";
 import { BaseShirtIcon } from "@/components/general/custom-icons/base-shirt-icon";
 import KoaProductImageItem from "@/components/general/koa-product-image-item";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useProductImagesByProduct } from "@/features/product-image/hooks/use-product-images";
-import { getErrorMessage } from "@/lib/api/errors";
+import { getErrorMessage, isNotFoundError } from "@/lib/api/errors";
 import {
   adminListHrefs,
   PAGE_ROUTES,
 } from "@/lib/configs/page-routes";
 import { ProductImageDto } from "@/types/product-image";
-import { BookImage, ChevronLeft, ImageOff } from "lucide-react";
+import { BookImage, ChevronLeft, ImageOff, ImagePlus } from "lucide-react";
 import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
 
@@ -26,10 +27,10 @@ const SKELETON_COUNT = 8;
 /**
  * Gallery of one product's images, at `/admin/product-configs/images/{productId}`.
  *
- * Reached from the "View images" action on the product-images table, which seeds
- * the query cache with the row it already has — so this page normally paints
- * from cache with no loading state. The hook still fetches on a cold mount
- * (refresh, pasted link), which is the case that makes the URL worth having.
+ * Reached from the "View images" action on the product-images table. That table
+ * returns a summary row — counts and swatches, not images — so this page always
+ * fetches its own detail and shows a skeleton for a beat. That is the trade for
+ * not shipping every image of every row just to draw a table.
  *
  * The product name comes from the response itself (it's the collection's
  * `name`), so the header and the gallery can never disagree about which product
@@ -40,6 +41,17 @@ export default function ProductImagesDetailPage() {
   const { productId } = useParams<{ productId: string }>();
   const { data: product, isLoading, isError, error } =
     useProductImagesByProduct(productId);
+
+  // The modal is driven by the product it's adding an image to, so opening it
+  // is a single boolean rather than a subject + flag pair.
+  const [isCreateOpen, setIsCreateOpen] = useState(false);
+
+  // A product that exists with zero images comes back 200 + empty `images[]`, so
+  // `isError` here means the id genuinely didn't resolve. Worth separating from
+  // a transport failure, which is what the other branch reports — the failure
+  // envelope gives both statuses the same shape.
+  const isNotFound = isError && isNotFoundError(error);
+  const isFailed = isError && !isNotFound;
 
   const handleBaseProductView = () => {
     // The collection's `id` is the base product's own id — a row here is a
@@ -66,6 +78,13 @@ export default function ProductImagesDetailPage() {
         icon={<BookImage />}
       >
         <Button
+          onClick={() => setIsCreateOpen(true)}
+          disabled={!product}
+        >
+          <ImagePlus className="size-3.5" />
+          Add image
+        </Button>
+        <Button
           variant="outline"
           size="sm"
           onClick={handleBaseProductView}
@@ -91,11 +110,11 @@ export default function ProductImagesDetailPage() {
             </div>
           ))}
         </div>
-      ) : isError ? (
+      ) : isFailed ? (
         <Notice icon={<ImageOff className="size-6" />}>
           {getErrorMessage(error)}
         </Notice>
-      ) : !product ? (
+      ) : isNotFound || !product ? (
         <Notice icon={<ImageOff className="size-6" />}>
           This product was not found. It may have been deleted, or the link may
           be wrong.
@@ -111,6 +130,15 @@ export default function ProductImagesDetailPage() {
           ))}
         </div>
       )}
+
+      <CreateProductImageModal
+        // The gallery already holds the full collection, so the modal gets its
+        // product from here rather than refetching one just to show a name.
+        // The `&& product` guard matters: a cold mount has `product` undefined,
+        // and the button that opens this is disabled in that state anyway.
+        product={isCreateOpen && product ? product : null}
+        onOpenChange={setIsCreateOpen}
+      />
     </div>
   );
 }
@@ -127,19 +155,35 @@ function describe(
   product: { images: ProductImageDto[] } | null | undefined,
   isLoading: boolean
 ): string {
-  if (isLoading || !product) return "Loading images...";
+  if (isLoading) return "Loading images...";
+
+  // No data yet and not loading means the request finished and the hook has
+  // nothing — a finished request must not read as a pending one.
+  if (!product) return "No images on record for this product.";
 
   const total = product.images.length;
-  const colorCount = new Set(product.images.map((image) => image.color.id)).size;
+  // `color` is nullable, so distinctness is counted over the tagged images
+  // only — `null` collapsing into one bucket would read as a real colorway.
+  const colorIds = new Set(
+    product.images
+      .map((image) => image.color?.id)
+      .filter((id): id is string => !!id)
+  );
+  const untagged = total - product.images.filter((image) => image.color).length;
   const primaryCount = product.images.filter((image) => image.isPrimary).length;
 
   return [
     `${total} image${total === 1 ? "" : "s"}`,
-    `across ${colorCount} color${colorCount === 1 ? "" : "s"}`,
+    colorIds.size > 0
+      ? `across ${colorIds.size} color${colorIds.size === 1 ? "" : "s"}`
+      : "untagged",
+    untagged > 0 ? `${untagged} without a color` : null,
     primaryCount > 0
       ? `${primaryCount} set as primary`
       : "no primary set",
-  ].join(" · ");
+  ]
+    .filter(Boolean)
+    .join(" · ");
 }
 
 /** Dashed placeholder for the states that aren't a grid of images. */

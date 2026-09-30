@@ -54,6 +54,9 @@ export const API_ROUTES = {
   },
   PRODUCT_IMAGES: {
     BASE: "/api/v1/product-images",
+    // `[HttpGet("{productId:Guid}")]`. The product id, not an image id — the
+    // response is the product with all of its images nested.
+    BY_ID: (productId: string) => `/api/v1/product-images/${productId}`,
   },
   STORAGE: {
     UPLOAD_REQUESTS: "/api/v1/storage/upload-url",
