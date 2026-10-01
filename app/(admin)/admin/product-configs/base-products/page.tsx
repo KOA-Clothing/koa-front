@@ -22,7 +22,7 @@ import UpdateProductModal from "@/components/admin/product/modals/update-product
 import ViewProductModal from "@/components/admin/product/modals/view-product-modal";
 import ManageLinkedDesignsModal from "@/components/admin/product/modals/manage-linked-designs-modal";
 import { useRouter } from "next/navigation";
-import { adminListHrefs } from "@/lib/configs/page-routes";
+import { adminHrefs, adminListHrefs } from "@/lib/configs/page-routes";
 
 export default function BaseProductsPage() {
   const {
@@ -85,6 +85,20 @@ export default function BaseProductsPage() {
   }
 
   /**
+   * Straight to the product's image gallery, not through the images table. A row
+   * already *is* a product, so a deep link that made the admin pick their product
+   * out of a list of every product would be a step in the wrong direction.
+   *
+   * `adminHrefs.productImages`, not an `adminListHrefs` builder: the images table
+   * has no `productId` filter to set, so this navigates to the detail route
+   * directly. If that filter is ever added, this should switch to the list
+   * builder so the two routes share one source of truth for the link.
+   */
+  const handleImagesView = (product: ProductDto) => {
+    router.push(adminHrefs.productImages(product.id));
+  }
+
+  /**
    * Label for the `productId` deep-link indicator. When that filter is set the
    * list is scoped to exactly that product, so the name is already in the
    * response — no second request. Matching on the id (rather than trusting the
@@ -138,7 +152,8 @@ export default function BaseProductsPage() {
           onChangeProductStatus: handleChangeProductStatus,
           manageLinkedDesigns: handleManageLinkedDesigns,
           onVariantsView: handleVariantsView,
-          onCategoryView: handleCategoryView
+          onCategoryView: handleCategoryView,
+          onImagesView: handleImagesView
         })}
         data={data?.items ?? []}
         rowCount={data?.totalRecords ?? 0}

@@ -11,7 +11,7 @@ import { useServerTableParams } from "@/hooks/use-server-table-params";
 import { adminHrefs, adminListHrefs } from "@/lib/configs/page-routes";
 import { ProductImageTableDetailsDto } from "@/types/product-image";
 import type { ColorDto } from "@/types/color";
-import { BookImage } from "lucide-react";
+import { BookImage, Images } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { getProductImageColumns } from "./columns";
 
@@ -49,7 +49,7 @@ export default function ProductImagesPage() {
       <PageHeader
         title={"Product Images"}
         description={"Every image attached to a base product, grouped per product."}
-        icon={<BookImage />}
+        icon={<Images />}
       />
 
       <div className="flex flex-col gap-3">

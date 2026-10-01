@@ -9,7 +9,7 @@ import {
   productStatusLabels,
 } from "@/types/enum-labels";
 import { AgeGroupEnum, GenderEnum, ProductStatusEnum } from "@/types/enums";
-import { ExternalLink, Eye, File, Pencil, SplinePointer, SwatchBook, Trash2 } from "lucide-react";
+import { ExternalLink, Eye, File, Images, Pencil, SplinePointer, SwatchBook, Trash2 } from "lucide-react";
 import Link from "next/link";
 import { KoaSwitch } from "@/components/general/koa-switch";
 import KoaEnumChanger from "@/components/general/koa-enum-changer";
@@ -31,6 +31,7 @@ interface BaseProductColumnActions {
   manageLinkedDesigns: (product: ProductDto) => void;
   onVariantsView: (product: ProductDto) => void;
   onCategoryView: (product: ProductDto) => void;
+  onImagesView: (product: ProductDto) => void;
 }
 
 const columnHelper = createDataTableColumnHelper<ProductDto>();
@@ -44,7 +45,8 @@ export function getProductColumns({
     onEdit, onDelete, onView, 
     toggleFeaturedStatus, toggleActiveStatus, 
     onChangeGender, onChangeAgeGroup, 
-    onChangeProductStatus, manageLinkedDesigns, onVariantsView, onCategoryView }: BaseProductColumnActions) {
+    onChangeProductStatus, manageLinkedDesigns, onVariantsView, onCategoryView,
+    onImagesView }: BaseProductColumnActions) {
   return columnHelper.columns([
     columnHelper.accessor("name", {
       header: () => <div className="text-center">Name</div>,
@@ -209,6 +211,19 @@ export function getProductColumns({
           >
             <SwatchBook className="size-3.5" />
             <span className="sr-only">View product variants</span>
+          </Button>
+
+          {/* Sits next to the variants button because images and variants are the
+              two per-product galleries an admin works on together — a shot is
+              always shot *in* a colorway. */}
+          <Button
+            variant="ghost"
+            size="icon-sm"
+            onClick={() => onImagesView(row.original)}
+            title="View product images"
+          >
+            <Images className="size-3.5" />
+            <span className="sr-only">View product images</span>
           </Button>
 
           <Button
