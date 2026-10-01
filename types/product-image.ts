@@ -101,6 +101,31 @@ export interface ChangePrimaryImageInput {
   newPrimaryImageId: string;
 }
 
+/**
+ * Payload for `DELETE /api/v1/product-images/{productId}/images/{imageId}` —
+ * mirrors `DeleteProductImageCommand(Guid ProductId, Guid ProductImageId)`.
+ *
+ * The server refuses to delete a product's **last** image, and promotes another
+ * image when the deleted one was primary. The card disables delete in that
+ * one-image case so the admin doesn't reach a rejection, but the API stays the
+ * authority — this input carries nothing about either rule.
+ *
+ * Note the second field is `productImageId`, not `imageId`: the command names
+ * the *image's* id with the `Product` prefix, while the route segment and
+ * `ProductImageDto.id` both call it a plain `imageId`. They are the same value.
+ *
+ * Both fields go in the **body** as well as the route, for the same reason as
+ * `ChangePrimaryImageInput`: the controller is meant to overwrite them from the
+ * route via a `with` expression but currently sends the unbound `command`
+ * instead. A DELETE's complex parameter binds from the body, so omitting it
+ * fails model binding outright rather than defaulting — this endpoint needs the
+ * body until that line is fixed.
+ */
+export interface DeleteProductImageInput {
+  productId: string;
+  productImageId: string;
+}
+
 /** The form's own state — what the modal holds before a file has been uploaded. */
 export const productImageFormSchema = z.object({
   colorId: z.string(),

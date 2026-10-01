@@ -13,6 +13,7 @@ import {
 import type {
   ChangePrimaryImageInput,
   CreateProductImageInput,
+  DeleteProductImageInput,
 } from "@/types/product-image";
 
 /**
@@ -22,7 +23,7 @@ import type {
  */
 const invalidateKeys = [queryKeys.productImages.all] as const;
 
-/** Product image mutations (create, change primary) plus its upload handshake. */
+/** Product image mutations (create, change primary, delete) plus its upload handshake. */
 export function useProductImageMutations() {
   const axiosClient = useAxiosClient();
 
@@ -51,6 +52,25 @@ export function useProductImageMutations() {
   });
 
   /**
+   * Removes one image from a product.
+   *
+   * Both ids ride in the route *and* the body — see `DeleteProductImageInput` for
+   * why the body can't be dropped yet. The gallery refetches via `invalidateKeys`,
+   * so the card disappears and the table's image count drops from the server's
+   * own numbers rather than a decrement here.
+   */
+  const remove = useAppMutation<void, DeleteProductImageInput>({
+    mutationFn: ({ productId, productImageId }) =>
+      axiosClient
+        .delete(API_ROUTES.PRODUCT_IMAGES.BY_IMAGE_ID(productId, productImageId), {
+          data: { productId, productImageId },
+        })
+        .then((r) => r.data),
+    invalidateKeys,
+    successMessage: "Product image deleted!",
+  });
+
+  /**
    * Asks the backend for a short-lived, single-use presigned upload URL in the
    * `product-images` folder. The caller PUTs the file to `uploadUrl` and stores
    * the returned `publicUrl` as the image's URL.
@@ -72,5 +92,5 @@ export function useProductImageMutations() {
     return UploadRequestResponseSchema.parse(response.data);
   };
 
-  return { create, changePrimary, requestProductImageUpload };
+  return { create, changePrimary, remove, requestProductImageUpload };
 }

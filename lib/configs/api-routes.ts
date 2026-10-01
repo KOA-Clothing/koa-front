@@ -57,6 +57,7 @@ export const API_ROUTES = {
     BASE: "/api/v1/product-images",
     BY_ID: (productId: string) => `/api/v1/product-images/${productId}`,
     CHANGE_PRIMARY: (productId: string) => `/api/v1/product-images/${productId}/change-primary`,
+    BY_IMAGE_ID: (productId: string, imageId: string) => `/api/v1/product-images/${productId}/images/${imageId}`,
   },
   STORAGE: {
     UPLOAD_REQUESTS: "/api/v1/storage/upload-url",

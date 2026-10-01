@@ -3,6 +3,7 @@
 import { ReactNode, useState } from "react";
 import { PageHeader } from "@/components/admin/page-header";
 import CreateProductImageModal from "@/components/admin/product-image/modals/create-product-image-modal";
+import DeleteProductImageConfirmationModal from "@/components/admin/product-image/modals/delete-product-image-confirmation-modal";
 import { BaseShirtIcon } from "@/components/general/custom-icons/base-shirt-icon";
 import KoaProductImageItem from "@/components/general/koa-product-image-item";
 import { Button } from "@/components/ui/button";
@@ -56,6 +57,11 @@ export default function ProductImagesDetailPage() {
   // waste. The dialog still works while this is in flight — `colorId` is
   // nullable, so an image can be added untagged and tagged later.
   const productColors = useProductVariantColors(productId, { enabled: isCreateOpen });
+
+  // Deletion is confirmed per card, so the page holds which image is pending
+  // confirmation — the same shape as `isCreateOpen`, one subject instead of a
+  // subject-plus-flag pair.
+  const [imageToDelete, setImageToDelete] = useState<ProductImageDto | null>(null);
 
   // A product that exists with zero images comes back 200 + empty `images[]`, so
   // `isError` here means the id genuinely didn't resolve. Worth separating from
@@ -137,7 +143,12 @@ export default function ProductImagesDetailPage() {
       ) : (
         <div className={GALLERY_GRID}>
           {product.images.map((image) => (
-            <KoaProductImageItem key={image.id} image={image} />
+            <KoaProductImageItem
+              key={image.id}
+              image={image}
+              imageCount={product.images.length}
+              onDelete={setImageToDelete}
+            />
           ))}
         </div>
       )}
@@ -154,6 +165,16 @@ export default function ProductImagesDetailPage() {
         // costs no extra request. Cached per product, so reopening is free.
         availableColors={productColors.data ?? EMPTY_COLORS}
         onOpenChange={setIsCreateOpen}
+      />
+
+      {/* Rendered unconditionally, driven by `imageToDelete` — mounting it only
+          while open would remount the dialog and lose its focus handling on
+          every open, the same reason the create modal sits outside the branch. */}
+      <DeleteProductImageConfirmationModal
+        image={imageToDelete}
+        onOpenChange={(open) => {
+          if (!open) setImageToDelete(null);
+        }}
       />
     </div>
   );
