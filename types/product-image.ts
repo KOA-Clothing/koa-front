@@ -28,8 +28,8 @@ export type ProductImageDto = z.infer<typeof ProductImageDtoSchema>;
  * Deliberately carries no color list. Each image already names its own
  * `color`, and the colors a product is *stocked in* are variant data — a
  * different concern from its images. The "Add image" modal needs that list, but
- * it asks for it directly via `useProductColors(productId)`, keyed off
- * `/colors/by-product/{productId}`.
+ * it asks for it directly via `useProductVariantColors(productId)`, keyed off
+ * `/products/{id}/variants/related-colors`.
  *
  * That is also the only correct source: `images[].color` is a **subset** of the
  * product's variant colors. A product with a Navy variant and no Navy shot yet

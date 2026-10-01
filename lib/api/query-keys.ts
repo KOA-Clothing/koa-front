@@ -22,13 +22,16 @@ export const queryKeys = {
     list: (params: Record<string, unknown>) => ["colors", "list", params] as const,
     detail: (id: string) => ["colors", "detail", id] as const,
     active: ["colors", "active"] as const,
-    // Per product, so the caches of two products can never collide.
-    byProduct: (productId: string) => ["colors", "by-product", productId] as const,
   },
   products: {
     all: ["products"] as const,
     list: (params: Record<string, unknown>) => ["products", "list", params] as const,
     detail: (id: string) => ["products", "detail", id] as const,
+    // The colors a product's variants are built from. Lives under `products`
+    // because that's the resource the path is scoped by, and it is deliberately
+    // not a `colors` key — it must never be confused with the global color list,
+    // and a stale `colors` invalidation must not pretend to clear it.
+    variantColors: (productId: string) => ["products", "variant-colors", productId] as const,
   },
   productVariants: {
     all: ["product-variants"] as const,

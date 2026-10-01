@@ -51,8 +51,8 @@ interface CreateProductImageModalProps {
    *
    * Required, and passed in rather than fetched, so the two callers can each use
    * the cheaper source. The table row already carries `availableColors`, so the
-   * list page makes no request; the gallery page calls `useProductColors`, lazily,
-   * only when the modal is actually opened.
+   * list page makes no request; the gallery page calls `useProductVariantColors`,
+   * lazily, only when the modal is actually opened.
    *
    * An empty list is a real state (the product has no color variants), and the
    * form still works — `colorId` is nullable, so the image saves untagged.

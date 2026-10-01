@@ -51,7 +51,8 @@ export function useActiveColors() {
 }
 
 /**
- * The distinct colors a product has variants in — `GET /colors/by-product/{id}`.
+ * The colors a product's variants are built in —
+ * `GET /products/{id}/variants/related-colors`.
  *
  * The scoped replacement for `useActiveColors` on any screen that edits one
  * product. A global list lets an admin pick a colorway the product has no variant
@@ -62,22 +63,30 @@ export function useActiveColors() {
  * Navy and have no Navy shot yet. Deriving the same list from its images would
  * hide exactly the colorway an admin opens this screen to upload a shot for.
  *
+ * Deliberately reads the same set as `ProductImageTableDetailsDto.availableColors`,
+ * so a product offers the same color picker from the table and from its gallery.
+ * If the two ever diverge, the same product shows different options depending on
+ * which page the modal was opened from — so they must project the same thing.
+ *
  * `enabled` is `false` while no product is in hand, so the hook is safe to call
  * unconditionally. Callers that already hold the list (a table row carrying
  * `availableColors`) should pass it down instead and not call this at all.
  */
-export function useProductColors(productId: string | undefined, options?: { enabled?: boolean }) {
+export function useProductVariantColors(
+  productId: string | undefined,
+  options?: { enabled?: boolean }
+) {
   const axiosClient = useAxiosClient();
 
   return useQuery({
-    queryKey: queryKeys.colors.byProduct(productId ?? ""),
+    queryKey: queryKeys.products.variantColors(productId ?? ""),
     enabled: !!productId && options?.enabled !== false,
     queryFn: async () => {
       // `enabled` above guarantees an id before this runs, but TypeScript can't
       // follow that into the fetcher — so this is a real guard rather than a cast
-      // that would send a request to `/by-product/` if it were ever reached.
-      if (!productId) throw new Error("useProductColors requires a productId");
-      const response = await axiosClient.get(API_ROUTES.COLORS.BY_PRODUCT(productId));
+      // that would send a request to `/variants/related-colors` with a blank id.
+      if (!productId) throw new Error("useProductVariantColors requires a productId");
+      const response = await axiosClient.get(API_ROUTES.PRODUCTS.VARIANT_COLORS(productId));
       return z.array(ColorDtoSchema).parse(response.data);
     },
   });

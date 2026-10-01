@@ -7,7 +7,7 @@ import { BaseShirtIcon } from "@/components/general/custom-icons/base-shirt-icon
 import KoaProductImageItem from "@/components/general/koa-product-image-item";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
-import { useProductColors } from "@/features/color/hooks/use-colors";
+import { useProductVariantColors } from "@/features/color/hooks/use-colors";
 import { useProductImagesByProduct } from "@/features/product-image/hooks/use-product-images";
 import { getErrorMessage, isNotFoundError } from "@/lib/api/errors";
 import {
@@ -44,8 +44,7 @@ const SKELETON_COUNT = 8;
 export default function ProductImagesDetailPage() {
   const router = useRouter();
   const { productId } = useParams<{ productId: string }>();
-  const { data: product, isLoading, isError, error } =
-    useProductImagesByProduct(productId);
+  const { data: product, isLoading, isError, error } = useProductImagesByProduct(productId);
 
   // The modal is driven by the product it's adding an image to, so opening it
   // is a single boolean rather than a subject + flag pair.
@@ -56,7 +55,7 @@ export default function ProductImagesDetailPage() {
   // request on every gallery visit to populate a select nobody opened is the
   // waste. The dialog still works while this is in flight — `colorId` is
   // nullable, so an image can be added untagged and tagged later.
-  const productColors = useProductColors(productId, { enabled: isCreateOpen });
+  const productColors = useProductVariantColors(productId, { enabled: isCreateOpen });
 
   // A product that exists with zero images comes back 200 + empty `images[]`, so
   // `isError` here means the id genuinely didn't resolve. Worth separating from
@@ -150,9 +149,9 @@ export default function ProductImagesDetailPage() {
         // the button that opens this is disabled in that state anyway.
         product={isCreateOpen && product ? product : null}
         // The collection carries no color list — the colors a product is stocked
-        // in are variant data. Fetched here and only while the dialog is open,
-        // so merely visiting a gallery costs no extra request. Cached per
-        // product, so reopening the dialog is free.
+        // in are variant data, so they come from the variants endpoint. Fetched
+        // here and only while the dialog is open, so merely visiting a gallery
+        // costs no extra request. Cached per product, so reopening is free.
         availableColors={productColors.data ?? EMPTY_COLORS}
         onOpenChange={setIsCreateOpen}
       />

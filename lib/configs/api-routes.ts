@@ -33,11 +33,6 @@ export const API_ROUTES = {
     BASE: "/api/v1/colors",
     ALL_ACTIVE: "/api/v1/colors/all-active",
     BY_ID: (id: string) => `/api/v1/colors/${id}`,
-    // `[HttpGet("by-product/{productId:Guid}")]` — the distinct colors across a
-    // product's variants. Scoped per product on purpose: a global color list lets
-    // an admin tag an image with a colorway the product has no variant for,
-    // producing an image that can never be picked on the storefront.
-    BY_PRODUCT: (productId: string) => `/api/v1/colors/by-product/${productId}`,
     TOGGLE_ACTIVE_STATUS: (id: string) => `/api/v1/colors/${id}/toggle-active-status`,
   },
   PRODUCTS: {
@@ -50,7 +45,7 @@ export const API_ROUTES = {
     CHANGE_PRODUCT_STATUS: (id: string) => `/api/v1/products/${id}/change-product-status`,
     LINKED_DESIGNS: (id: string) => `/api/v1/products/${id}/linked-designs`,
     VARIANTS: (id: string) => `/api/v1/products/${id}/variants`,
-    VARIANTS_COLORS: (id: string) => `/api/v1/products/${id}/variants/related-colors`
+    VARIANT_COLORS: (id: string) => `/api/v1/products/${id}/variants/related-colors`
   },
   PRODUCT_VARIANTS: {
     BASE: "/api/v1/product-variants",
@@ -60,8 +55,6 @@ export const API_ROUTES = {
   },
   PRODUCT_IMAGES: {
     BASE: "/api/v1/product-images",
-    // `[HttpGet("{productId:Guid}")]`. The product id, not an image id — the
-    // response is the product with all of its images nested.
     BY_ID: (productId: string) => `/api/v1/product-images/${productId}`,
     CHANGE_PRIMARY: (productId: string) => `/api/v1/product-images/${productId}/change-primary`,
   },
