@@ -77,6 +77,15 @@ export default function ProductVariantsPage() {
   };
 
   /**
+   * Deep-links to the inventory table scoped to this product's rows. `id` is the
+   * base product's id here too, so the filter matches the product-wide inventory
+   * rather than a single variant.
+   */
+  const handleInventoryView = (product: ProductVariantsCollectionDto) => {
+    router.push(adminListHrefs.inventory({ productId: product.id }));
+  };
+
+  /**
    * Label for the `productId` deep-link indicator. When that filter is set the
    * list is scoped to exactly that product, so the name is already in the
    * response — no second request. Matching on the id (rather than trusting the
@@ -118,7 +127,8 @@ export default function ProductVariantsPage() {
         columns={getProductVariantColumns({
           onView: setProductToView,
           onCreate: setProductToCreate,
-          onBaseProductView: handleBaseProductView
+          onBaseProductView: handleBaseProductView,
+          onInventoryView: handleInventoryView
         })}
         data={data?.items ?? []}
         rowCount={data?.totalRecords ?? 0}

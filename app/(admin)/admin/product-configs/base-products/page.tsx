@@ -98,6 +98,11 @@ export default function BaseProductsPage() {
     router.push(adminHrefs.productImages(product.id));
   }
 
+  /** Deep-links to the inventory table scoped to this product's rows. */
+  const handleInventoryView = (product: ProductDto) => {
+    router.push(adminListHrefs.inventory({ productId: product.id }));
+  }
+
   /**
    * Label for the `productId` deep-link indicator. When that filter is set the
    * list is scoped to exactly that product, so the name is already in the
@@ -153,7 +158,8 @@ export default function BaseProductsPage() {
           manageLinkedDesigns: handleManageLinkedDesigns,
           onVariantsView: handleVariantsView,
           onCategoryView: handleCategoryView,
-          onImagesView: handleImagesView
+          onImagesView: handleImagesView,
+          onInventoryView: handleInventoryView
         })}
         data={data?.items ?? []}
         rowCount={data?.totalRecords ?? 0}

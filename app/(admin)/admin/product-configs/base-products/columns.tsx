@@ -9,7 +9,7 @@ import {
   productStatusLabels,
 } from "@/types/enum-labels";
 import { AgeGroupEnum, GenderEnum, ProductStatusEnum } from "@/types/enums";
-import { ExternalLink, Eye, File, Images, Pencil, SplinePointer, SwatchBook, Trash2 } from "lucide-react";
+import { ExternalLink, Eye, File, Images, Pencil, ShelvingUnit, SplinePointer, SwatchBook, Trash2 } from "lucide-react";
 import Link from "next/link";
 import { KoaSwitch } from "@/components/general/koa-switch";
 import KoaEnumChanger from "@/components/general/koa-enum-changer";
@@ -32,6 +32,7 @@ interface BaseProductColumnActions {
   onVariantsView: (product: ProductDto) => void;
   onCategoryView: (product: ProductDto) => void;
   onImagesView: (product: ProductDto) => void;
+  onInventoryView: (product: ProductDto) => void;
 }
 
 const columnHelper = createDataTableColumnHelper<ProductDto>();
@@ -46,7 +47,7 @@ export function getProductColumns({
     toggleFeaturedStatus, toggleActiveStatus, 
     onChangeGender, onChangeAgeGroup, 
     onChangeProductStatus, manageLinkedDesigns, onVariantsView, onCategoryView,
-    onImagesView }: BaseProductColumnActions) {
+    onImagesView, onInventoryView }: BaseProductColumnActions) {
   return columnHelper.columns([
     columnHelper.accessor("name", {
       header: () => <div className="text-center">Name</div>,
@@ -211,6 +212,16 @@ export function getProductColumns({
           >
             <SwatchBook className="size-3.5" />
             <span className="sr-only">View product variants</span>
+          </Button>
+
+          <Button
+            variant="ghost"
+            size="icon-sm"
+            onClick={() => onInventoryView(row.original)}
+            title="View Inventory Items"
+          >
+            <ShelvingUnit className="size-3.5" />
+            <span className="sr-only">View Inventory Items</span>
           </Button>
 
           {/* Sits next to the variants button because images and variants are the

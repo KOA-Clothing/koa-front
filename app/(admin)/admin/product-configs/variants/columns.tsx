@@ -9,7 +9,7 @@ import { clothingSizeBadgeStyles } from "@/lib/configs/enum-badge-styles";
 import { createDataTableColumnHelper } from "@/lib/configs/table-configs";
 import { clothingSizeLabels } from "@/types/enum-labels";
 import { ProductVariantsCollectionDto } from "@/types/product-variant";
-import { Baseline, CirclePlus, Eye, ScissorsLineDashed } from "lucide-react";
+import { CirclePlus, Eye, ShelvingUnit } from "lucide-react";
 
 const columnHelper = createDataTableColumnHelper<ProductVariantsCollectionDto>();
 
@@ -28,9 +28,10 @@ interface ProductVariantsColumnActions {
   onView: (product: ProductVariantsCollectionDto) => void;
   onCreate: (product: ProductVariantsCollectionDto) => void;
   onBaseProductView: (product: ProductVariantsCollectionDto) => void;
+  onInventoryView: (product: ProductVariantsCollectionDto) => void;
 }
 
-export function getProductVariantColumns({ onView, onCreate, onBaseProductView }: ProductVariantsColumnActions) {
+export function getProductVariantColumns({ onView, onCreate, onBaseProductView, onInventoryView }: ProductVariantsColumnActions) {
   return columnHelper.columns([
     columnHelper.accessor("name", {
       header: () => <div className="text-center">Product Name</div>,
@@ -137,6 +138,15 @@ export function getProductVariantColumns({ onView, onCreate, onBaseProductView }
           >
             <BaseShirtIcon className="size-3.5" />
             <span className="sr-only">View Base Product</span>
+          </Button>
+          <Button
+            variant="ghost"
+            size="icon-sm"
+            onClick={() => onInventoryView(row.original)}
+            title="View Inventory Items"
+          >
+            <ShelvingUnit className="size-3.5" />
+            <span className="sr-only">View Inventory Items</span>
           </Button>
         </div>
       ),

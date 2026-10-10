@@ -1,5 +1,5 @@
 import { Button } from "@/components/ui/button";
-import { PaintBucket, X } from "lucide-react";
+import { PaintBucket, ShelvingUnit, X } from "lucide-react";
 import ColorSwatch from "@/components/general/koa-color-badge";
 import KoaEnumBadge from "@/components/general/koa-enum-badge";
 import { KoaSwitch } from "@/components/general/koa-switch";
@@ -34,6 +34,10 @@ export default function KoaProductVariantItem({
     router.push(adminListHrefs.colors({ colorId: variant.color.id }));
   }
 
+  const handleViewInventory = () => {
+    router.push(adminListHrefs.inventory({ variantId: variant.id }));
+  }
+
   return (
     <Item variant="outline" className="rounded-xl p-4">
       {/* Media: vertically center the swatch against the content block.
@@ -49,7 +53,7 @@ export default function KoaProductVariantItem({
             variant="ghost"
             size="icon-sm"
             onClick={handleViewColor}
-            title="View category"
+            title="View color"
           >
             <PaintBucket className="size-3.5" />
             <span className="sr-only">View color</span>
@@ -74,9 +78,21 @@ export default function KoaProductVariantItem({
         </ItemDescription>
       </ItemContent>
 
-      {/* Actions: single compact control row with a divider before the
-          destructive remove button. */}
+      {/* Actions: a navigation drill-down to this variant's inventory row, then
+          its live state control, then a divider before the destructive remove
+          button. The inventory link comes first because it is the one action
+          that leaves this modal. */}
       <ItemActions className="shrink-0 gap-3">
+        <Button
+          variant="ghost"
+          size="icon-sm"
+          onClick={handleViewInventory}
+          title="View inventory items"
+        >
+          <ShelvingUnit className="size-3.5" />
+          <span className="sr-only">View inventory items</span>
+        </Button>
+
         <span className="flex items-center gap-2 text-xs text-muted-foreground">
           Active
           <KoaSwitch
