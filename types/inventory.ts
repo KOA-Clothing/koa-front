@@ -28,3 +28,25 @@ export const InventoryDtoSchema = z.object({
 });
 
 export type InventoryDto = z.infer<typeof InventoryDtoSchema>;
+
+/**
+ * Orders inventory rows the way the table presents them: by product name,
+ * then by the variant's color name, then by size.
+ *
+ * `variant.size` is the `ClothingSizeEnum` numeric value (XS = 1 … OS = 8), so
+ * plain numeric comparison already yields the natural size order — no need to
+ * map through `clothingSizeLabels`.
+ *
+ * Returns a new array; the caller's page data is never mutated.
+ */
+export function sortInventoryRows(rows: InventoryDto[]): InventoryDto[] {
+  return [...rows].sort((a, b) => {
+    const byProduct = a.productName.localeCompare(b.productName);
+    if (byProduct !== 0) return byProduct;
+
+    const byColor = a.variant.color.name.localeCompare(b.variant.color.name);
+    if (byColor !== 0) return byColor;
+
+    return a.variant.size - b.variant.size;
+  });
+}

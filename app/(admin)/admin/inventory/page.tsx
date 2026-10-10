@@ -1,11 +1,13 @@
 "use client";
 
+import { useMemo } from "react";
 import KoaAdminSearchBar from "@/components/admin/koa-admin-searchbar";
 import { PageHeader } from "@/components/admin/page-header";
 import { KoaTable } from "@/components/general/table/koa-table";
 import { useInventory } from "@/features/inventory/hooks/use-inventory";
 import { useSearchField } from "@/hooks/use-search-field";
 import { useServerTableParams } from "@/hooks/use-server-table-params";
+import { sortInventoryRows } from "@/types/inventory";
 import { ShelvingUnit } from "lucide-react";
 import { getInventoryColumns } from "./columns";
 
@@ -17,6 +19,12 @@ export default function InventoryPage() {
     useServerTableParams();
   const searchField = useSearchField({ value: search, onCommit: setSearch });
   const { data, isLoading } = useInventory({ pagination, search, filters });
+
+  // The API returns rows unordered and we don't sort server-side, so order the
+  // fetched page here: product name -> variant color name -> variant size.
+  // NOTE: this only reorders the current page (server-side pagination returns
+  // one page at a time); a global order needs the backend to sort.
+  const rows = useMemo(() => sortInventoryRows(data?.items ?? []), [data]);
 
   return (
     <div className="flex flex-col gap-4">
@@ -37,7 +45,7 @@ export default function InventoryPage() {
 
       <KoaTable
         columns={getInventoryColumns()}
-        data={data?.items ?? []}
+        data={rows}
         rowCount={data?.totalRecords ?? 0}
         pagination={pagination}
         onPaginationChange={setPagination}
