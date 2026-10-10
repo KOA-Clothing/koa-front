@@ -1,8 +1,10 @@
 "use client";
 
+import { BaseShirtIcon } from "@/components/general/custom-icons/base-shirt-icon";
 import ColorSwatch from "@/components/general/koa-color-badge";
 import KoaEnumBadge from "@/components/general/koa-enum-badge";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import { clothingSizeBadgeStyles } from "@/lib/configs/enum-badge-styles";
 import { createDataTableColumnHelper } from "@/lib/configs/table-configs";
 import { clothingSizeLabels } from "@/types/enum-labels";
@@ -24,7 +26,13 @@ function CountCell({ value }: { value: number | null }) {
   return <div className="text-center">{value}</div>;
 }
 
-export function getInventoryColumns() {
+interface InventoryColumnActions {
+  onBaseProductView: (item: InventoryDto) => void;
+}
+
+export function getInventoryColumns({
+  onBaseProductView,
+}: InventoryColumnActions) {
   return columnHelper.columns([
     columnHelper.accessor("productName", {
       header: () => <div className="text-center">Product Name</div>,
@@ -78,9 +86,18 @@ export function getInventoryColumns() {
     columnHelper.display({
       id: "actions",
       header: () => <div className="text-center">Actions</div>,
-      // No row actions yet — actions (adjust stock, etc.) will be added here.
-      cell: () => (
-        <div className="text-center text-xs text-muted-foreground">—</div>
+      cell: ({ row }) => (
+        <div className="flex items-center justify-center gap-2">
+          <Button
+            variant="ghost"
+            size="icon-sm"
+            onClick={() => onBaseProductView(row.original)}
+            title="View Base Product"
+          >
+            <BaseShirtIcon className="size-3.5" />
+            <span className="sr-only">View Base Product</span>
+          </Button>
+        </div>
       ),
       enableSorting: false,
     }),
