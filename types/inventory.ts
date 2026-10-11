@@ -30,6 +30,33 @@ export const InventoryDtoSchema = z.object({
 export type InventoryDto = z.infer<typeof InventoryDtoSchema>;
 
 /**
+ * Payload for `PATCH /api/v1/inventory/{inventoryId}/add`, which increases a
+ * variant's stock by `quantity`. The endpoint *adds* to the current level
+ * rather than setting it, so the value must be a positive whole number — a
+ * negative or fractional value is a client error, caught here before the round
+ * trip. Field/params default to `null` when empty, so `coerce` maps `""`/`null`
+ * onto `0` and lets the `.positive()` rule produce the message.
+ */
+export const AddInventoryInputSchema = z.object({
+  quantity: z.coerce
+    .number({ error: "Enter a quantity to add" })
+    .int("Quantity must be a whole number")
+    .positive("Quantity must be greater than 0"),
+});
+
+export type AddInventoryInput = z.infer<typeof AddInventoryInputSchema>;
+
+/** Response of the add-stock endpoint, carrying the new stock level. */
+export const AddInventoryResponseSchema = z.object({
+  inventoryId: z.string(),
+  variantId: z.string(),
+  quantity: z.number(),
+  updatedAt: z.string().datetime({ offset: true }),
+});
+
+export type AddInventoryResponse = z.infer<typeof AddInventoryResponseSchema>;
+
+/**
  * Orders inventory rows the way the table presents them: by product name,
  * then by the variant's color name, then by size.
  *

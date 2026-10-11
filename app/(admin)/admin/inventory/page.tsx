@@ -1,7 +1,8 @@
 "use client";
 
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 import InventoryFilterControls from "@/components/admin/inventory/filters/inventory-filter-controls";
+import AddInventoryModal from "@/components/admin/inventory/modals/add-inventory-modal";
 import KoaAdminFiltersBar from "@/components/admin/koa-admin-filters-bar";
 import KoaAdminSearchBar from "@/components/admin/koa-admin-searchbar";
 import { PageHeader } from "@/components/admin/page-header";
@@ -32,6 +33,8 @@ export default function InventoryPage() {
   const searchField = useSearchField({ value: search, onCommit: setSearch });
   const { data, isLoading } = useInventory({ pagination, search, filters });
 
+  const [itemToAddInventory, setItemToAddInventory] = useState<InventoryDto | null>(null);
+
   // The backend now orders by product name -> variant color name -> variant
   // size, so this is usually a no-op; it stays as a cheap guarantee that the
   // on-screen order matches the intended key even if the server order drifts.
@@ -40,6 +43,10 @@ export default function InventoryPage() {
   /** Deep-links to the inventory row's base product, scoped by its id filter. */
   const handleBaseProductView = (item: InventoryDto) => {
     router.push(adminListHrefs.baseProducts({ productId: item.productId }));
+  };
+
+  const handleAddInventory = (item: InventoryDto) => {
+    setItemToAddInventory(item);
   };
 
   /**
@@ -95,6 +102,7 @@ export default function InventoryPage() {
       <KoaTable
         columns={getInventoryColumns({
           onBaseProductView: handleBaseProductView,
+          onAddInventory: handleAddInventory
         })}
         data={rows}
         rowCount={data?.totalRecords ?? 0}
@@ -106,6 +114,13 @@ export default function InventoryPage() {
             ? "No inventory items match the current search and filters."
             : undefined
         }
+      />
+
+      <AddInventoryModal
+        item={itemToAddInventory}
+        onOpenChange={(open) => {
+          if (!open) setItemToAddInventory(null);
+        }}
       />
     </div>
   );

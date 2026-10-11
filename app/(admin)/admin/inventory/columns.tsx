@@ -9,7 +9,7 @@ import { clothingSizeBadgeStyles } from "@/lib/configs/enum-badge-styles";
 import { createDataTableColumnHelper } from "@/lib/configs/table-configs";
 import { clothingSizeLabels } from "@/types/enum-labels";
 import { InventoryDto } from "@/types/inventory";
-import { X } from "lucide-react";
+import { LayersPlus, X } from "lucide-react";
 
 const columnHelper = createDataTableColumnHelper<InventoryDto>();
 
@@ -28,10 +28,11 @@ function CountCell({ value }: { value: number | null }) {
 
 interface InventoryColumnActions {
   onBaseProductView: (item: InventoryDto) => void;
+  onAddInventory: (item: InventoryDto) => void;
 }
 
 export function getInventoryColumns({
-  onBaseProductView,
+  onBaseProductView, onAddInventory
 }: InventoryColumnActions) {
   return columnHelper.columns([
     columnHelper.accessor("productName", {
@@ -46,7 +47,7 @@ export function getInventoryColumns({
 
     return (
       // Changed from flex to grid with explicit column widths
-      <div className="grid grid-cols-[120px_auto_1fr] items-center gap-2">
+      <div className="grid grid-cols-[100px_auto_1fr] items-center gap-2">
         <Badge
           variant="outline"
           className="gap-1.5 h-7 justify-start"
@@ -88,6 +89,16 @@ export function getInventoryColumns({
       header: () => <div className="text-center">Actions</div>,
       cell: ({ row }) => (
         <div className="flex items-center justify-center gap-2">
+          <Button
+            variant="ghost"
+            size="icon-sm"
+            onClick={() => onAddInventory(row.original)}
+            title="Add Inventory"
+          >
+            <LayersPlus className="size-3.5" />
+            <span className="sr-only">Add Inventory</span>
+          </Button>
+          
           <Button
             variant="ghost"
             size="icon-sm"
