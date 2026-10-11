@@ -10,9 +10,11 @@ import {
   SidebarHeader,
   SidebarRail,
 } from "@/components/ui/sidebar"
-import { TerminalSquareIcon, Columns3Cog, Shirt, Palette, DraftingCompass, ShelvingUnit, ChartLine, ChartLineIcon, ChartSpline, StickyNote, PersonStanding, TimerReset, ScissorsLineDashed, Scissors, UserRound, Users, FileCode, FileCog, Bolt, Images, BookImage, SwatchBook } from "lucide-react"
+import { ShelvingUnit, ChartSpline, TimerReset, Users, BookImage, SwatchBook, FileCog, PaintBucket, File, SplinePointer, Images } from "lucide-react"
 import { CompanyHeader } from "./company-header"
 import { NavSingle } from "./nav-single"
+import { BaseShirtIcon } from "@/components/general/custom-icons/base-shirt-icon"
+import { ShirtCogIcon } from "@/components/general/custom-icons/shirt-cog-icon"
 
 // This is sample data.
 const data = {
@@ -37,14 +39,14 @@ const data = {
       title: "Product Configurations",
       url: "/admin/product-configs/products",
       icon: (
-        <Shirt/>
+        <ShirtCogIcon/>
       ),
       isActive: true,
       items: [
         {
           title: "Base Products",
           url: "/admin/product-configs/base-products",
-          icon: (<ScissorsLineDashed/>)
+          icon: (<BaseShirtIcon />)
         },
         {
           title: "Product Variants",
@@ -54,7 +56,7 @@ const data = {
         {
           title: "Product Images",
           url: "/admin/product-configs/images",
-          icon: (<BookImage/>)
+          icon: (<Images />)
         }
       ],
     },
@@ -62,24 +64,24 @@ const data = {
       title: "Facets",
       url: "/admin/facets/category",
       icon: (
-        <Columns3Cog/>
+        <FileCog />
       ),
       isActive: true,
       items: [
         {
           title: "Categories",
           url: "/admin/facets/category",
-          icon: (<StickyNote/>)
+          icon: (<File />)
         },
         {
           title: "Designs",
           url: "/admin/facets/design",
-          icon: (<DraftingCompass/>)
+          icon: (<SplinePointer/>)
         },
         {
           title: "Colors",
           url: "/admin/facets/color",
-          icon: (<Palette/>)
+          icon: (<PaintBucket/>)
         }
       ],
     }

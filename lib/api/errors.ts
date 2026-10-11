@@ -16,6 +16,16 @@ export function getErrorMessage(error: unknown): string {
 }
 
 /**
+ * True when the API answered 404 — the resource genuinely doesn't exist, as
+ * opposed to the request failing. Worth its own check because the failure
+ * envelope gives every status the same shape, so a missing product and a dead
+ * network both arrive as `isError` with a string to show.
+ */
+export function isNotFoundError(error: unknown): boolean {
+  return error instanceof AxiosError && error.response?.status === 404;
+}
+
+/**
  * Some successful responses carry a `message` field (the envelope shape is
  * loose); fall back to `fallback` when it isn't present.
  */

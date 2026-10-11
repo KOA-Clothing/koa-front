@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useMemo, useState } from "react";
 import { useServerTableParams } from "@/hooks/use-server-table-params";
 import { useSearchField } from "@/hooks/use-search-field";
 import { useProducts } from "@/features/product/hooks/use-products";
@@ -8,19 +8,34 @@ import { useProductMutations } from "@/features/product/hooks/use-product-mutati
 import { getProductColumns } from "./columns";
 import { ProductDto } from "@/types/product";
 import { AgeGroupEnum, GenderEnum, ProductStatusEnum } from "@/types/enums";
+import { productFilterSpecs } from "@/types/filters/product-filters";
 import { KoaTable } from "@/components/general/table/koa-table";
 import { Shirt } from "lucide-react";
 import { PageHeader } from "@/components/admin/page-header";
 import { AddNewButton } from "@/components/general/add-new-button";
 import KoaAdminSearchBar from "@/components/admin/koa-admin-searchbar";
+import KoaAdminFiltersBar from "@/components/admin/koa-admin-filters-bar";
+import ProductFilterControls from "@/components/admin/product/filters/product-filter-controls";
 import CreateProductModal from "@/components/admin/product/modals/create-product-modal";
 import DeleteProductConfirmationModal from "@/components/admin/product/modals/delete-product-confirmation-modal";
 import UpdateProductModal from "@/components/admin/product/modals/update-product-modal";
 import ViewProductModal from "@/components/admin/product/modals/view-product-modal";
 import ManageLinkedDesignsModal from "@/components/admin/product/modals/manage-linked-designs-modal";
+import { useRouter } from "next/navigation";
+import { adminHrefs, adminListHrefs } from "@/lib/configs/page-routes";
 
 export default function BaseProductsPage() {
-  const { pagination, setPagination, search, setSearch } = useServerTableParams();
+  const {
+    pagination,
+    setPagination,
+    search,
+    setSearch,
+    filters,
+    setFilter,
+    clearFilters,
+    hasActiveFilters,
+  } = useServerTableParams({ filters: productFilterSpecs });
+  const router = useRouter();
   const searchField = useSearchField({ value: search, onCommit: setSearch });
 
   const [isCreateOpen, setIsCreateOpen] = useState(false);
@@ -29,7 +44,7 @@ export default function BaseProductsPage() {
   const [productToDelete, setProductToDelete] = useState<ProductDto | null>(null);
   const [productToManageDesigns, setProductToManageDesigns] = useState<ProductDto | null>(null);
 
-  const { data, isLoading } = useProducts(pagination, search);
+  const { data, isLoading } = useProducts({ pagination, search, filters });
   const { 
     toggleActiveStatus, 
     toggleFeaturedStatus, 
@@ -61,6 +76,45 @@ export default function BaseProductsPage() {
     setProductToManageDesigns(product);
   }
 
+  const handleVariantsView = (product: ProductDto) => {
+    router.push(adminListHrefs.productVariants({ productId: product.id }));
+  }
+
+  const handleCategoryView = (product: ProductDto) => {
+    router.push(adminListHrefs.categories({ categoryId: product.category.id }));
+  }
+
+  /**
+   * Straight to the product's image gallery, not through the images table. A row
+   * already *is* a product, so a deep link that made the admin pick their product
+   * out of a list of every product would be a step in the wrong direction.
+   *
+   * `adminHrefs.productImages`, not an `adminListHrefs` builder: the images table
+   * has no `productId` filter to set, so this navigates to the detail route
+   * directly. If that filter is ever added, this should switch to the list
+   * builder so the two routes share one source of truth for the link.
+   */
+  const handleImagesView = (product: ProductDto) => {
+    router.push(adminHrefs.productImages(product.id));
+  }
+
+  /** Deep-links to the inventory table scoped to this product's rows. */
+  const handleInventoryView = (product: ProductDto) => {
+    router.push(adminListHrefs.inventory({ productId: product.id }));
+  }
+
+  /**
+   * Label for the `productId` deep-link indicator. When that filter is set the
+   * list is scoped to exactly that product, so the name is already in the
+   * response — no second request. Matching on the id (rather than trusting the
+   * row position) keeps a stale `placeholderData` page from naming the wrong
+   * product for a frame while the filtered request is in flight.
+   */
+  const productIdLabel = useMemo(() => {
+    if (!filters.productId) return undefined;
+    return data?.items.find((item) => item.id === filters.productId)?.name;
+  }, [filters.productId, data]);
+
   return (
     <div className="flex flex-col gap-4">
       <PageHeader
@@ -74,6 +128,17 @@ export default function BaseProductsPage() {
           searchField={searchField}
           placeholder="Search Products..."
         />
+
+        <KoaAdminFiltersBar
+          hasActiveFilters={hasActiveFilters}
+          onClearAll={clearFilters}
+        >
+          <ProductFilterControls
+            filters={filters}
+            setFilter={setFilter}
+            productIdLabel={productIdLabel}
+          />
+        </KoaAdminFiltersBar>
 
         <div className="flex items-center justify-end gap-2">
           <AddNewButton onClick={() => setIsCreateOpen(true)} />
@@ -90,13 +155,22 @@ export default function BaseProductsPage() {
           onChangeGender: handleChangeGender,
           onChangeAgeGroup: handleChangeAgeGroup,
           onChangeProductStatus: handleChangeProductStatus,
-          manageLinkedDesigns: handleManageLinkedDesigns
+          manageLinkedDesigns: handleManageLinkedDesigns,
+          onVariantsView: handleVariantsView,
+          onCategoryView: handleCategoryView,
+          onImagesView: handleImagesView,
+          onInventoryView: handleInventoryView
         })}
         data={data?.items ?? []}
         rowCount={data?.totalRecords ?? 0}
         pagination={pagination}
         onPaginationChange={setPagination}
         isLoading={isLoading}
+        emptyMessage={
+          hasActiveFilters || search
+            ? "No products match the current search and filters."
+            : undefined
+        }
       />
 
       <CreateProductModal open={isCreateOpen} onOpenChange={setIsCreateOpen} />

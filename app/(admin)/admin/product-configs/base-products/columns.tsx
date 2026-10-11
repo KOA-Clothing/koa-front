@@ -9,7 +9,7 @@ import {
   productStatusLabels,
 } from "@/types/enum-labels";
 import { AgeGroupEnum, GenderEnum, ProductStatusEnum } from "@/types/enums";
-import { DraftingCompass, ExternalLink, Eye, Pencil, Trash2 } from "lucide-react";
+import { ExternalLink, Eye, File, Images, Pencil, ShelvingUnit, SplinePointer, SwatchBook, Trash2 } from "lucide-react";
 import Link from "next/link";
 import { KoaSwitch } from "@/components/general/koa-switch";
 import KoaEnumChanger from "@/components/general/koa-enum-changer";
@@ -29,6 +29,10 @@ interface BaseProductColumnActions {
   onChangeAgeGroup: (product: ProductDto, ageGroup: AgeGroupEnum) => void;
   onChangeProductStatus: (product: ProductDto, status: ProductStatusEnum) => void;
   manageLinkedDesigns: (product: ProductDto) => void;
+  onVariantsView: (product: ProductDto) => void;
+  onCategoryView: (product: ProductDto) => void;
+  onImagesView: (product: ProductDto) => void;
+  onInventoryView: (product: ProductDto) => void;
 }
 
 const columnHelper = createDataTableColumnHelper<ProductDto>();
@@ -42,7 +46,8 @@ export function getProductColumns({
     onEdit, onDelete, onView, 
     toggleFeaturedStatus, toggleActiveStatus, 
     onChangeGender, onChangeAgeGroup, 
-    onChangeProductStatus, manageLinkedDesigns }: BaseProductColumnActions) {
+    onChangeProductStatus, manageLinkedDesigns, onVariantsView, onCategoryView,
+    onImagesView, onInventoryView }: BaseProductColumnActions) {
   return columnHelper.columns([
     columnHelper.accessor("name", {
       header: () => <div className="text-center">Name</div>,
@@ -195,8 +200,51 @@ export function getProductColumns({
             onClick={() => manageLinkedDesigns(row.original)}
             title="Manage linked designs"
           >
-            <DraftingCompass className="size-3.5" />
+            <SplinePointer className="size-3.5" />
             <span className="sr-only">Manage linked designs</span>
+          </Button>
+
+          <Button
+            variant="ghost"
+            size="icon-sm"
+            onClick={() => onVariantsView(row.original)}
+            title="View product variants"
+          >
+            <SwatchBook className="size-3.5" />
+            <span className="sr-only">View product variants</span>
+          </Button>
+
+          <Button
+            variant="ghost"
+            size="icon-sm"
+            onClick={() => onInventoryView(row.original)}
+            title="View Inventory Items"
+          >
+            <ShelvingUnit className="size-3.5" />
+            <span className="sr-only">View Inventory Items</span>
+          </Button>
+
+          {/* Sits next to the variants button because images and variants are the
+              two per-product galleries an admin works on together — a shot is
+              always shot *in* a colorway. */}
+          <Button
+            variant="ghost"
+            size="icon-sm"
+            onClick={() => onImagesView(row.original)}
+            title="View product images"
+          >
+            <Images className="size-3.5" />
+            <span className="sr-only">View product images</span>
+          </Button>
+
+          <Button
+            variant="ghost"
+            size="icon-sm"
+            onClick={() => onCategoryView(row.original)}
+            title="View category"
+          >
+            <File className="size-3.5" />
+            <span className="sr-only">View category</span>
           </Button>
 
           <Button

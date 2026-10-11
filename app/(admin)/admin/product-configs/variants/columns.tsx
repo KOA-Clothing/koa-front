@@ -1,5 +1,6 @@
 "use client";
 
+import { BaseShirtIcon } from "@/components/general/custom-icons/base-shirt-icon";
 import ColorSwatch from "@/components/general/koa-color-badge";
 import KoaEnumBadge from "@/components/general/koa-enum-badge";
 import { Badge } from "@/components/ui/badge";
@@ -8,7 +9,7 @@ import { clothingSizeBadgeStyles } from "@/lib/configs/enum-badge-styles";
 import { createDataTableColumnHelper } from "@/lib/configs/table-configs";
 import { clothingSizeLabels } from "@/types/enum-labels";
 import { ProductVariantsCollectionDto } from "@/types/product-variant";
-import { CirclePlus, Eye } from "lucide-react";
+import { CirclePlus, Eye, ShelvingUnit } from "lucide-react";
 
 const columnHelper = createDataTableColumnHelper<ProductVariantsCollectionDto>();
 
@@ -26,13 +27,28 @@ function distinctBy<T>(items: T[], key: (item: T) => unknown): T[] {
 interface ProductVariantsColumnActions {
   onView: (product: ProductVariantsCollectionDto) => void;
   onCreate: (product: ProductVariantsCollectionDto) => void;
+  onBaseProductView: (product: ProductVariantsCollectionDto) => void;
+  onInventoryView: (product: ProductVariantsCollectionDto) => void;
 }
 
-export function getProductVariantColumns({ onView, onCreate }: ProductVariantsColumnActions) {
+export function getProductVariantColumns({ onView, onCreate, onBaseProductView, onInventoryView }: ProductVariantsColumnActions) {
   return columnHelper.columns([
     columnHelper.accessor("name", {
       header: () => <div className="text-center">Product Name</div>,
       enableSorting: true,
+    }),
+    columnHelper.display({
+      id: "availableVariantCount",
+      header: () => <div className="text-center">Total Variant Count</div>,
+      cell: ({ row }) => {
+        
+        return (
+          <div className="text-center">
+            {row.original.variants.length}
+          </div>
+        );
+      },
+      enableSorting: false,
     }),
     columnHelper.display({
       id: "availableSizes",
@@ -50,7 +66,7 @@ export function getProductVariantColumns({ onView, onCreate }: ProductVariantsCo
         }
 
         return (
-          <div className="flex flex-wrap items-center justify-center gap-1.5">
+          <div className="grid grid-cols-4 gap-1.5 place-items-center justify-center max-w-fit mx-auto">
             {sizes.map((size) => (
               <KoaEnumBadge
                 key={size}
@@ -113,6 +129,24 @@ export function getProductVariantColumns({ onView, onCreate }: ProductVariantsCo
           >
             <CirclePlus className="size-3.5" />
             <span className="sr-only">Create variant</span>
+          </Button>
+          <Button
+            variant="ghost"
+            size="icon-sm"
+            onClick={() => onBaseProductView(row.original)}
+            title="View Base Product"
+          >
+            <BaseShirtIcon className="size-3.5" />
+            <span className="sr-only">View Base Product</span>
+          </Button>
+          <Button
+            variant="ghost"
+            size="icon-sm"
+            onClick={() => onInventoryView(row.original)}
+            title="View Inventory Items"
+          >
+            <ShelvingUnit className="size-3.5" />
+            <span className="sr-only">View Inventory Items</span>
           </Button>
         </div>
       ),

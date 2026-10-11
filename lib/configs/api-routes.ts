@@ -44,13 +44,24 @@ export const API_ROUTES = {
     CHANGE_AGE_GROUP: (id: string) => `/api/v1/products/${id}/change-age-group`,
     CHANGE_PRODUCT_STATUS: (id: string) => `/api/v1/products/${id}/change-product-status`,
     LINKED_DESIGNS: (id: string) => `/api/v1/products/${id}/linked-designs`,
-    VARIANTS: (id: string) => `/api/v1/products/${id}/variants`
+    VARIANTS: (id: string) => `/api/v1/products/${id}/variants`,
+    VARIANT_COLORS: (id: string) => `/api/v1/products/${id}/variants/related-colors`
   },
   PRODUCT_VARIANTS: {
     BASE: "/api/v1/product-variants",
     EXISTS: (productId: string, colorId: string, size: string | number) => `/api/v1/product-variants/exists?productId=${productId}&colorId=${colorId}&size=${size}`,
     BY_ID: (id: string) => `/api/v1/product-variants/${id}`,
     TOGGLE_ACTIVE_STATUS: (id: string) => `/api/v1/product-variants/${id}/toggle-active-status`,
+  },
+  PRODUCT_IMAGES: {
+    BASE: "/api/v1/product-images",
+    BY_ID: (productId: string) => `/api/v1/product-images/${productId}`,
+    CHANGE_PRIMARY: (productId: string) => `/api/v1/product-images/${productId}/change-primary`,
+    BY_IMAGE_ID: (productId: string, imageId: string) => `/api/v1/product-images/${productId}/images/${imageId}`,
+  },
+  INVENTORY: {
+    BASE: "/api/v1/inventory",
+    ADD: (inventoryId: string) => `/api/v1/inventory/${inventoryId}/add`,
   },
   STORAGE: {
     UPLOAD_REQUESTS: "/api/v1/storage/upload-url",
