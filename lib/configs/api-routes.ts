@@ -61,6 +61,7 @@ export const API_ROUTES = {
   },
   INVENTORY: {
     BASE: "/api/v1/inventory",
+    BY_ID: (inventoryId: string) => `/api/v1/inventory/${inventoryId}`,
     ADD: (inventoryId: string) => `/api/v1/inventory/${inventoryId}/add`,
   },
   STORAGE: {

@@ -9,7 +9,7 @@ import { clothingSizeBadgeStyles } from "@/lib/configs/enum-badge-styles";
 import { createDataTableColumnHelper } from "@/lib/configs/table-configs";
 import { clothingSizeLabels } from "@/types/enum-labels";
 import { InventoryDto } from "@/types/inventory";
-import { LayersPlus, X } from "lucide-react";
+import { Flag, LayersPlus, X } from "lucide-react";
 
 const columnHelper = createDataTableColumnHelper<InventoryDto>();
 
@@ -29,10 +29,11 @@ function CountCell({ value }: { value: number | null }) {
 interface InventoryColumnActions {
   onBaseProductView: (item: InventoryDto) => void;
   onAddInventory: (item: InventoryDto) => void;
+  setLowStockThreshold: (item: InventoryDto) => void;
 }
 
 export function getInventoryColumns({
-  onBaseProductView, onAddInventory
+  onBaseProductView, onAddInventory, setLowStockThreshold
 }: InventoryColumnActions) {
   return columnHelper.columns([
     columnHelper.accessor("productName", {
@@ -97,6 +98,16 @@ export function getInventoryColumns({
           >
             <LayersPlus className="size-3.5" />
             <span className="sr-only">Add Inventory</span>
+          </Button>
+
+          <Button
+            variant="ghost"
+            size="icon-sm"
+            onClick={() => setLowStockThreshold(row.original)}
+            title="Set Low Stock Threshold"
+          >
+            <Flag className="size-3.5" />
+            <span className="sr-only">Set Low Stock Threshold</span>
           </Button>
           
           <Button

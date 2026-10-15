@@ -57,6 +57,42 @@ export const AddInventoryResponseSchema = z.object({
 export type AddInventoryResponse = z.infer<typeof AddInventoryResponseSchema>;
 
 /**
+ * Payload for `PATCH /api/v1/inventory/{inventoryId}`, which *sets* the
+ * low-stock threshold to an absolute value (unlike the additive stock
+ * endpoint). The backend rule is "greater than or equal to 0", so `0` is a real
+ * threshold and must stay submittable.
+ *
+ * This deliberately does NOT use `z.coerce.number()` like `AddInventoryInput`
+ * does: an empty field coerces to `0`, which would satisfy a `.min(0)` rule and
+ * silently clear the threshold. Validating the raw digit string first makes an
+ * empty entry a validation error rather than a zero.
+ */
+export const SetLowStockThresholdInputSchema = z.object({
+  lowStockThreshold: z
+    .string()
+    .trim()
+    .min(1, "Enter a low stock threshold")
+    .regex(/^\d+$/, "Enter a whole number of 0 or more")
+    .transform((value) => Number(value)),
+});
+
+export type SetLowStockThresholdInput = z.infer<
+  typeof SetLowStockThresholdInputSchema
+>;
+
+/** Response of the set-threshold endpoint, echoing the stored value. */
+export const SetLowStockThresholdResponseSchema = z.object({
+  inventoryId: z.string(),
+  variantId: z.string(),
+  lowStockThreshold: z.number(),
+  updatedAt: z.string().datetime({ offset: true }),
+});
+
+export type SetLowStockThresholdResponse = z.infer<
+  typeof SetLowStockThresholdResponseSchema
+>;
+
+/**
  * Orders inventory rows the way the table presents them: by product name,
  * then by the variant's color name, then by size.
  *

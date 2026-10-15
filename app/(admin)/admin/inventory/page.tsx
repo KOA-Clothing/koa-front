@@ -3,6 +3,7 @@
 import { useMemo, useState } from "react";
 import InventoryFilterControls from "@/components/admin/inventory/filters/inventory-filter-controls";
 import AddInventoryModal from "@/components/admin/inventory/modals/add-inventory-modal";
+import SetLowStockThresholdModal from "@/components/admin/inventory/modals/set-low-stock-threshold-modal";
 import KoaAdminFiltersBar from "@/components/admin/koa-admin-filters-bar";
 import KoaAdminSearchBar from "@/components/admin/koa-admin-searchbar";
 import { PageHeader } from "@/components/admin/page-header";
@@ -34,6 +35,7 @@ export default function InventoryPage() {
   const { data, isLoading } = useInventory({ pagination, search, filters });
 
   const [itemToAddInventory, setItemToAddInventory] = useState<InventoryDto | null>(null);
+  const [itemToSetThreshold, setItemToSetThreshold] = useState<InventoryDto | null>(null);
 
   // The backend now orders by product name -> variant color name -> variant
   // size, so this is usually a no-op; it stays as a cheap guarantee that the
@@ -47,6 +49,10 @@ export default function InventoryPage() {
 
   const handleAddInventory = (item: InventoryDto) => {
     setItemToAddInventory(item);
+  };
+
+  const handleSetLowStockThreshold = (item: InventoryDto) => {
+    setItemToSetThreshold(item);
   };
 
   /**
@@ -102,7 +108,8 @@ export default function InventoryPage() {
       <KoaTable
         columns={getInventoryColumns({
           onBaseProductView: handleBaseProductView,
-          onAddInventory: handleAddInventory
+          onAddInventory: handleAddInventory,
+          setLowStockThreshold: handleSetLowStockThreshold
         })}
         data={rows}
         rowCount={data?.totalRecords ?? 0}
@@ -120,6 +127,13 @@ export default function InventoryPage() {
         item={itemToAddInventory}
         onOpenChange={(open) => {
           if (!open) setItemToAddInventory(null);
+        }}
+      />
+
+      <SetLowStockThresholdModal
+        item={itemToSetThreshold}
+        onOpenChange={(open) => {
+          if (!open) setItemToSetThreshold(null);
         }}
       />
     </div>

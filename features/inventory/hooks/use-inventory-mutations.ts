@@ -4,20 +4,33 @@ import { useAxiosClient } from "@/hooks/use-api-client";
 import { useAppMutation } from "@/lib/api/use-app-mutation";
 import { queryKeys } from "@/lib/api/query-keys";
 import { API_ROUTES } from "@/lib/configs/api-routes";
-import type { AddInventoryResponse } from "@/types/inventory";
+import type {
+  AddInventoryResponse,
+  SetLowStockThresholdResponse,
+} from "@/types/inventory";
 
 interface AddInventoryVariables {
   inventoryId: string;
   quantity: number;
 }
 
+interface SetLowStockThresholdVariables {
+  inventoryId: string;
+  lowStockThreshold: number;
+}
+
 /**
- * Inventory mutations. Currently only "add stock", which increases a variant's
- * on-hand quantity by a positive amount — the endpoint is additive, so it is a
- * `PATCH` on `/inventory/{id}/add` rather than a write of the whole row.
+ * Inventory mutations.
  *
- * Invalidates `queryKeys.inventory.all`, which covers every filtered/paginated
- * inventory list, so the table reflects the new level without a manual refetch.
+ * - `addInventory` *increases* a variant's on-hand quantity by a positive amount
+ *   (`PATCH /inventory/{id}/add`).
+ * - `setLowStockThreshold` *replaces* the row's low-stock threshold with an
+ *   absolute value (`PATCH /inventory/{id}`) — a set, not an add, so it can
+ *   lower the threshold as well as raise it.
+ *
+ * Both invalidate `queryKeys.inventory.all`, which covers every filtered/
+ * paginated inventory list, so the table reflects the change without a manual
+ * refetch.
  */
 export function useInventoryMutations() {
   const axiosClient = useAxiosClient();
@@ -31,5 +44,17 @@ export function useInventoryMutations() {
     successMessage: "Inventory updated successfully!",
   });
 
-  return { addInventory };
+  const setLowStockThreshold = useAppMutation<
+    SetLowStockThresholdResponse,
+    SetLowStockThresholdVariables
+  >({
+    mutationFn: ({ inventoryId, lowStockThreshold }) =>
+      axiosClient
+        .patch(API_ROUTES.INVENTORY.BY_ID(inventoryId), { lowStockThreshold })
+        .then((r) => r.data),
+    invalidateKeys: [queryKeys.inventory.all],
+    successMessage: "Low stock threshold updated successfully!",
+  });
+
+  return { addInventory, setLowStockThreshold };
 }
