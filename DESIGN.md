@@ -379,7 +379,19 @@ Availability feedback:
 - Keep hover treatments subtle and preserve the same hierarchy at touch and keyboard widths.
 - Do not disable browser zoom, reduce focus visibility, or introduce content that requires hover to understand.
 
-## 7. Agent implementation checklist
+## 7. Storefront long-form pages
+
+The storefront legal pages (`/privacy-policy`, `/terms-of-service`) and the About page share one long-form composition. Reuse it for any new prose-heavy storefront route instead of inventing a new one.
+
+- Container: `max-w-7xl mx-auto px-4 md:px-8`.
+- Hero: a short uppercase eyebrow, a large `font-bold tracking-tight` title with a `text-primary` accent line, an intro paragraph capped near `max-w-2xl`, then an uppercase last-updated line.
+- Optional contents nav sits in the hero under a `border-t border-border pt-6` rule as an accessible `<nav>`/`<ol>` of anchor links, each prefixed with a zero-padded `tabular-nums` index in `text-primary`.
+- Body sections use `LegalSection` (`components/shop-front/legal-section.tsx`): `border-b border-border`, `py-16 md:py-24`, a `md:grid-cols-[1fr_2fr]` split with a sticky (`md:top-24`) number + uppercase label column on the left, and an `h2` plus prose on the right.
+- Prose uses `text-base leading-relaxed text-muted-foreground`; inline emphasis such as list-lead terms uses `font-medium text-foreground`. Lists are `list-disc space-y-3 pl-5`.
+- Contact blocks are a quiet `rounded-xl border border-border bg-muted/30 p-4` panel with an uppercase label — no shadow, no new color.
+- Sections carry `id` + `scroll-mt-24` so contents links land below the sticky `h-20` header; smooth scrolling uses `motion-safe:scroll-smooth` on `<main>`.
+
+## 8. Agent implementation checklist
 
 Before completing a user-facing UI change, verify that:
 

@@ -140,7 +140,7 @@ export default function Footer() {
 
                   <li>
                     <Link
-                      href="/about"
+                      href="/privacy-policy"
                       className="transition hover:text-[#3D79BE]"
                     >
                       Privacy Policy
@@ -163,14 +163,14 @@ export default function Footer() {
 
                 <div className="flex flex-wrap gap-x-6 gap-y-2">
                   <Link
-                    href="/about"
+                    href="/terms-of-service"
                     className="transition hover:text-[#3D79BE]"
                   >
                     Terms of Service
                   </Link>
 
                   <Link
-                    href="/about"
+                    href="/privacy-policy"
                     className="transition hover:text-[#3D79BE]"
                   >
                     Privacy Policy
