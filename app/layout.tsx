@@ -6,8 +6,8 @@ import { ClerkProvider } from "@clerk/nextjs";
 import QueryProvider from "@/components/providers/query-provider";
 import { ToasterProvider } from "@/components/providers/toaster-provider";
 
-import { Analytics } from "@vercel/analytics/next"
-import { SpeedInsights } from "@vercel/speed-insights/next"
+import { Analytics } from "@vercel/analytics/next";
+import { SpeedInsights } from "@vercel/speed-insights/next";
 
 const inter = Inter({subsets:['latin'],variable:'--font-sans'});
 
