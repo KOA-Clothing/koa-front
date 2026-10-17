@@ -47,7 +47,7 @@ export function Header() {
           
           {/* Desktop Navigation */}
           <nav className="hidden md:flex items-center gap-5">
-            <NavItem href={'/search'} text={'Shop'} isSolidActive={isSolidActive} />
+            <NavItem href={'/'} text={'Shop'} isSolidActive={isSolidActive} />
             <NavItem href={'/collections'} text={'Collections'} isSolidActive={isSolidActive} />
             <NavItem href={'/about'} text={'About'} isSolidActive={isSolidActive} />
           </nav>

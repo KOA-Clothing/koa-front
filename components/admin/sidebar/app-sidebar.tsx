@@ -10,7 +10,7 @@ import {
   SidebarHeader,
   SidebarRail,
 } from "@/components/ui/sidebar"
-import { ShelvingUnit, ChartSpline, TimerReset, Users, BookImage, SwatchBook, FileCog, PaintBucket, File, SplinePointer, Images } from "lucide-react"
+import { ShelvingUnit, ChartSpline, TimerReset, Users, BookImage, SwatchBook, FileCog, PaintBucket, File, SplinePointer, Images, Boxes, LayoutGrid } from "lucide-react"
 import { CompanyHeader } from "./company-header"
 import { NavSingle } from "./nav-single"
 import { BaseShirtIcon } from "@/components/general/custom-icons/base-shirt-icon"
@@ -87,6 +87,13 @@ const data = {
     }
   ],
   BottomSingle: [
+    {
+      name: "Product Collections",
+      url: "/admin/collections",
+      icon: (
+        <LayoutGrid/>
+      )
+    },
     {
       name: "Customers",
       url: "/admin/customers",
