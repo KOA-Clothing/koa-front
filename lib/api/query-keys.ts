@@ -11,6 +11,14 @@ export const queryKeys = {
     detail: (id: string) => ["categories", "detail", id] as const,
     active: ["categories", "active"] as const,
   },
+  collections: {
+    all: ["collections"] as const,
+    list: (params: Record<string, unknown>) => ["collections", "list", params] as const,
+    // The products linked to one collection. Lives under `collections` (not
+    // `products`) because the path is scoped by the collection, and a
+    // `products` invalidation must never pretend to clear it.
+    items: (collectionId: string) => ["collections", "items", collectionId] as const,
+  },
   designs: {
     all: ["designs"] as const,
     list: (params: Record<string, unknown>) => ["designs", "list", params] as const,

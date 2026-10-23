@@ -11,6 +11,7 @@ export const PAGE_ROUTES = {
     CATEGORIES: "/admin/facets/category",
     DESIGNS: "/admin/facets/design",
     COLORS: "/admin/facets/color",
+    COLLECTIONS: "/admin/collections",
     INVENTORY: "/admin/inventory",
   },
 } as const;
@@ -67,4 +68,10 @@ export const adminHrefs = {
   /** One product's image gallery, keyed by product id. */
   productImages: (productId: string) =>
     `${PAGE_ROUTES.ADMIN.PRODUCT_IMAGES}/${productId}`,
+  /**
+   * One collection's product list, keyed by collection id. This is what a
+   * collection card in the admin grid opens when it's clicked.
+   */
+  collectionDetail: (collectionId: string) =>
+    `${PAGE_ROUTES.ADMIN.COLLECTIONS}/${collectionId}`,
 };

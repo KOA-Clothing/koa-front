@@ -3,6 +3,7 @@ import { z } from "zod";
 export const SIZE_GUIDE_FOLDER = "size-guides";
 export const SWATCH_IMAGES_FOLDER = "swatch-images";
 export const PRODUCT_IMAGES_FOLDER = "product-images";
+export const COLLECTION_COVER_IMAGES_FOLDER = "collection-covers";
 
 export const UploadRequestInputSchema = z.object({
   fileName: z.string().min(1, "File name is required"),

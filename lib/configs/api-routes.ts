@@ -23,6 +23,12 @@ export const API_ROUTES = {
     BY_ID: (id: string) => `/api/v1/categories/${id}`,
     TOGGLE_ACTIVE_STATUS: (id: string) => `/api/v1/categories/${id}/toggle-active-status`,
   },
+  COLLECTIONS: {
+    BASE: "/api/v1/collections",
+    BY_ID: (collectionId: string) => `/api/v1/collections/${collectionId}`,
+    TOGGLE_ACTIVE_STATUS: (id: string) => `/api/v1/collections/${id}/toggle-active-status`,
+    ITEM: (collectionId: string, productId: string) => `/api/v1/collections/${collectionId}/items/${productId}`,
+  },
   DESIGNS: {
     BASE: "/api/v1/designs",
     ALL_ACTIVE: "/api/v1/designs/all-active",
