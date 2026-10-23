@@ -3,13 +3,16 @@
 import { useState } from "react";
 import { PageHeader } from "@/components/admin/page-header";
 import { KoaTable } from "@/components/general/table/koa-table";
+import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { useCollectionInfo } from "@/features/collection/hooks/use-collection-info";
 import { useCollectionItems } from "@/features/collection/hooks/use-collection-items";
 import { getErrorMessage, isNotFoundError } from "@/lib/api/errors";
 import { PAGE_ROUTES } from "@/lib/configs/page-routes";
+import type { CollectionDto } from "@/types/collection";
 import { DEFAULT_PAGE_SIZE } from "@/types/pagination";
 import type { PaginationState } from "@tanstack/react-table";
-import { ChevronLeft, Package, PackageX } from "lucide-react";
+import { Boxes, ChevronLeft, Package, PackageX } from "lucide-react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
 import { getCollectionItemColumns } from "./columns";
@@ -23,35 +26,48 @@ const INITIAL_PAGINATION: PaginationState = {
  * One collection's products, at `/admin/collections/{collectionId}`, reached by
  * clicking a tile in the collections grid.
  *
- * The only list page in the admin whose paging is client-side: the endpoint
- * behind it (`GET /api/v1/collections/{id}`) is not paged — it returns the
- * collection's whole product list as one array — so the slice happens here and
- * `KoaTable` still gets the manual-pagination props it expects (this page's
- * `data`, every row's count). If collections ever grow past a page or two of
- * products, paging this belongs on the server next.
+ * Two requests, because neither endpoint answers both halves: `/info` returns
+ * the collection itself (so the header can carry its real name, description and
+ * item count), and `/collections/{id}` returns the products inside it. The
+ * `/info` call also supplies the page's existence check — the items endpoint
+ * replies `200 + []` for an id that doesn't resolve, which is indistinguishable
+ * from a collection that simply has no products yet.
  *
- * NOTE: that endpoint returns a collection's *items*, not the collection — so
- * this page can't name the collection it is showing. The header deliberately
- * stays generic ("Collection products") rather than inventing a label from the
- * id; showing the real name/description/cover needs a read-by-id endpoint
- * (e.g. `GET /api/v1/collections/{id}/details`), which `/api/v1/collections/
- * {id}` can't also be while it serves the items.
+ * The only list page in the admin whose paging is client-side: the items
+ * endpoint is not paged — it returns the collection's whole product list as one
+ * array — so the slice happens here and `KoaTable` still gets the
+ * manual-pagination props it expects (this page's `data`, every row's count).
+ * If collections ever grow past a page or two of products, paging this belongs
+ * on the server next.
  */
 export default function CollectionItemsPage() {
   const { collectionId } = useParams<{ collectionId: string }>();
   const { data, isLoading, isError, error } = useCollectionItems(collectionId);
+  const info = useCollectionInfo(collectionId);
 
   const [pagination, setPagination] = useState<PaginationState>(INITIAL_PAGINATION);
 
+  const collection = info.data;
   const items = data ?? [];
   const start = pagination.pageIndex * pagination.pageSize;
   const pageItems = items.slice(start, start + pagination.pageSize);
 
-  // A collection that exists with no products comes back 200 + `[]`, so an
-  // error here means the id genuinely didn't resolve. Worth separating from a
-  // transport failure, which is what the other branch reports — the failure
-  // envelope gives every status the same shape.
-  const isNotFound = isError && isNotFoundError(error);
+  // A 404 is the collection genuinely not existing, as opposed to the request
+  // failing: the failure envelope gives every status the same shape, so the
+  // status is the only way to tell "deleted" from "tunnel is down". Checked on
+  // both queries even though only `/info` reports it today.
+  const isNotFound =
+    (info.isError && isNotFoundError(info.error)) ||
+    (isError && isNotFoundError(error));
+
+  // The first non-404 failure to report. A missing collection outranks a
+  // transport error on the other request — "not found" is the actionable fact.
+  const failure =
+    info.isError && !isNotFoundError(info.error)
+      ? info.error
+      : isError && !isNotFoundError(error)
+        ? error
+        : null;
 
   return (
     <div className="flex flex-col gap-4">
@@ -69,16 +85,29 @@ export default function CollectionItemsPage() {
       </Button>
 
       <PageHeader
-        title="Collection products"
-        description={describe(items.length, isLoading)}
+        title={collection?.name ?? "Collection"}
+        description={describeCollection(collection, info.isLoading)}
         icon={<Package />}
-      />
+      >
+        {/* The count comes from the collection record, not from `items.length`:
+            it is the number the backend reports for this collection, and it
+            stays correct while the product list is still in flight. */}
+        {collection && (
+          <Badge variant="secondary" className="h-6 gap-1.5 px-2.5">
+            {collection.itemCount}{" "}
+            {collection.itemCount === 1 ? "product" : "products"}
+          </Badge>
+        )}
+      </PageHeader>
 
-      {isError ? (
+      {isNotFound ? (
         <Notice icon={<PackageX className="size-6" />}>
-          {isNotFound
-            ? "This collection was not found. It may have been deleted, or the link may be wrong."
-            : getErrorMessage(error)}
+          This collection was not found. It may have been deleted, or the link
+          may be wrong.
+        </Notice>
+      ) : failure ? (
+        <Notice icon={<PackageX className="size-6" />}>
+          {getErrorMessage(failure)}
         </Notice>
       ) : (
         <KoaTable
@@ -96,16 +125,20 @@ export default function CollectionItemsPage() {
 }
 
 /**
- * The line under the page title. Says how many products the collection holds,
- * and deliberately says nothing about failure: the error message belongs in
- * the notice below, and repeating it here would print it twice.
+ * The line under the collection name: the collection's own description, with
+ * the loading and no-description cases spelled out so a request in flight never
+ * reads as a collection that has no description.
+ *
+ * Deliberately says nothing about failure — the notice below already prints the
+ * error, and repeating it here would show it twice.
  */
-function describe(count: number, isLoading: boolean): string {
-  if (isLoading) return "Loading products...";
-
-  if (count === 0) return "No products grouped into this collection yet.";
-
-  return `${count} product${count === 1 ? "" : "s"} grouped into this collection.`;
+function describeCollection(
+  collection: CollectionDto | undefined,
+  isLoading: boolean
+): string {
+  if (isLoading) return "Loading collection details...";
+  if (!collection) return "Collection details unavailable.";
+  return collection.description?.trim() || "No description for this collection.";
 }
 
 /** Dashed placeholder for the states that aren't a table of products. */

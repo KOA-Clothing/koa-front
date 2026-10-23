@@ -14,6 +14,10 @@ export const queryKeys = {
   collections: {
     all: ["collections"] as const,
     list: (params: Record<string, unknown>) => ["collections", "list", params] as const,
+    // The collection's own record (name, description, item count) — distinct
+    // from `items` below, which is the products inside it. Both sit under
+    // `collections`, so a collection mutation refreshes the pair together.
+    info: (collectionId: string) => ["collections", "info", collectionId] as const,
     // The products linked to one collection. Lives under `collections` (not
     // `products`) because the path is scoped by the collection, and a
     // `products` invalidation must never pretend to clear it.

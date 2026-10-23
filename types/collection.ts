@@ -5,6 +5,13 @@ export const CollectionDtoSchema = z.object({
   id: z.string(),
   name: z.string(),
   description: z.string().nullable().optional(),
+  /**
+   * How many products are linked to the collection. Only
+   * `GET /collections/{id}/info` computes it — the paged list leaves it at the
+   * DTO's `0` default because the grid never shows counts — hence the fallback
+   * rather than a required field that would reject a list response.
+   */
+  itemCount: z.number().int().nonnegative().default(0),
   coverImageUrl: z.string().url().nullable().optional(),
   isActive: z.boolean(),
   createdAt: z.string().datetime({ offset: true }),

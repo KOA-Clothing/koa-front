@@ -26,6 +26,8 @@ export const API_ROUTES = {
   COLLECTIONS: {
     BASE: "/api/v1/collections",
     BY_ID: (collectionId: string) => `/api/v1/collections/${collectionId}`,
+    /** The collection itself (name, description, cover, item count) — `BY_ID` serves its products. */
+    INFO: (collectionId: string) => `/api/v1/collections/${collectionId}/info`,
     TOGGLE_ACTIVE_STATUS: (id: string) => `/api/v1/collections/${id}/toggle-active-status`,
     ITEM: (collectionId: string, productId: string) => `/api/v1/collections/${collectionId}/items/${productId}`,
   },
