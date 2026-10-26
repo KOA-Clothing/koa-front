@@ -41,9 +41,9 @@ export function getCollectionItemColumns() {
     }),
     columnHelper.accessor((item) => item.product.sellingPrice, {
       id: "sellingPrice",
-      header: () => <div className="text-center">Selling Price</div>,
+      header: () => <div className="flex flex-row items-center justify-center">Selling Price</div>,
       cell: (info) => (
-        <div className="text-center">{currencyFormatter.format(info.getValue())}</div>
+        <div className="text-center border border-red-500">{currencyFormatter.format(info.getValue())}</div>
       ),
       enableSorting: true,
     }),

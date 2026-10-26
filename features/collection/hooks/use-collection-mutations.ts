@@ -69,5 +69,22 @@ export function useCollectionMutations() {
     successMessage: "Collection updated successfully!",
   });
 
-  return { create, requestCoverUpload, toggleActiveStatus, remove, update };
+  /**
+   * Links one product to a collection
+   * (`POST /api/v1/collections/{collectionId}/items/{productId}`).
+   *
+   * The backend is idempotent — linking an already-linked product returns the
+   * existing row instead of failing — which is why the picker hides products
+   * that are already in the collection rather than relying on an error.
+   */
+  const addItem = useAppMutation<void, { collectionId: string; productId: string }>({
+    mutationFn: ({ collectionId, productId }) =>
+      axiosClient
+        .post(API_ROUTES.COLLECTIONS.ITEM(collectionId, productId))
+        .then((r) => r.data),
+    invalidateKeys,
+    successMessage: "Product added to collection!",
+  });
+
+  return { create, requestCoverUpload, toggleActiveStatus, remove, update, addItem };
 }

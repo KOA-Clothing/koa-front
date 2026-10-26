@@ -1,6 +1,7 @@
 "use client";
 
 import { useQuery } from "@tanstack/react-query";
+import { z } from "zod";
 import { useAxiosClient } from "@/hooks/use-api-client";
 import { API_ROUTES } from "@/lib/configs/api-routes";
 import { paginatedListSchema } from "@/types/api-response";
@@ -33,5 +34,30 @@ export function useProducts(params: ListParams<ProductFilters>) {
       return productListSchema.parse(response.data);
     },
     placeholderData: (previousData) => previousData,
+  });
+}
+
+/**
+ * Every product in one category
+ * (`PATCH /api/v1/products/all/category/{categoryId}` → `List<ProductDto>`),
+ * used by pickers such as "add a product to this collection".
+ *
+ * The PATCH verb is the endpoint's shape, not a mistake here. Not paged: the
+ * endpoint returns the category's whole product list, so callers filter it
+ * client-side. Disabled while no category is chosen, which is what keeps the
+ * request from firing with an empty id.
+ */
+export function useProductsByCategory(categoryId: string) {
+  const axiosClient = useAxiosClient();
+
+  return useQuery({
+    queryKey: queryKeys.products.byCategory(categoryId),
+    queryFn: async () => {
+      const response = await axiosClient.patch(
+        API_ROUTES.PRODUCTS.BY_CATEGORY(categoryId)
+      );
+      return z.array(ProductDtoSchema).parse(response.data);
+    },
+    enabled: !!categoryId,
   });
 }

@@ -37,8 +37,13 @@ export function useCategories(params: ListParams<CategoryFilters>) {
   });
 }
 
-/** All active categories, used for selects (e.g. product category picker). */
-export function useActiveCategories() {
+/**
+ * All active categories, used for selects (e.g. product category picker).
+ *
+ * `enabled` lets an always-mounted dialog hold the request back until it is
+ * actually opened, so a page that merely renders the dialog pays nothing.
+ */
+export function useActiveCategories({ enabled = true }: { enabled?: boolean } = {}) {
   const axiosClient = useAxiosClient();
 
   return useQuery({
@@ -47,5 +52,6 @@ export function useActiveCategories() {
       const response = await axiosClient.get(API_ROUTES.CATEGORIES.ALL_ACTIVE);
       return z.array(CategoryDtoSchema).parse(response.data);
     },
+    enabled,
   });
 }

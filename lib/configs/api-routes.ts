@@ -46,6 +46,11 @@ export const API_ROUTES = {
   PRODUCTS: {
     BASE: "/api/v1/products",
     BY_ID: (id: string) => `/api/v1/products/${id}`,
+    /**
+     * Every product in one category, for pickers. A PATCH without a body is
+     * the endpoint's own shape, not a mistake here.
+     */
+    BY_CATEGORY: (categoryId: string) => `/api/v1/products/all/category/${categoryId}`,
     TOGGLE_ACTIVE_STATUS: (id: string) => `/api/v1/products/${id}/toggle-active-status`,
     TOGGLE_FEATURED_STATUS: (id: string) => `/api/v1/products/${id}/toggle-featured-status`,
     CHANGE_GENDER: (id: string) => `/api/v1/products/${id}/change-gender`,

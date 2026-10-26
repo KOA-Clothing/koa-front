@@ -39,6 +39,11 @@ export const queryKeys = {
     all: ["products"] as const,
     list: (params: Record<string, unknown>) => ["products", "list", params] as const,
     detail: (id: string) => ["products", "detail", id] as const,
+    // Every product in one category, for pickers (e.g. adding a product to a
+    // collection). Not a `list` key: that one is paged and filtered, this one
+    // is the category's whole array.
+    byCategory: (categoryId: string) =>
+      ["products", "by-category", categoryId] as const,
     // The colors a product's variants are built from. Lives under `products`
     // because that's the resource the path is scoped by, and it is deliberately
     // not a `colors` key — it must never be confused with the global color list,

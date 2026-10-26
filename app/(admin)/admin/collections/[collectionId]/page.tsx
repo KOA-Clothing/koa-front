@@ -2,9 +2,11 @@
 
 import { useState } from "react";
 import { PageHeader } from "@/components/admin/page-header";
+import AddProductModal from "@/components/admin/collection/modals/add-product-modal";
 import { KoaTable } from "@/components/general/table/koa-table";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { AddNewButton } from "@/components/general/add-new-button";
 import { useCollectionInfo } from "@/features/collection/hooks/use-collection-info";
 import { useCollectionItems } from "@/features/collection/hooks/use-collection-items";
 import { getErrorMessage, isNotFoundError } from "@/lib/api/errors";
@@ -46,6 +48,15 @@ export default function CollectionItemsPage() {
   const info = useCollectionInfo(collectionId);
 
   const [pagination, setPagination] = useState<PaginationState>(INITIAL_PAGINATION);
+
+  // The add-product dialog is driven by the collection it targets (subject
+  // doubles as the open flag), the same shape as the edit/delete dialogs on the
+  // collections grid. Held in state rather than derived so the modal isn't
+  // handed a new object — and reseeded — on every render of this page.
+  const [collectionForAdd, setCollectionForAdd] = useState<{
+    id: string;
+    name: string;
+  } | null>(null);
 
   const collection = info.data;
   const items = data ?? [];
@@ -94,12 +105,27 @@ export default function CollectionItemsPage() {
             stays correct while the product list is still in flight. */}
         {collection && (
           <Badge variant="secondary" className="h-6 gap-1.5 px-2.5">
+            <Boxes className="size-3.5" />
             {collection.itemCount}{" "}
             {collection.itemCount === 1 ? "product" : "products"}
           </Badge>
         )}
       </PageHeader>
-
+      
+      <div className="flex flex-row items-center justify-end">
+        <AddNewButton
+          label="Add product"
+          // Disabled until `/info` answers: the dialog names the collection it
+          // is adding to, and adding to a collection that doesn't exist can
+          // only fail.
+          disabled={!collection}
+          onClick={() =>
+            collection &&
+            setCollectionForAdd({ id: collection.id, name: collection.name })
+          }
+        />
+      </div>
+      
       {isNotFound ? (
         <Notice icon={<PackageX className="size-6" />}>
           This collection was not found. It may have been deleted, or the link
@@ -120,6 +146,16 @@ export default function CollectionItemsPage() {
           emptyMessage="No products have been added to this collection yet."
         />
       )}
+
+      <AddProductModal
+        collection={collectionForAdd}
+        // Products already in the collection are the ones the endpoint would
+        // treat as a no-op, so the picker leaves them out.
+        excludeProductIds={items.map((item) => item.productId)}
+        onOpenChange={(open) => {
+          if (!open) setCollectionForAdd(null);
+        }}
+      />
     </div>
   );
 }
