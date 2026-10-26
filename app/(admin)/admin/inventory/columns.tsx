@@ -14,16 +14,15 @@ import { Flag, LayersPlus, X } from "lucide-react";
 const columnHelper = createDataTableColumnHelper<InventoryDto>();
 
 /**
- * A centred count cell. `null` is a real value on `lowStockThreshold` — it
- * means "not configured" — so it prints an em dash rather than `0`, which
- * would read as "alert me at zero".
+ * Numeric/count cell right-aligned per table alignment rules. `null` means
+ * "not configured" (low stock threshold) and is rendered as an em dash.
  */
 function CountCell({ value }: { value: number | null }) {
   if (value === null) {
-    return <div className="text-center text-xs text-muted-foreground">—</div>;
+    return <div className="w-full text-right text-xs text-muted-foreground">—</div>;
   }
 
-  return <div className="text-center">{value}</div>;
+  return <div className="w-full text-right">{value}</div>;
 }
 
 interface InventoryColumnActions {
@@ -33,61 +32,66 @@ interface InventoryColumnActions {
 }
 
 export function getInventoryColumns({
-  onBaseProductView, onAddInventory, setLowStockThreshold
+  onBaseProductView,
+  onAddInventory,
+  setLowStockThreshold,
 }: InventoryColumnActions) {
   return columnHelper.columns([
     columnHelper.accessor("productName", {
-      header: () => <div className="text-center">Product Name</div>,
+      header: () => <div>Product Name</div>,
+      meta: { headerClassName: "w-full text-left", cellClassName: "text-left" } as any,
       enableSorting: true,
     }),
     columnHelper.display({
-  id: "variant",
-  header: () => <div className="text-center">Variant</div>,
-  cell: ({ row }) => {
-    const { color, size } = row.original.variant;
+      id: "variant",
+      header: () => <div>Variant</div>,
+      meta: { headerClassName: "w-full text-left", cellClassName: "text-left" } as any,
+      cell: ({ row }) => {
+        const { color, size } = row.original.variant;
 
-    return (
-      // Changed from flex to grid with explicit column widths
-      <div className="grid grid-cols-[100px_auto_1fr] items-center gap-2">
-        <Badge
-          variant="outline"
-          className="gap-1.5 h-7 justify-start"
-        >
-          <ColorSwatch color={color} /> 
-          <span className="truncate">{color.name}</span>
-        </Badge>
-        
-        <X className="size-3.5 shrink-0 text-muted-foreground justify-self-center" />
-        
-        <KoaEnumBadge
-          labels={clothingSizeLabels}
-          value={size}
-          styles={clothingSizeBadgeStyles}
-          className="justify-self-start"
-        />
-      </div>
-    );
-  },
-  enableSorting: false,
-}),
+        return (
+          // Changed from flex to grid with explicit column widths
+          <div className="grid grid-cols-[100px_auto_1fr] items-center gap-2">
+            <Badge variant="outline" className="gap-1.5 h-7 justify-start">
+              <ColorSwatch color={color} />
+              <span className="truncate">{color.name}</span>
+            </Badge>
+
+            <X className="size-3.5 shrink-0 text-muted-foreground justify-self-center" />
+
+            <KoaEnumBadge
+              labels={clothingSizeLabels}
+              value={size}
+              styles={clothingSizeBadgeStyles}
+              className="justify-self-start"
+            />
+          </div>
+        );
+      },
+      enableSorting: false,
+    }),
     columnHelper.accessor("quantity", {
-      header: () => <div className="text-center">Quantity</div>,
+      header: () => <div>Quantity</div>,
+      meta: { headerClassName: "w-full text-right justify-end", cellClassName: "text-right" } as any,
       cell: ({ getValue }) => <CountCell value={getValue()} />,
       enableSorting: false,
     }),
     columnHelper.accessor("reservedQuantity", {
-      header: () => <div className="text-center">Reserved Quantity</div>,
+      header: () => <div>Reserved Quantity</div>,
+      meta: { headerClassName: "w-full text-right justify-end", cellClassName: "text-right" } as any,
       cell: ({ getValue }) => <CountCell value={getValue()} />,
       enableSorting: false,
     }),
     columnHelper.accessor("lowStockThreshold", {
-      header: () => <div className="text-center">Low Stock Threshold</div>,
+      header: () => <div>Low Stock Threshold</div>,
+      meta: { headerClassName: "w-full text-right justify-end", cellClassName: "text-right" } as any,
       cell: ({ getValue }) => <CountCell value={getValue()} />,
       enableSorting: false,
     }),
     columnHelper.display({
       id: "actions",
-      header: () => <div className="text-center">Actions</div>,
+      header: () => <div>Actions</div>,
+      meta: { headerClassName: "flex flex-row items-center justify-center", cellClassName: "text-center" } as any,
       cell: ({ row }) => (
         <div className="flex items-center justify-center gap-2">
           <Button
@@ -109,7 +113,7 @@ export function getInventoryColumns({
             <Flag className="size-3.5" />
             <span className="sr-only">Set Low Stock Threshold</span>
           </Button>
-          
+
           <Button
             variant="ghost"
             size="icon-sm"

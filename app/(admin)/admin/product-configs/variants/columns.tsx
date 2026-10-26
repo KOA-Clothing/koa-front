@@ -34,25 +34,21 @@ interface ProductVariantsColumnActions {
 export function getProductVariantColumns({ onView, onCreate, onBaseProductView, onInventoryView }: ProductVariantsColumnActions) {
   return columnHelper.columns([
     columnHelper.accessor("name", {
-      header: () => <div className="text-center">Product Name</div>,
+      header: () => <div>Product Name</div>,
+      meta: { headerClassName: "w-full text-left", cellClassName: "text-left" } as any,
       enableSorting: true,
     }),
     columnHelper.display({
       id: "availableVariantCount",
-      header: () => <div className="text-center">Total Variant Count</div>,
-      cell: ({ row }) => {
-        
-        return (
-          <div className="text-center">
-            {row.original.variants.length}
-          </div>
-        );
-      },
+      header: () => <div>Total Variant Count</div>,
+      meta: { headerClassName: "w-full text-right justify-end", cellClassName: "text-right" } as any,
+      cell: ({ row }) => <div className="w-full text-right">{row.original.variants.length}</div>,
       enableSorting: false,
     }),
     columnHelper.display({
       id: "availableSizes",
-      header: () => <div className="text-center">Available Sizes</div>,
+      header: () => <div>Available Sizes</div>,
+      meta: { headerClassName: "w-full items-center justify-center", cellClassName: "text-center" } as any,
       cell: ({ row }) => {
         const sizes = distinctBy(
           row.original.variants.map((variant) => variant.size),
@@ -66,13 +62,14 @@ export function getProductVariantColumns({ onView, onCreate, onBaseProductView, 
         }
 
         return (
-          <div className="grid grid-cols-4 gap-1.5 place-items-center justify-center max-w-fit mx-auto">
+          <div className="grid grid-cols-4 gap-1.5 place-items-center justify-center w-fit mx-auto">
             {sizes.map((size) => (
               <KoaEnumBadge
                 key={size}
                 labels={clothingSizeLabels}
                 value={size}
                 styles={clothingSizeBadgeStyles}
+                className="w-fit"
               />
             ))}
           </div>
@@ -82,7 +79,8 @@ export function getProductVariantColumns({ onView, onCreate, onBaseProductView, 
     }),
     columnHelper.display({
       id: "availableColors",
-      header: () => <div className="text-center">Available Colors</div>,
+      header: () => <div>Available Colors</div>,
+      meta: { headerClassName: "w-full items-center justify-center", cellClassName: "text-start" } as any,
       cell: ({ row }) => {
         const colors = distinctBy(
           row.original.variants.map((variant) => variant.color),
@@ -96,10 +94,15 @@ export function getProductVariantColumns({ onView, onCreate, onBaseProductView, 
         }
 
         return (
-          <div className="grid grid-cols-4 gap-1.5 place-items-center max-w-fit mx-auto">
+          <div className="grid grid-cols-4 gap-1.5 w-fit justify-items-start">
             {colors.map((color) => (
-              <Badge key={color.id} variant="outline" className="gap-1.5 h-7 w-full justify-start">
-                <ColorSwatch color={color} /> {color.name}
+              <Badge
+                key={color.id}
+                variant="outline"
+                className="gap-1.5 h-7 w-fit justify-start"
+              >
+                <ColorSwatch color={color} />
+                <span className="truncate">{color.name}</span>
               </Badge>
             ))}
           </div>
@@ -109,7 +112,8 @@ export function getProductVariantColumns({ onView, onCreate, onBaseProductView, 
     }),
     columnHelper.display({
       id: "actions",
-      header: () => <div className="text-center">Actions</div>,
+      header: () => <div>Actions</div>,
+      meta: { headerClassName: "w-full items-center justify-center", cellClassName: "text-center" } as any,
       cell: ({ row }) => (
         <div className="flex items-center justify-center gap-2">
           <Button

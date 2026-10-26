@@ -23,35 +23,30 @@ export function getCategoryColumns({
   return columnHelper.columns(
   [
     columnHelper.accessor("name", {
-      header: () => <div className="text-center">Name</div>,
+      header: () => <div>Name</div>,
+      meta: { headerClassName: "w-full text-left", cellClassName: "text-left" } as any,
       enableSorting: true
     }),
     columnHelper.accessor("description", {
-      header: () => <div className="text-center">Description</div>,
-      cell: (info) => <div className="text-rigth">{info.getValue()}</div>,
+      header: () => <div>Description</div>,
+      meta: { headerClassName: "w-full text-left", cellClassName: "text-left" } as any,
+      cell: (info) => <div className="text-left">{info.getValue()}</div>,
       enableSorting: true
     }),
     columnHelper.accessor("sizeGuideUrl", {
-      header: () => <div className="text-center">Size Guide</div>,
+      header: () => <div>Size Guide</div>,
+      meta: { headerClassName: "w-full text-center", cellClassName: "text-center" } as any,
       cell: (info) => {
         const url = info.getValue();
 
         if (!url) {
-          return <div className="text-center text-muted-foreground text-xs">—</div>;
+          return <div className="w-full text-center text-muted-foreground text-xs">—</div>;
         }
 
         return (
           <div className="flex justify-center">
-            <Button
-              variant="outline"
-              size="icon-sm"
-              title="Open size guide"
-            >
-              <Link
-                href={url}
-                target="_blank"
-                rel="noopener noreferrer"
-              >
+            <Button variant="outline" size="icon-sm" title="Open size guide">
+              <Link href={url} target="_blank" rel="noopener noreferrer">
                 <ExternalLink className="size-3.5" />
                 <span className="sr-only">Open size guide in new tab</span>
               </Link>
@@ -62,7 +57,8 @@ export function getCategoryColumns({
       enableSorting: false,
     }),
     columnHelper.accessor("isActive", {
-      header: () => <div className="text-center">Active Status</div>,
+      header: () => <div>Active Status</div>,
+      meta: { headerClassName: "w-full items-center justify-center", cellClassName: "text-center" } as any,
       cell: ({ row, getValue }) => (
         <div className="flex flex-row items-center justify-center">
           <KoaSwitch
@@ -74,13 +70,15 @@ export function getCategoryColumns({
       enableSorting: true
     }),
     columnHelper.accessor("sortOrder", {
-      header: () => <div className="text-center">Sort Order</div>,
-      cell: (info) => <div className="text-center">{info.getValue()}</div>,
+      header: () => <div>Sort Order</div>,
+      meta: { headerClassName: "w-full items-center justify-end", cellClassName: "text-right" } as any,
+      cell: (info) => <div className="w-full text-right">{info.getValue()}</div>,
       enableSorting: true
     }),
     columnHelper.display({
       id: "actions",
-      header: () => <div className="text-center">Actions</div>,
+      header: () => <div>Actions</div>,
+      meta: { headerClassName: "w-full items-center justify-center", cellClassName: "text-center" } as any,
       cell: ({ row }) => (
         <div className="flex items-center justify-center gap-2">
           <Button

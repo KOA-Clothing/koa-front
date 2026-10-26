@@ -151,9 +151,7 @@ export default function CollectionItemsPage() {
         <KoaTable
           columns={getCollectionItemColumns({
             onViewBaseProduct: handleBaseProductView,
-            //(product) => { router.push(adminListHrefs.baseProducts({ productId: product.id }));},
             onDelete: handleRemoveItem
-            //(product) => { setProductToRemove(product); },
           })}
           data={pageItems}
           rowCount={items.length}

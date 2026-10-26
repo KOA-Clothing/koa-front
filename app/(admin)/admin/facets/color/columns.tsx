@@ -22,16 +22,18 @@ export function getColorColumns({
 }: ColorColumnActions) {
   return columnHelper.columns([
     columnHelper.accessor("name", {
-      header: () => <div className="text-center">Name</div>,
+      header: () => <div>Name</div>,
+      meta: { headerClassName: "w-full text-left", cellClassName: "text-left" } as any,
       enableSorting: true,
     }),
     columnHelper.accessor("hexCode", {
-      header: () => <div className="text-center">Hex Code</div>,
+      header: () => <div>Hex Code</div>,
+      meta: { headerClassName: "w-full items-center justify-center", cellClassName: "text-center" } as any,
       cell: ({ row, getValue }) => {
         const hex = getValue();
 
         if (row.original.swatchImageUrl || !hex) {
-          return <div className="text-center text-muted-foreground text-xs">—</div>;
+          return <div className="w-full text-center text-muted-foreground text-xs">—</div>;
         }
 
         return (
@@ -47,26 +49,19 @@ export function getColorColumns({
       enableSorting: true,
     }),
     columnHelper.accessor("swatchImageUrl", {
-      header: () => <div className="text-center">Swatch Image</div>,
+      header: () => <div>Swatch Image</div>,
+      meta: { headerClassName: "w-full items-center justify-center", cellClassName: "text-center" } as any,
       cell: (info) => {
         const url = info.getValue();
 
         if (!url) {
-          return <div className="text-center text-muted-foreground text-xs">—</div>;
+          return <div className="w-full text-center text-muted-foreground text-xs">—</div>;
         }
 
         return (
           <div className="flex justify-center">
-            <Button
-              variant="outline"
-              size="icon-sm"
-              title="Open swatch image"
-            >
-              <Link
-                href={url}
-                target="_blank"
-                rel="noopener noreferrer"
-              >
+            <Button variant="outline" size="icon-sm" title="Open swatch image">
+              <Link href={url} target="_blank" rel="noopener noreferrer">
                 <ExternalLink className="size-3.5" />
                 <span className="sr-only">Open swatch image in new tab</span>
               </Link>
@@ -77,7 +72,8 @@ export function getColorColumns({
       enableSorting: false,
     }),
     columnHelper.accessor("isActive", {
-      header: () => <div className="text-center">Active Status</div>,
+      header: () => <div>Active Status</div>,
+      meta: { headerClassName: "w-full items-center justify-center", cellClassName: "text-center" } as any,
       cell: ({ row, getValue }) => (
         <div className="flex flex-row items-center justify-center">
           <KoaSwitch
@@ -90,7 +86,8 @@ export function getColorColumns({
     }),
     columnHelper.display({
       id: "actions",
-      header: () => <div className="text-center">Actions</div>,
+      header: () => <div>Actions</div>,
+      meta: { headerClassName: "w-full items-center justify-center", cellClassName: "text-center" } as any,
       cell: ({ row }) => (
         <div className="flex flex-row items-center justify-center gap-2">
           <Button

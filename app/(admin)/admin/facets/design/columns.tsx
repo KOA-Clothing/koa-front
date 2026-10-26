@@ -21,16 +21,19 @@ export function getDesignColumns({
 }: DesignColumnActions) {
   return columnHelper.columns([
     columnHelper.accessor("name", {
-      header: () => <div className="text-center">Name</div>,
+      header: () => <div>Name</div>,
+      meta: { headerClassName: "w-full text-left", cellClassName: "text-left" } as any,
       enableSorting: true,
     }),
     columnHelper.accessor("description", {
-      header: () => <div className="text-center">Description</div>,
+      header: () => <div>Description</div>,
+      meta: { headerClassName: "w-full text-left", cellClassName: "text-left" } as any,
       cell: (info) => <div className="text-left">{info.getValue()}</div>,
       enableSorting: true,
     }),
     columnHelper.accessor("isActive", {
-      header: () => <div className="text-center">Active Status</div>,
+      header: () => <div>Active Status</div>,
+      meta: { headerClassName: "w-full items-center justify-center", cellClassName: "text-center" } as any,
       cell: ({ row, getValue }) => (
         <div className="flex flex-row items-center justify-center">
           <KoaSwitch
@@ -43,7 +46,8 @@ export function getDesignColumns({
     }),
     columnHelper.display({
       id: "actions",
-      header: () => <div className="text-center">Actions</div>,
+      header: () => <div>Actions</div>,
+      meta: { headerClassName: "w-full items-center justify-center", cellClassName: "text-center" } as any,
       cell: ({ row }) => (
         <div className="flex items-center justify-center gap-2">
           <Button
