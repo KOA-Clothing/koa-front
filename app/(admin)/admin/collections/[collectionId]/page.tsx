@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { PageHeader } from "@/components/admin/page-header";
 import AddProductModal from "@/components/admin/collection/modals/add-product-modal";
+import RemoveProductFromCollectionModal from "@/components/admin/collection/modals/remove-product-from-collection-modal";
 import { KoaTable } from "@/components/general/table/koa-table";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -10,13 +11,14 @@ import { AddNewButton } from "@/components/general/add-new-button";
 import { useCollectionInfo } from "@/features/collection/hooks/use-collection-info";
 import { useCollectionItems } from "@/features/collection/hooks/use-collection-items";
 import { getErrorMessage, isNotFoundError } from "@/lib/api/errors";
-import { PAGE_ROUTES } from "@/lib/configs/page-routes";
+import { adminListHrefs, PAGE_ROUTES } from "@/lib/configs/page-routes";
 import type { CollectionDto } from "@/types/collection";
+import type { ProductDto } from "@/types/product";
 import { DEFAULT_PAGE_SIZE } from "@/types/pagination";
 import type { PaginationState } from "@tanstack/react-table";
 import { Boxes, ChevronLeft, Package, PackageX } from "lucide-react";
 import Link from "next/link";
-import { useParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import { getCollectionItemColumns } from "./columns";
 
 const INITIAL_PAGINATION: PaginationState = {
@@ -44,6 +46,7 @@ const INITIAL_PAGINATION: PaginationState = {
  */
 export default function CollectionItemsPage() {
   const { collectionId } = useParams<{ collectionId: string }>();
+  const router = useRouter();
   const { data, isLoading, isError, error } = useCollectionItems(collectionId);
   const info = useCollectionInfo(collectionId);
 
@@ -57,6 +60,7 @@ export default function CollectionItemsPage() {
     id: string;
     name: string;
   } | null>(null);
+  const [productToRemove, setProductToRemove] = useState<ProductDto | null>(null);
 
   const collection = info.data;
   const items = data ?? [];
@@ -80,6 +84,14 @@ export default function CollectionItemsPage() {
         ? error
         : null;
 
+  const handleBaseProductView = (product: ProductDto) => {
+    router.push(adminListHrefs.baseProducts({ productId: product.id }));
+  };
+
+  const handleRemoveItem = (product: ProductDto) => {
+    setProductToRemove(product);
+  };
+ 
   return (
     <div className="flex flex-col gap-4">
       <Button
@@ -137,7 +149,12 @@ export default function CollectionItemsPage() {
         </Notice>
       ) : (
         <KoaTable
-          columns={getCollectionItemColumns()}
+          columns={getCollectionItemColumns({
+            onViewBaseProduct: handleBaseProductView,
+            //(product) => { router.push(adminListHrefs.baseProducts({ productId: product.id }));},
+            onDelete: handleRemoveItem
+            //(product) => { setProductToRemove(product); },
+          })}
           data={pageItems}
           rowCount={items.length}
           pagination={pagination}
@@ -154,6 +171,14 @@ export default function CollectionItemsPage() {
         excludeProductIds={items.map((item) => item.productId)}
         onOpenChange={(open) => {
           if (!open) setCollectionForAdd(null);
+        }}
+      />
+
+      <RemoveProductFromCollectionModal
+        collectionId={collectionId}
+        product={productToRemove}
+        onOpenChange={(open) => {
+          if (!open) setProductToRemove(null);
         }}
       />
     </div>

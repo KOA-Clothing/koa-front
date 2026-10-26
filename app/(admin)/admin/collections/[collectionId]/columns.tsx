@@ -1,11 +1,11 @@
 "use client";
 
-import KoaEnumBadge from "@/components/general/koa-enum-badge";
-import { Badge } from "@/components/ui/badge";
 import { createDataTableColumnHelper } from "@/lib/configs/table-configs";
-import { productStatusBadgeStyles } from "@/lib/configs/enum-badge-styles";
 import type { CollectionItemDto } from "@/types/collection";
-import { productStatusLabels } from "@/types/enum-labels";
+import { Button } from "@/components/ui/button";
+import { Eye, Trash2 } from "lucide-react";
+import { ProductDto } from "@/types/product";
+import { BaseShirtIcon } from "@/components/general/custom-icons/base-shirt-icon";
 
 const columnHelper = createDataTableColumnHelper<CollectionItemDto>();
 
@@ -13,6 +13,11 @@ const currencyFormatter = new Intl.NumberFormat("en-US", {
   style: "currency",
   currency: "USD",
 });
+
+interface CollectionItemsColumnActions {
+  onViewBaseProduct: (product: ProductDto) => void;
+  onDelete: (product: ProductDto) => void;
+}
 
 /**
  * The columns for one collection's product list.
@@ -26,62 +31,94 @@ const currencyFormatter = new Intl.NumberFormat("en-US", {
  * that need the product they act on, so they live in their own controls rather
  * than as a column of buttons here.
  */
-export function getCollectionItemColumns() {
+export function getCollectionItemColumns({
+  onViewBaseProduct, onDelete
+}: CollectionItemsColumnActions) {
   return columnHelper.columns([
     columnHelper.accessor((item) => item.product.name, {
       id: "product",
-      header: () => <div className="text-center">Product</div>,
+      header: () => <div>Product</div>,
+      meta: { headerClassName: "w-full text-center", cellClassName: "text-center" } as any,
       enableSorting: true,
     }),
     columnHelper.accessor((item) => item.product.category.name, {
       id: "category",
-      header: () => <div className="text-center">Category</div>,
-      cell: (info) => <div className="text-left">{info.getValue()}</div>,
+      header: () => <div>Category</div>,
+      meta: { headerClassName: "w-full text-center", cellClassName: "text-left" } as any,
       enableSorting: true,
     }),
     columnHelper.accessor((item) => item.product.sellingPrice, {
       id: "sellingPrice",
-      header: () => <div className="flex flex-row items-center justify-center">Selling Price</div>,
-      cell: (info) => (
-        <div className="text-center border border-red-500">{currencyFormatter.format(info.getValue())}</div>
-      ),
+      header: () => <div>Selling Price</div>,
+      meta: { headerClassName: "w-full text-right justify-end", cellClassName: "text-right" } as any,
+      cell: (info) => <div className="w-full text-right">{currencyFormatter.format(info.getValue())}</div>,
       enableSorting: true,
     }),
-    columnHelper.accessor((item) => item.product.status, {
-      id: "status",
-      header: () => <div className="text-center">Product Status</div>,
-      cell: (info) => (
-        <div className="flex justify-center">
-          <KoaEnumBadge
-            labels={productStatusLabels}
-            styles={productStatusBadgeStyles}
-            value={info.getValue()}
-          />
-        </div>
-      ),
-      enableSorting: true,
-    }),
-    columnHelper.accessor((item) => item.product.isActive, {
-      id: "isActive",
-      header: () => <div className="text-center">Is Active</div>,
-      cell: (info) => (
-        <div className="flex justify-center">
-          <Badge variant={info.getValue() ? "secondary" : "outline"}>
-            {info.getValue() ? "Active" : "Inactive"}
-          </Badge>
-        </div>
-      ),
-      enableSorting: true,
-    }),
+    // columnHelper.accessor((item) => item.product.status, {
+    //   id: "status",
+    //   header: () => <div>Product Status</div>,
+    //   meta: { headerClassName: "w-full justify-center text-center", cellClassName: "text-center" },
+    //   cell: (info) => (
+    //     <div className="flex justify-center">
+    //       <KoaEnumBadge
+    //         labels={productStatusLabels}
+    //         styles={productStatusBadgeStyles}
+    //         value={info.getValue()}
+    //       />
+    //     </div>
+    //   ),
+    //   enableSorting: true,
+    // }),
+    // columnHelper.accessor((item) => item.product.isActive, {
+    //   id: "isActive",
+    //   header: () => <div>Is Active</div>,
+    //   meta: { headerClassName: "w-full justify-center text-center", cellClassName: "text-center" },
+    //   cell: (info) => (
+    //     <div className="flex justify-center">
+    //       <Badge variant={info.getValue() ? "secondary" : "outline"}>
+    //         {info.getValue() ? "Active" : "Inactive"}
+    //       </Badge>
+    //     </div>
+    //   ),
+    //   enableSorting: true,
+    // }),
     columnHelper.accessor((item) => item.createdAt, {
       id: "added",
-      header: () => <div className="text-center">Added</div>,
+      header: () => <div>Added Date</div>,
+      meta: { headerClassName: "w-full text-right justify-end"} as any,
       cell: (info) => (
-        <div className="text-center text-muted-foreground">
-          {new Date(info.getValue()).toLocaleDateString()}
-        </div>
+        <div className="text-muted-foreground w-full text-end"> {new Date(info.getValue()).toLocaleDateString()} </div>
       ),
       enableSorting: true,
     }),
+    columnHelper.display({
+      id: "actions",
+      header: () => <div className="w-full text-center">Actions</div>,
+      meta: { headerClassName: "w-full text-center", cellClassName: "text-center" } as any,
+      cell: ({ row }) => (
+        <div className="flex items-center justify-center gap-2">
+          <Button
+            variant="ghost"
+            size="icon-sm"
+            onClick={() => onViewBaseProduct(row.original.product)}
+            title="View base product"
+          >
+            <BaseShirtIcon className="size-3.5" />
+            <span className="sr-only">View base product</span>
+          </Button>
+
+          <Button
+            variant="ghost"
+            size="icon-sm"
+            className="text-destructive hover:bg-destructive/10 hover:text-destructive"
+            onClick={() => onDelete(row.original.product)}
+            title="Delete product from colletion"
+          >
+            <Trash2 className="size-3.5" />
+            <span className="sr-only">Delete product from collection</span>
+          </Button>
+        </div>
+      ),
+    })
   ]);
 }

@@ -86,5 +86,18 @@ export function useCollectionMutations() {
     successMessage: "Product added to collection!",
   });
 
-  return { create, requestCoverUpload, toggleActiveStatus, remove, update, addItem };
+  /**
+   * Removes one product from a collection
+   * (`DELETE /api/v1/collections/{collectionId}/items/{productId}`).
+   */
+  const removeItem = useAppMutation<void, { collectionId: string; productId: string }>({
+    mutationFn: ({ collectionId, productId }) =>
+      axiosClient
+        .delete(API_ROUTES.COLLECTIONS.ITEM(collectionId, productId))
+        .then((r) => r.data),
+    invalidateKeys,
+    successMessage: "Product removed from collection!",
+  });
+
+  return { create, requestCoverUpload, toggleActiveStatus, remove, update, addItem, removeItem };
 }

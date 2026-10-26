@@ -1,6 +1,7 @@
 "use client";
 
 import { ArrowDown, ArrowUp, ChevronsUpDown } from "lucide-react";
+import { cn } from "@/lib/utils";
 import type { MouseEvent, ReactNode } from "react";
 
 export type SortDirection = "asc" | "desc" | null;
@@ -15,6 +16,7 @@ interface DataTableSortButtonProps {
    */
   onToggleSort: (event: MouseEvent<HTMLButtonElement>) => void;
   children: ReactNode;
+  className?: string;
 }
 
 /**
@@ -27,6 +29,7 @@ export function DataTableSortButton({
   sortDir,
   onToggleSort,
   children,
+  className,
 }: DataTableSortButtonProps) {
   const SortIcon =
     sortDir === "asc" ? ArrowUp : sortDir === "desc" ? ArrowDown : ChevronsUpDown;
@@ -35,7 +38,10 @@ export function DataTableSortButton({
     <button
       type="button"
       onClick={onToggleSort}
-      className="group inline-flex cursor-pointer items-center gap-1 text-xs font-medium whitespace-nowrap text-foreground select-none outline-none transition-colors hover:text-foreground focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-1"
+      className={cn(
+        "group flex w-full cursor-pointer items-center gap-1 text-xs font-medium whitespace-nowrap text-foreground select-none outline-none transition-colors hover:text-foreground focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-1",
+        className
+      )}
     >
       {children}
       <SortIcon

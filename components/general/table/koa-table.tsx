@@ -14,6 +14,7 @@ import type { PaginationChangeHandler } from "@/types/pagination";
 import { DataTablePagination } from "./data-table-pagination";
 import { DataTableColumnDef, tableFeatureSet } from "@/lib/configs/table-configs";
 import { DataTableSortButton } from "./data-table-sort-button";
+import { cn } from "@/lib/utils";
 
 interface DataTableProps<TData extends RowData> {
   // TValue is intentionally not a generic param here — see the note on
@@ -77,11 +78,19 @@ export function KoaTable<TData extends RowData>({
                         onToggleSort={(event) =>
                           header.column.getToggleSortingHandler()?.(event)
                         }
+                        className={(header.column.columnDef.meta as any)?.headerClassName}
                       >
                         <table.FlexRender header={header} />
                       </DataTableSortButton>
                     ) : (
-                      <table.FlexRender header={header} />
+                      <div
+                        className={cn(
+                          "flex items-center",
+                          (header.column.columnDef.meta as any)?.headerClassName
+                        )}
+                      >
+                        <table.FlexRender header={header} />
+                      </div>
                     )}
                   </TableHead>
                 ))}
