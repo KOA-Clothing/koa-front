@@ -48,7 +48,7 @@ export function getProductVariantColumns({ onView, onCreate, onBaseProductView, 
     columnHelper.display({
       id: "availableSizes",
       header: () => <div>Available Sizes</div>,
-      meta: { headerClassName: "w-full items-center justify-center", cellClassName: "text-center" } as any,
+      meta: { headerClassName: "w-full items-center justify-center", cellClassName: "align-top" } as any,
       cell: ({ row }) => {
         const sizes = distinctBy(
           row.original.variants.map((variant) => variant.size),
@@ -57,19 +57,18 @@ export function getProductVariantColumns({ onView, onCreate, onBaseProductView, 
 
         if (sizes.length === 0) {
           return (
-            <div className="text-center text-xs text-muted-foreground">—</div>
+            <div className="w-full text-center text-xs text-muted-foreground">—</div>
           );
         }
 
         return (
-          <div className="grid grid-cols-4 gap-1.5 place-items-center justify-center w-fit mx-auto">
+          <div className="flex flex-wrap justify-center gap-1.5">
             {sizes.map((size) => (
               <KoaEnumBadge
                 key={size}
                 labels={clothingSizeLabels}
                 value={size}
                 styles={clothingSizeBadgeStyles}
-                className="w-fit"
               />
             ))}
           </div>
@@ -80,7 +79,7 @@ export function getProductVariantColumns({ onView, onCreate, onBaseProductView, 
     columnHelper.display({
       id: "availableColors",
       header: () => <div>Available Colors</div>,
-      meta: { headerClassName: "w-full items-center justify-center", cellClassName: "text-start" } as any,
+      meta: { headerClassName: "w-full items-center justify-center", cellClassName: "align-top" } as any,
       cell: ({ row }) => {
         const colors = distinctBy(
           row.original.variants.map((variant) => variant.color),
@@ -89,17 +88,17 @@ export function getProductVariantColumns({ onView, onCreate, onBaseProductView, 
 
         if (colors.length === 0) {
           return (
-            <div className="text-center text-xs text-muted-foreground">—</div>
+            <div className="w-full text-center text-xs text-muted-foreground">—</div>
           );
         }
 
         return (
-          <div className="grid grid-cols-4 gap-1.5 w-fit justify-items-start">
+          <div className="flex flex-wrap justify-start gap-1.5">
             {colors.map((color) => (
               <Badge
                 key={color.id}
                 variant="outline"
-                className="gap-1.5 h-7 w-fit justify-start"
+                className="gap-1.5 h-7 max-w-37.5 justify-start"
               >
                 <ColorSwatch color={color} />
                 <span className="truncate">{color.name}</span>
