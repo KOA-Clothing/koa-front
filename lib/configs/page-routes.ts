@@ -4,6 +4,9 @@ import type { FilterValue } from "@/types/filters/table-filters";
 
 /** Internal app routes that other routes link into, mirroring `api-routes.ts`. */
 export const PAGE_ROUTES = {
+  SHOP: {
+    COLLECTIONS: "/collections",
+  },
   ADMIN: {
     BASE_PRODUCTS: "/admin/product-configs/base-products",
     PRODUCT_VARIANTS: "/admin/product-configs/variants",
@@ -74,4 +77,16 @@ export const adminHrefs = {
    */
   collectionDetail: (collectionId: string) =>
     `${PAGE_ROUTES.ADMIN.COLLECTIONS}/${collectionId}`,
+};
+
+/**
+ * Builders for shop-front routes that take a **path param**.
+ *
+ * The storefront counterpart to `adminHrefs`: collection cards assemble their
+ * destination here instead of inlining `/collection/${id}` at each call site.
+ */
+export const shopHrefs = {
+  /** One collection's product catalogue, keyed by collection id. */
+  collection: (collectionId: string) =>
+    `${PAGE_ROUTES.SHOP.COLLECTIONS}/${collectionId}`,
 };
