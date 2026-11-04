@@ -8,6 +8,7 @@ import { useCollectionItems } from "@/features/catalogue/hooks/use-collection-it
 import { useCollections } from "@/features/catalogue/hooks/use-collections";
 import { PAGE_ROUTES } from "@/lib/configs/page-routes";
 import { getErrorMessage } from "@/lib/api/errors";
+import { BackButton } from "@/components/shop-front/back-button";
 
 interface CollectionItemsPageClientProps {
   collectionId: string;
@@ -32,16 +33,7 @@ export default function CollectionItemsPageClient({
   return (
     <main className="min-h-screen bg-background text-foreground">
       <div className="mx-auto max-w-7xl px-4 py-8 md:px-8 md:py-12">
-        {/* ── BACK NAVIGATION ── */}
-        <Link href={PAGE_ROUTES.SHOP.COLLECTIONS}>
-          <Button
-            variant="ghost"
-            size="sm"
-            className="-ml-2 mb-6 w-fit gap-2 text-muted-foreground hover:text-foreground"
-          >
-            <ArrowLeft className="size-3.5" /> Back to collections
-          </Button>
-        </Link>
+        <BackButton fallbackUrl={PAGE_ROUTES.SHOP.COLLECTIONS} />
 
         {/* ── HERO ── */}
         <section className="pb-10 pt-4 md:pb-14">
