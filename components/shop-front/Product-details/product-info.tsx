@@ -3,6 +3,7 @@ import { cn } from "@/lib/utils";
 import { ProductStatusEnum } from "@/types/enums";
 import { genderLabels, ageGroupLabels, productStatusLabels } from "@/types/enum-labels";
 import type { ProductDetailsDto } from "@/types/product";
+import DesignBadge from "@/components/shop-front/design-badge";
 
 const statusBadgeClasses: Record<ProductStatusEnum, string> = {
   [ProductStatusEnum.Draft]: "bg-foreground/90 text-background",
@@ -74,9 +75,7 @@ export default function ProductInfo({ product }: ProductInfoProps) {
       {product.designs && product.designs.length > 0 && (
         <div className="flex flex-wrap gap-2">
           {product.designs.map((design) => (
-            <Badge key={design.id} variant="outline">
-              {design.name}
-            </Badge>
+            <DesignBadge key={design.id} design={design} />
           ))}
         </div>
       )}

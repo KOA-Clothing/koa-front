@@ -1,11 +1,10 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { cn } from "@/lib/utils";
-import { Button } from "@/components/ui/button";
-import { clothingSizeLabels } from "@/types/enum-labels";
 import { ClothingSizeEnum } from "@/types/enums";
 import type { ProductDetailsDto, ProductDetailsVariantDto } from "@/types/product";
+import ColorButton from "@/components/shop-front/color-button";
+import SizeButton from "@/components/shop-front/size-button";
 
 interface VariantSelectorProps {
   product: ProductDetailsDto;
@@ -90,28 +89,13 @@ export default function VariantSelector({
               const isAvailable = availableColorIds.has(color.id);
               const isSelected = selectedColorId === color.id;
               return (
-                <button
+                <ColorButton
                   key={color.id}
+                  color={color}
+                  isSelected={isSelected}
+                  isAvailable={isAvailable}
                   onClick={() => handleColorSelect(color.id)}
-                  disabled={!isAvailable && !isSelected}
-                  className={cn(
-                    "flex items-center gap-2 rounded-full border px-4 py-2 text-sm transition-all",
-                    isSelected
-                      ? "border-foreground bg-foreground text-background"
-                      : isAvailable
-                      ? "border-border hover:border-foreground"
-                      : "border-border opacity-40 cursor-not-allowed"
-                  )}
-                  title={color.name}
-                >
-                  {color.hexCode && (
-                    <span
-                      className="size-4 rounded-full border border-border"
-                      style={{ backgroundColor: color.hexCode }}
-                    />
-                  )}
-                  <span>{color.name}</span>
-                </button>
+                />
               );
             })}
           </div>
@@ -128,21 +112,13 @@ export default function VariantSelector({
                 const isAvailable = availableSizeSet.has(size);
                 const isSelected = selectedSize === size;
                 return (
-                  <button
+                  <SizeButton
                     key={size}
+                    size={size}
+                    isSelected={isSelected}
+                    isAvailable={isAvailable}
                     onClick={() => handleSizeSelect(size)}
-                    disabled={!isAvailable && !isSelected}
-                    className={cn(
-                      "min-w-12 rounded-md border px-3 py-2 text-sm font-medium transition-all",
-                      isSelected
-                        ? "border-foreground bg-foreground text-background"
-                        : isAvailable
-                        ? "border-border hover:border-foreground"
-                        : "border-border opacity-40 cursor-not-allowed"
-                    )}
-                  >
-                    {clothingSizeLabels[size]}
-                  </button>
+                  />
                 );
               })}
           </div>
