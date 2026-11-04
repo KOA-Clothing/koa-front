@@ -1,7 +1,6 @@
 "use client";
 
 import { useState } from "react";
-
 import type { ProductDetailsDto, ProductDetailsVariantDto } from "@/types/product";
 import VariantSelector from "./variant-selector";
 import ProductActions from "./product-actions";

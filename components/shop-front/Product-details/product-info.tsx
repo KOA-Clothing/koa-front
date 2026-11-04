@@ -1,16 +1,8 @@
-import { Badge } from "@/components/ui/badge";
-import { cn } from "@/lib/utils";
-import { ProductStatusEnum } from "@/types/enums";
-import { genderLabels, ageGroupLabels, productStatusLabels } from "@/types/enum-labels";
 import type { ProductDetailsDto } from "@/types/product";
 import DesignBadge from "@/components/shop-front/design-badge";
-
-const statusBadgeClasses: Record<ProductStatusEnum, string> = {
-  [ProductStatusEnum.Draft]: "bg-foreground/90 text-background",
-  [ProductStatusEnum.Discontinued]: "bg-destructive text-white",
-  [ProductStatusEnum.OutOfStock]: "bg-amber-400 text-amber-950",
-  [ProductStatusEnum.Available]: "",
-};
+import ProductMetaBadges from "@/components/shop-front/product-meta-badges";
+import ProductAudience from "@/components/shop-front/product-audience";
+import ProductCareInfo from "@/components/shop-front/product-care-info";
 
 export function calculatePriceBreakdown(sellingPrice: number, discountPercentage: number) {
   const hasDiscount = discountPercentage > 0;
@@ -30,40 +22,18 @@ interface ProductInfoProps {
 }
 
 export default function ProductInfo({ product }: ProductInfoProps) {
-  const statusLabel =
-    product.status === ProductStatusEnum.Available
-      ? null
-      : productStatusLabels[product.status];
-
   return (
     <div className="flex flex-col gap-6">
       <div className="flex flex-col gap-3">
-        <div className="flex flex-wrap items-center gap-2">
-          <p className="text-sm font-medium text-muted-foreground uppercase tracking-wider">
-            {product.category.name}
-          </p>
-          {product.isFeatured && (
-            <Badge className="bg-foreground text-background">Featured</Badge>
-          )}
-          {statusLabel && (
-            <Badge
-              className={cn(
-                "border-transparent",
-                statusBadgeClasses[product.status]
-              )}
-            >
-              {statusLabel}
-            </Badge>
-          )}
-        </div>
+        <ProductMetaBadges
+          categoryName={product.category.name}
+          isFeatured={product.isFeatured}
+          status={product.status}
+        />
         <h1 className="text-3xl font-bold tracking-tight text-foreground md:text-4xl lg:text-5xl">
           {product.name}
         </h1>
-        <div className="flex flex-wrap items-center gap-3 text-sm text-muted-foreground">
-          <span>{genderLabels[product.gender]}</span>
-          <span>•</span>
-          <span>{ageGroupLabels[product.ageGroup]}</span>
-        </div>
+        <ProductAudience gender={product.gender} ageGroup={product.ageGroup} />
       </div>
 
       {product.description && (
@@ -80,26 +50,10 @@ export default function ProductInfo({ product }: ProductInfoProps) {
         </div>
       )}
 
-      {(product.material || product.careInstructions) && (
-        <div className="flex flex-col gap-4 border-t border-border pt-6">
-          {product.material && (
-            <div>
-              <h3 className="text-sm font-semibold mb-1">Material</h3>
-              <p className="text-sm text-muted-foreground whitespace-pre-wrap">
-                {product.material}
-              </p>
-            </div>
-          )}
-          {product.careInstructions && (
-            <div>
-              <h3 className="text-sm font-semibold mb-1">Care Instructions</h3>
-              <p className="text-sm text-muted-foreground whitespace-pre-wrap">
-                {product.careInstructions}
-              </p>
-            </div>
-          )}
-        </div>
-      )}
+      <ProductCareInfo
+        material={product.material}
+        careInstructions={product.careInstructions}
+      />
     </div>
   );
 }

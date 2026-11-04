@@ -15,11 +15,13 @@ interface DesignBadgeProps {
 export default function DesignBadge({ design }: DesignBadgeProps) {
   return (
     <HoverCard>
-      <HoverCardTrigger>
-        <Badge variant="outline" className="cursor-default">
-          {design.name}
-        </Badge>
-      </HoverCardTrigger>
+      <HoverCardTrigger
+        render={
+          <Badge variant="outline" className="cursor-default">
+            {design.name}
+          </Badge>
+        }
+      />
       {design.description && (
         <HoverCardContent className="w-64">
           <p className="text-sm text-muted-foreground">{design.description}</p>

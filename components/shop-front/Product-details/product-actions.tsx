@@ -32,7 +32,7 @@ export default function ProductActions({
           size="lg"
           className="flex-1"
           disabled={!canPurchase}
-          onClick={() => {}}
+          onClick={() => console.log("inventoryId: ", selectedVariant!.inventoryId)}
         >
           <Zap className="mr-2 size-4" />
           Buy Now
@@ -42,7 +42,7 @@ export default function ProductActions({
           variant="outline"
           className="flex-1"
           disabled={!canPurchase}
-          onClick={() => {}}
+          onClick={() => console.log("inventoryId: ", selectedVariant!.inventoryId)}
         >
           <ShoppingBag className="mr-2 size-4" />
           Add to Cart

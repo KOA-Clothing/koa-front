@@ -10,6 +10,7 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { Ruler } from "lucide-react";
+import Image from "next/image";
 
 interface SizeGuideProps {
   sizeGuide?: string | null;
@@ -26,12 +27,14 @@ export default function SizeGuide({ sizeGuide, categorySizeGuideUrl }: SizeGuide
 
   return (
     <Dialog>
-      <DialogTrigger>
-        <Button variant="link" className="px-0 h-auto">
-          <Ruler className="mr-2 size-4" />
-          Size Guide
-        </Button>
-      </DialogTrigger>
+      <DialogTrigger
+        render={
+          <Button variant="link" className="px-0 h-auto">
+            <Ruler className="mr-2 size-4" />
+            Size Guide
+          </Button>
+        }
+      />
       <DialogContent className="max-w-3xl">
         <DialogHeader>
           <DialogTitle>Size Guide</DialogTitle>
@@ -39,11 +42,13 @@ export default function SizeGuide({ sizeGuide, categorySizeGuideUrl }: SizeGuide
         <div className="relative aspect-4/3 w-full overflow-hidden rounded-lg bg-muted">
           {!hasFailed ? (
             // eslint-disable-next-line @next/next/no-img-element
-            <img
+            <Image
               src={guideUrl}
               alt="Size guide"
               onError={() => setHasFailed(true)}
               className="size-full object-contain"
+              width={100}
+              height={100}
             />
           ) : (
             <div className="flex size-full items-center justify-center text-muted-foreground">

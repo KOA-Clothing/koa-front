@@ -41,10 +41,6 @@ export default function ProductDetailsClient({
           sellingPrice={product.sellingPrice}
           discountPercentage={product.discountPercentage}
         />
-        <SizeGuide
-          sizeGuide={product.sizeGuide}
-          categorySizeGuideUrl={product.category.sizeGuideUrl}
-        />
         <div className="flex flex-col gap-6">
           <VariantSelector product={product} onVariantChange={handleVariantChange} />
           <ProductActions
@@ -53,6 +49,10 @@ export default function ProductDetailsClient({
             totalAvailableQuantity={product.totalAvailableQuantity}
           />
         </div>
+        <SizeGuide
+          sizeGuide={product.sizeGuide}
+          categorySizeGuideUrl={product.category.sizeGuideUrl}
+        />
       </div>
     </div>
   );
