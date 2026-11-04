@@ -60,6 +60,13 @@ export const API_ROUTES = {
     VARIANTS: (id: string) => `/api/v1/products/${id}/variants`,
     VARIANT_COLORS: (id: string) => `/api/v1/products/${id}/variants/related-colors`
   },
+  CATALOGUE: {
+    BASE: "/api/v1/catalogue",
+    COLLECTIONS: "/api/v1/catalogue/collections",
+    COLLECTION_ITEMS: (collectionId: string) => `/api/v1/catalogue/collections/${collectionId}`,
+    PRODUCTS: "/api/v1/catalogue/products",
+    PRODUCT_BY_ID: (productId: string) => `/api/v1/catalogue/products/${productId}`,
+  },
   PRODUCT_VARIANTS: {
     BASE: "/api/v1/product-variants",
     EXISTS: (productId: string, colorId: string, size: string | number) => `/api/v1/product-variants/exists?productId=${productId}&colorId=${colorId}&size=${size}`,

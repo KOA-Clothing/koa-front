@@ -64,4 +64,18 @@ export const queryKeys = {
     all: ["inventory"] as const,
     list: (params: Record<string, unknown>) => ["inventory", "list", params] as const,
   },
+  catalogue: {
+    all: ["catalogue"] as const,
+    products: {
+      search: (params: Record<string, unknown>) =>
+        ["catalogue", "products", "search", params] as const,
+      detail: (productId: string) =>
+        ["catalogue", "products", "detail", productId] as const,
+    },
+    collections: {
+      all: ["catalogue", "collections"] as const,
+      items: (collectionId: string) =>
+        ["catalogue", "collections", "items", collectionId] as const,
+    },
+  },
 } as const;
