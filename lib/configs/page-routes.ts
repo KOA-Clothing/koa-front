@@ -6,7 +6,7 @@ import type { FilterValue } from "@/types/filters/table-filters";
 export const PAGE_ROUTES = {
   SHOP: {
     COLLECTIONS: "/collections",
-    SEARCH: "/search",
+    SEARCH: "/products/search",
     PRODUCTS: "/products",
   },
   ADMIN: {
