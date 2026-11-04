@@ -3,11 +3,11 @@
 import { useQuery } from "@tanstack/react-query";
 import { useAxiosClient } from "@/hooks/use-api-client";
 import { API_ROUTES } from "@/lib/configs/api-routes";
-import { CollectionItemDtoSchema } from "@/types/collection";
+import { ProductCardDtoSchema } from "@/types/product";
 import { queryKeys } from "@/lib/api/query-keys";
 import { z } from "zod";
 
-const collectionItemsSchema = z.array(CollectionItemDtoSchema);
+const collectionProductsSchema = z.array(ProductCardDtoSchema);
 
 export function useCollectionItems(collectionId: string) {
   const axiosClient = useAxiosClient();
@@ -18,7 +18,7 @@ export function useCollectionItems(collectionId: string) {
       const response = await axiosClient.get(
         API_ROUTES.CATALOGUE.COLLECTION_ITEMS(collectionId)
       );
-      return collectionItemsSchema.parse(response.data);
+      return collectionProductsSchema.parse(response.data);
     },
     enabled: !!collectionId,
   });
