@@ -9,11 +9,13 @@ import SizeButton from "@/components/shop-front/size-button";
 interface VariantSelectorProps {
   product: ProductDetailsDto;
   onVariantChange?: (variant: ProductDetailsVariantDto | null) => void;
+  onColorChange?: (colorId: string | null) => void;
 }
 
 export default function VariantSelector({
   product,
   onVariantChange,
+  onColorChange,
 }: VariantSelectorProps) {
   const [selectedColorId, setSelectedColorId] = useState<string | null>(null);
   const [selectedSize, setSelectedSize] = useState<ClothingSizeEnum | null>(null);
@@ -58,8 +60,14 @@ export default function VariantSelector({
   const handleColorSelect = (colorId: string) => {
     if (selectedColorId === colorId) {
       setSelectedColorId(null);
+      onColorChange?.(null);
+      // If current size not available for this color, clear it
+      if (selectedSize && !availableSizeSet.has(selectedSize)) {
+        setSelectedSize(null);
+      }
     } else {
       setSelectedColorId(colorId);
+      onColorChange?.(colorId);
       // If current size not available for this color, clear it
       if (selectedSize && !availableSizeSet.has(selectedSize)) {
         setSelectedSize(null);
@@ -75,6 +83,7 @@ export default function VariantSelector({
       // If current color not available for this size, clear it
       if (selectedColorId && !availableColorIds.has(selectedColorId)) {
         setSelectedColorId(null);
+        onColorChange?.(null);
       }
     }
   };

@@ -22,11 +22,6 @@ export default function ProductDetailsClient({
 
   const handleVariantChange = (variant: ProductDetailsVariantDto | null) => {
     setSelectedVariant(variant);
-    if (variant) {
-      setSelectedColorId(variant.colorId);
-    } else {
-      setSelectedColorId(null);
-    }
   };
 
   return (
@@ -42,7 +37,11 @@ export default function ProductDetailsClient({
           discountPercentage={product.discountPercentage}
         />
         <div className="flex flex-col gap-6">
-          <VariantSelector product={product} onVariantChange={handleVariantChange} />
+          <VariantSelector
+            product={product}
+            onVariantChange={handleVariantChange}
+            onColorChange={setSelectedColorId}
+          />
           <ProductActions
             selectedVariant={selectedVariant}
             inStock={product.inStock}
