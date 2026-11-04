@@ -1,7 +1,7 @@
 "use client";
 
 import { useQuery } from "@tanstack/react-query";
-import axios from "axios";
+import { useAxiosClient } from "@/hooks/use-api-client";
 import { API_ROUTES } from "@/lib/configs/api-routes";
 import { paginatedListSchema } from "@/types/api-response";
 import { ProductCardDtoSchema } from "@/types/product";
@@ -16,7 +16,7 @@ export interface SearchProductsParams {
 }
 
 export function useSearchProducts(params: SearchProductsParams) {
-  const baseURL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5261";
+  const axiosClient = useAxiosClient();
 
   const queryParams = {
     searchTerm: params.searchTerm?.trim() || "",
@@ -27,7 +27,7 @@ export function useSearchProducts(params: SearchProductsParams) {
   return useQuery({
     queryKey: queryKeys.catalogue.products.search(queryParams),
     queryFn: async () => {
-      const response = await axios.get(`${baseURL}${API_ROUTES.CATALOGUE.PRODUCTS}`, {
+      const response = await axiosClient.get(API_ROUTES.CATALOGUE.PRODUCTS, {
         params: queryParams,
       });
       return searchProductsSchema.parse(response.data);

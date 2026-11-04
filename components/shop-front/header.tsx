@@ -74,7 +74,7 @@ export function Header() {
           {/* Right Section */}
           <div className="flex items-center gap-2 z-20">
             <Link
-              href='/search'
+              href='/products/search'
               className={`p-2 rounded-lg transition duration-300 ${isSolidActive ? 'hover:bg-muted' : 'hover:bg-white/10'}`}
               aria-label="Search"
             >

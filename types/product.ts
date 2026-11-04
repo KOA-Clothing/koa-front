@@ -1,8 +1,10 @@
 import { z } from "zod";
 import { CategoryDtoSchema } from "./category";
 import { DesignDtoSchema } from "./design";
+import { ColorDtoSchema } from "./color";
 import {
   AgeGroupSchema,
+  ClothingSizeSchema,
   GenderSchema,
   ProductStatusSchema,
 } from "./enums";
@@ -55,6 +57,48 @@ export const ProductCardDtoSchema = z.object({
 });
 
 export type ProductCardDto = z.infer<typeof ProductCardDtoSchema>;
+
+export const ProductDetailsImageDtoSchema = z.object({
+  id: z.string(),
+  colorId: z.string().nullable().optional(),
+  imageUrl: z.string(),
+  altText: z.string().nullable().optional(),
+  isPrimary: z.boolean(),
+  createdAt: z.string().datetime({ offset: true }),
+  updatedAt: z.string().datetime({ offset: true }),
+});
+
+export type ProductDetailsImageDto = z.infer<typeof ProductDetailsImageDtoSchema>;
+
+export const ProductDetailsVariantDtoSchema = z.object({
+  id: z.string(), // ProductVariant id
+  colorId: z.string(),
+  size: ClothingSizeSchema,
+  sku: z.string(),
+  isActive: z.boolean(),
+  inventoryId: z.string(),
+  quantity: z.number(),
+  reservedQuantity: z.number(),
+  lowStockThreshold: z.number().nullable().optional(),
+  createdAt: z.string().datetime({ offset: true }),
+  updatedAt: z.string().datetime({ offset: true }),
+  availableQuantity: z.number(),
+  inStock: z.boolean(),
+  isLowStock: z.boolean(),
+});
+
+export type ProductDetailsVariantDto = z.infer<typeof ProductDetailsVariantDtoSchema>;
+
+export const ProductDetailsDtoSchema = ProductDtoSchema.extend({
+  colors: z.array(ColorDtoSchema).optional().default([]),
+  images: z.array(ProductDetailsImageDtoSchema).optional().default([]),
+  variants: z.array(ProductDetailsVariantDtoSchema).optional().default([]),
+  availableSizes: z.array(ClothingSizeSchema).optional().default([]),
+  inStock: z.boolean().optional().default(false),
+  totalAvailableQuantity: z.number().optional().default(0),
+});
+
+export type ProductDetailsDto = z.infer<typeof ProductDetailsDtoSchema>;
 
 export const ProductUpdateInputSchema = z.object({
   name: z.string()
