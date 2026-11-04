@@ -16,6 +16,14 @@ export const DEFAULT_PAGE_SIZE = 10;
 export const PAGE_SIZE_OPTIONS = [10, 20, 25, 30, 40, 50];
 
 /**
+ * Shop-front product grids are laid out in 2/3/4 columns, so their page sizes
+ * are multiples of 12 rather than the admin tables' arbitrary sizes. Kept
+ * separate so changing one never quietly changes the other.
+ */
+export const SHOP_DEFAULT_PAGE_SIZE = 12;
+export const SHOP_PAGE_SIZE_OPTIONS = [12, 24, 36, 48] as const;
+
+/**
  * Everything one server-paginated list request needs: TanStack's pagination
  * state, the text search term, and the route's typed filter bag. Keeping the
  * filters in a bag (rather than a 4th positional argument) is what lets a page

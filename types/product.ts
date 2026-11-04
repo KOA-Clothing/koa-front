@@ -32,6 +32,30 @@ export const ProductDtoSchema = z.object({
 
 export type ProductDto = z.infer<typeof ProductDtoSchema>;
 
+/**
+ * Trimmed product shape used by shop-front cards and search results
+ * (`ProductCardDto` on the backend).
+ *
+ * Deliberately not `ProductDto`: a customer card never needs cost price,
+ * designs, inventory or the description, and the backend already resolves
+ * `coverImageUrl` to the one image the card should show. Keep this schema in
+ * lockstep with `Domain.Models.ProductCardDto`.
+ */
+export const ProductCardDtoSchema = z.object({
+  id: z.string(),
+  name: z.string(),
+  category: CategoryDtoSchema,
+  coverImageUrl: z.string().url().nullable().optional(),
+  sellingPrice: z.number(),
+  discountPercentage: z.number(),
+  isFeatured: z.boolean(),
+  status: ProductStatusSchema,
+  createdAt: z.string().datetime({ offset: true }),
+  updatedAt: z.string().datetime({ offset: true }),
+});
+
+export type ProductCardDto = z.infer<typeof ProductCardDtoSchema>;
+
 export const ProductUpdateInputSchema = z.object({
   name: z.string()
     .min(1, "Name is required")

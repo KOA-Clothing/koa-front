@@ -6,6 +6,8 @@ import type { FilterValue } from "@/types/filters/table-filters";
 export const PAGE_ROUTES = {
   SHOP: {
     COLLECTIONS: "/collections",
+    SEARCH: "/search",
+    PRODUCTS: "/products",
   },
   ADMIN: {
     BASE_PRODUCTS: "/admin/product-configs/base-products",
@@ -89,4 +91,10 @@ export const shopHrefs = {
   /** One collection's product catalogue, keyed by collection id. */
   collection: (collectionId: string) =>
     `${PAGE_ROUTES.SHOP.COLLECTIONS}/${collectionId}`,
+  /**
+   * One product's detail page. The detail route is still to be built; product
+   * cards already link here so the grid is navigable the day it lands.
+   */
+  product: (productId: string) =>
+    `${PAGE_ROUTES.SHOP.PRODUCTS}/${productId}`,
 };
