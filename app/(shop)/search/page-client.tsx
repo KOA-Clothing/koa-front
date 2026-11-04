@@ -68,7 +68,7 @@ export default function ProductSearchPageClient({
         <div className="mb-8 flex flex-col gap-3 border-b border-border pb-5 sm:flex-row sm:items-end sm:justify-between">
           <div>
             <p className="mb-3 text-xs font-medium uppercase tracking-[0.2em] text-muted-foreground">
-              {searchTerm ? "Search results" : "The collection"}
+              {searchTerm ? "Search results" : "The catalogue"}
             </p>
             <h2
               id="product-results-heading"
