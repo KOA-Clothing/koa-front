@@ -20,7 +20,7 @@ export interface PaginatedList<T> {
  * endpoint returns. The single place that changes if the API casing/fields
  * drift (e.g. `TotalCount` instead of `totalRecords`).
  */
-export function paginatedListSchema<ItemSchema extends z.ZodTypeAny>(
+export function paginatedListSchema<ItemSchema extends z.ZodType>(
   itemSchema: ItemSchema
 ) {
   return z.object({
@@ -32,6 +32,6 @@ export function paginatedListSchema<ItemSchema extends z.ZodTypeAny>(
   });
 }
 
-export type PaginatedListSchema<T extends z.ZodTypeAny> = z.infer<
+export type PaginatedListSchema<T extends z.ZodType> = z.infer<
   ReturnType<typeof paginatedListSchema<T>>
 >;

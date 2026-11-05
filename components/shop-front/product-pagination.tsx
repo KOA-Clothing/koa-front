@@ -45,7 +45,7 @@ interface ProductPaginationProps {
  * Builds the visible page numbers: first, last, the current page and its
  * neighbours, with an ellipsis wherever the sequence skips more than one page.
  */
-function getPageItems(
+export function getPageItems(
   currentPage: number,
   pageCount: number
 ): (number | "ellipsis")[] {

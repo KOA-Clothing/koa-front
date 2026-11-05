@@ -1,6 +1,6 @@
 import { Hero } from "@/components/shop-front/hero";
 import ValueTicker from "@/components/shop-front/home/value-ticker";
-import FeaturedProductsSection from "@/components/shop-front/home/featured-products-section";
+import FeaturedProductsFeed from "@/components/shop-front/home/featured-products-feed";
 import CollectionsSpotlight from "@/components/shop-front/home/collections-spotlight";
 import BrandStoryBanner from "@/components/shop-front/home/brand-story-banner";
 import CategoryGrid from "@/components/shop-front/home/category-grid";
@@ -17,28 +17,28 @@ export default function Home() {
       {/* ── 02. ANCHOR & CORE SECTIONS ── */}
       <div id="shop-sections" className="w-full flex flex-col items-center">
         {/* Brand Value Propositions / Trust Strip */}
-        <ValueTicker />
+        {/* <ValueTicker /> */}
 
         {/* Featured Products / New Battle-Ready Essentials */}
-        <FeaturedProductsSection />
+        <FeaturedProductsFeed />
 
         {/* Curated Drops / Signature Collections Spotlight */}
-        <CollectionsSpotlight />
+        {/* <CollectionsSpotlight /> */}
 
         {/* The Warrior Story & Heritage Banner */}
-        <BrandStoryBanner />
+        {/* <BrandStoryBanner /> */}
 
         {/* Shop By Category Visual Navigator */}
-        <CategoryGrid />
+        {/* <CategoryGrid /> */}
 
         {/* Garment Engineering & Technical Fabric Breakdown */}
-        <FeaturesBreakdown />
+        {/* <FeaturesBreakdown /> */}
 
         {/* Community Proof & Athlete Testimonials */}
         {/* <CommunitySection /> */}
 
         {/* VIP Early Access & Newsletter Lead Capture */}
-        <NewsletterSection />
+        {/* <NewsletterSection /> */}
       </div>
     </main>
   );

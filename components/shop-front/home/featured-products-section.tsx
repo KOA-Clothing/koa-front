@@ -1,122 +1,51 @@
 "use client";
 
-import { useState } from "react";
 import Link from "next/link";
-import { ArrowRight, Flame, Sparkles, Tag } from "lucide-react";
+import { ArrowRight, ChevronLeft, ChevronRight } from "lucide-react";
 import ProductCard from "@/components/shop-front/product-card";
-import { useSearchProducts } from "@/features/catalogue/hooks/use-search-products";
+import { getPageItems } from "@/components/shop-front/product-pagination";
 import { PAGE_ROUTES } from "@/lib/configs/page-routes";
-import { ProductStatusEnum } from "@/types/enums";
+import { cn } from "@/lib/utils";
 import type { ProductCardDto } from "@/types/product";
 
-type FilterTab = "all" | "featured" | "sale";
+/** Anchor used by the feed's pager to bring the new page into view. */
+export const FEATURED_PRODUCTS_SECTION_ID = "featured-products";
 
-// Curated preview items displayed if backend catalogue is empty or syncing
-const FALLBACK_PRODUCTS: ProductCardDto[] = [
-  {
-    id: "koa-heavyweight-tee",
-    name: "KOA Heavyweight Oversized Tee — 280 GSM",
-    category: {
-      id: "cat-tees",
-      name: "Tees & Tops",
-      code: "TEES",
-      isActive: true,
-      displayOrder: 1,
-      createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString(),
-    },
-    coverImageUrl: "/hero-images/hero-1.jpg",
-    sellingPrice: 42,
-    discountPercentage: 0,
-    isFeatured: true,
-    status: ProductStatusEnum.Available,
-    createdAt: new Date().toISOString(),
-    updatedAt: new Date().toISOString(),
-  },
-  {
-    id: "koa-pro-stretch-short",
-    name: "KOA Pro-Movement Training Shorts 7\"",
-    category: {
-      id: "cat-shorts",
-      name: "Bottoms",
-      code: "SHORTS",
-      isActive: true,
-      displayOrder: 2,
-      createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString(),
-    },
-    coverImageUrl: "/hero-images/hero-2.jpg",
-    sellingPrice: 48,
-    discountPercentage: 15,
-    isFeatured: true,
-    status: ProductStatusEnum.Available,
-    createdAt: new Date().toISOString(),
-    updatedAt: new Date().toISOString(),
-  },
-  {
-    id: "koa-warrior-compression",
-    name: "Warrior Seamless Second-Skin Rashguard",
-    category: {
-      id: "cat-active",
-      name: "Activewear",
-      code: "ACTIVE",
-      isActive: true,
-      displayOrder: 3,
-      createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString(),
-    },
-    coverImageUrl: "/hero-images/hero-3.jpg",
-    sellingPrice: 55,
-    discountPercentage: 0,
-    isFeatured: true,
-    status: ProductStatusEnum.Available,
-    createdAt: new Date().toISOString(),
-    updatedAt: new Date().toISOString(),
-  },
-  {
-    id: "koa-raw-fleece-hoodie",
-    name: "Core Drop-Shoulder French Terry Hoodie — 450 GSM",
-    category: {
-      id: "cat-fleece",
-      name: "Hoodies & Fleece",
-      code: "FLEECE",
-      isActive: true,
-      displayOrder: 4,
-      createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString(),
-    },
-    coverImageUrl: "/hero-images/hero-1.jpg",
-    sellingPrice: 78,
-    discountPercentage: 20,
-    isFeatured: false,
-    status: ProductStatusEnum.Available,
-    createdAt: new Date().toISOString(),
-    updatedAt: new Date().toISOString(),
-  },
-];
+const GRID_CLASSES = "grid grid-cols-2 gap-x-4 gap-y-10 md:grid-cols-3 md:gap-x-6 lg:grid-cols-4";
 
-export default function FeaturedProductsSection() {
-  const [activeTab, setActiveTab] = useState<FilterTab>("all");
+interface FeaturedProductsSectionProps {
+  products: ProductCardDto[];
+  pageIndex: number;
+  totalPages: number;
+  onPageChange: (pageIndex: number) => void;
+  isLoading?: boolean;
+  isFetching?: boolean;
+}
 
-  const { data, isLoading } = useSearchProducts({
-    pageIndex: 1,
-    pageSize: 8,
-  });
+/**
+ * Landing-page "Featured Essentials" grid.
+ *
+ * Presentational by design: the feed container (`featured-products-feed.tsx`)
+ * owns the query, the page index, and the decision to render this section at
+ * all. That keeps this file free of fetch state and makes the pager a plain
+ * callback rather than a second source of truth.
+ */
+export default function FeaturedProductsSection({
+  products,
+  pageIndex,
+  totalPages,
+  onPageChange,
+  isLoading = false,
+  isFetching = false,
+}: FeaturedProductsSectionProps) {
 
-  const liveItems = data?.items ?? [];
-  const hasLiveItems = liveItems.length > 0;
-  const itemsToDisplay = hasLiveItems ? liveItems : FALLBACK_PRODUCTS;
-
-  const filteredItems = itemsToDisplay.filter((product) => {
-    if (activeTab === "featured") return product.isFeatured;
-    if (activeTab === "sale") return product.discountPercentage > 0;
-    return true;
-  });
-
-  const displayList = filteredItems.length > 0 ? filteredItems : itemsToDisplay;
-
+  console.log(totalPages)
   return (
-    <section id="featured-products" className="w-full scroll-mt-24 py-16 md:py-24">
+    <section
+      id={FEATURED_PRODUCTS_SECTION_ID}
+      aria-busy={isFetching}
+      className="w-full scroll-mt-24 py-16 md:py-24"
+    >
       <div className="mx-auto max-w-7xl px-4 md:px-8">
         {/* Section Header */}
         <div className="flex flex-col gap-6 border-b border-border pb-8 md:flex-row md:items-end md:justify-between">
@@ -128,58 +57,18 @@ export default function FeaturedProductsSection() {
               </p>
             </div>
             <h2 className="text-3xl font-bold tracking-tight text-foreground md:text-4xl">
-              Featured Essentials
+              Featured Products
             </h2>
             <p className="mt-2 max-w-xl text-sm leading-relaxed text-muted-foreground">
               Built for high exertion and timeless aesthetics. Heavyweight cottons, technical 4-way stretch, and zero shortcuts.
             </p>
-          </div>
-
-          {/* Filter Pills */}
-          <div className="flex flex-wrap items-center gap-2">
-            <button
-              type="button"
-              onClick={() => setActiveTab("all")}
-              className={`flex items-center gap-1.5 rounded-full px-4 py-2 text-xs font-medium transition-all ${
-                activeTab === "all"
-                  ? "bg-foreground text-background shadow-sm"
-                  : "bg-muted/70 text-muted-foreground hover:bg-muted hover:text-foreground"
-              }`}
-            >
-              <Sparkles className="size-3.5" />
-              All Pieces
-            </button>
-            <button
-              type="button"
-              onClick={() => setActiveTab("featured")}
-              className={`flex items-center gap-1.5 rounded-full px-4 py-2 text-xs font-medium transition-all ${
-                activeTab === "featured"
-                  ? "bg-foreground text-background shadow-sm"
-                  : "bg-muted/70 text-muted-foreground hover:bg-muted hover:text-foreground"
-              }`}
-            >
-              <Flame className="size-3.5" />
-              Featured
-            </button>
-            <button
-              type="button"
-              onClick={() => setActiveTab("sale")}
-              className={`flex items-center gap-1.5 rounded-full px-4 py-2 text-xs font-medium transition-all ${
-                activeTab === "sale"
-                  ? "bg-foreground text-background shadow-sm"
-                  : "bg-muted/70 text-muted-foreground hover:bg-muted hover:text-foreground"
-              }`}
-            >
-              <Tag className="size-3.5" />
-              Special Drops
-            </button>
           </div>
         </div>
 
         {/* Product Grid */}
         <div className="mt-10">
           {isLoading ? (
-            <div className="grid grid-cols-2 gap-x-4 gap-y-10 md:grid-cols-3 md:gap-x-6 lg:grid-cols-4">
+            <div className={GRID_CLASSES}>
               {[...Array(8)].map((_, i) => (
                 <div key={i} className="flex flex-col gap-3">
                   <div className="aspect-4/5 w-full animate-pulse rounded-xl bg-muted" />
@@ -189,13 +78,81 @@ export default function FeaturedProductsSection() {
               ))}
             </div>
           ) : (
-            <div className="grid grid-cols-2 gap-x-4 gap-y-10 md:grid-cols-3 md:gap-x-6 lg:grid-cols-4">
-              {displayList.map((product) => (
+            <div
+              className={cn(
+                GRID_CLASSES,
+                "transition-opacity duration-200",
+                isFetching && "opacity-60"
+              )}
+            >
+              {products.map((product) => (
                 <ProductCard key={product.id} product={product} />
               ))}
             </div>
           )}
         </div>
+
+        {/* Pagination */}
+        {totalPages > 1 && (
+          <nav
+            aria-label="Featured products pages"
+            className="mt-12 flex flex-col items-center gap-3"
+          >
+            <div className="flex items-center gap-1.5">
+              <button
+                type="button"
+                onClick={() => onPageChange(pageIndex - 1)}
+                disabled={pageIndex <= 1}
+                aria-label="Go to previous page"
+                className="flex size-9 items-center justify-center rounded-full border border-border bg-card text-foreground transition-colors hover:border-foreground/40 hover:bg-muted disabled:pointer-events-none disabled:opacity-40 focus-visible:outline-none focus-visible:ring-3 focus-visible:ring-ring/50"
+              >
+                <ChevronLeft className="size-4" />
+              </button>
+
+              {getPageItems(pageIndex, totalPages).map((item, index) =>
+                item === "ellipsis" ? (
+                  <span
+                    key={`ellipsis-${index}`}
+                    aria-hidden="true"
+                    className="flex size-9 items-center justify-center text-xs text-muted-foreground"
+                  >
+                    &hellip;
+                  </span>
+                ) : (
+                  <button
+                    key={item}
+                    type="button"
+                    onClick={() => onPageChange(item)}
+                    aria-label={`Go to page ${item}`}
+                    aria-current={item === pageIndex ? "page" : undefined}
+                    className={cn(
+                      "flex size-9 items-center justify-center rounded-full text-xs font-medium tabular-nums transition-colors focus-visible:outline-none focus-visible:ring-3 focus-visible:ring-ring/50",
+                      item === pageIndex
+                        ? "bg-foreground text-background"
+                        : "border border-border bg-card text-foreground hover:border-foreground/40 hover:bg-muted"
+                    )}
+                  >
+                    {item}
+                  </button>
+                )
+              )}
+
+              <button
+                type="button"
+                onClick={() => onPageChange(pageIndex + 1)}
+                disabled={pageIndex >= totalPages}
+                aria-label="Go to next page"
+                className="flex size-9 items-center justify-center rounded-full border border-border bg-card text-foreground transition-colors hover:border-foreground/40 hover:bg-muted disabled:pointer-events-none disabled:opacity-40 focus-visible:outline-none focus-visible:ring-3 focus-visible:ring-ring/50"
+              >
+                <ChevronRight className="size-4" />
+              </button>
+            </div>
+
+            <p className="text-xs tabular-nums text-muted-foreground">
+              Page {pageIndex} of {totalPages}
+            </p>
+          </nav>
+        )}
 
         {/* View All CTA */}
         <div className="mt-14 flex justify-center">

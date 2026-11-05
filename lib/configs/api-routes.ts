@@ -66,6 +66,7 @@ export const API_ROUTES = {
     COLLECTION_ITEMS: (collectionId: string) => `/api/v1/catalogue/collections/${collectionId}`,
     PRODUCTS: "/api/v1/catalogue/products",
     PRODUCT_BY_ID: (productId: string) => `/api/v1/catalogue/products/${productId}`,
+    FEATURED_PRODUCTS: "/api/v1/catalogue/products/featured",
   },
   PRODUCT_VARIANTS: {
     BASE: "/api/v1/product-variants",
