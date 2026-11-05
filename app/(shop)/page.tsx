@@ -35,7 +35,7 @@ export default function Home() {
         <FeaturesBreakdown />
 
         {/* Community Proof & Athlete Testimonials */}
-        <CommunitySection />
+        {/* <CommunitySection /> */}
 
         {/* VIP Early Access & Newsletter Lead Capture */}
         <NewsletterSection />

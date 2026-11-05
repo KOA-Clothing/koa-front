@@ -92,13 +92,13 @@ export function Hero() {
             href={PAGE_ROUTES.SHOP.SEARCH}
             className="px-8 py-3.5 rounded-full bg-white text-neutral-950 font-semibold text-xs uppercase tracking-[0.18em] shadow-xl hover:bg-neutral-200 transition-all hover:scale-105 active:scale-95 duration-200"
           >
-            Shop The Collection
+            Explore Drops
           </Link>
           <Link
             href={PAGE_ROUTES.SHOP.COLLECTIONS}
             className="px-8 py-3.5 rounded-full bg-black/40 backdrop-blur-md text-white border border-white/30 font-semibold text-xs uppercase tracking-[0.18em] shadow-xl hover:bg-white/10 hover:border-white transition-all hover:scale-105 active:scale-95 duration-200"
           >
-            Explore Drops
+            Explore Collections
           </Link>
         </div>
 
