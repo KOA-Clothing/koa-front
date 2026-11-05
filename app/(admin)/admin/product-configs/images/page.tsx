@@ -11,7 +11,7 @@ import { useServerTableParams } from "@/hooks/use-server-table-params";
 import { adminHrefs, adminListHrefs } from "@/lib/configs/page-routes";
 import { ProductImageTableDetailsDto } from "@/types/product-image";
 import type { ColorDto } from "@/types/color";
-import { BookImage, Images } from "lucide-react";
+import { Images } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { getProductImageColumns } from "./columns";
 

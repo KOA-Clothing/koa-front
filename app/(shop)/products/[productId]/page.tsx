@@ -8,7 +8,7 @@ interface ProductPageProps {
 export async function generateMetadata({
   params,
 }: ProductPageProps): Promise<Metadata> {
-  const { productId } = await params;
+  // const { productId } = await params;
   return {
     title: "Product | KOA Clothing",
   };

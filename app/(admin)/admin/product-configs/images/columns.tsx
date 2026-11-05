@@ -16,9 +16,6 @@ const columnHelper =
  * and needs one — so it prints the number rather than falling back to an em
  * dash, which would read as "nothing to report".
  */
-function CountCell({ value }: { value: number }) {
-  return <div className="text-center">{value}</div>;
-}
 
 interface ProductImageColumnActions {
   onView: (product: ProductImageTableDetailsDto) => void;

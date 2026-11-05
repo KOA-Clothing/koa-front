@@ -3,7 +3,7 @@
 import { createDataTableColumnHelper } from "@/lib/configs/table-configs";
 import type { CollectionItemDto } from "@/types/collection";
 import { Button } from "@/components/ui/button";
-import { Eye, Trash2 } from "lucide-react";
+import { Trash2 } from "lucide-react";
 import { ProductDto } from "@/types/product";
 import { BaseShirtIcon } from "@/components/general/custom-icons/base-shirt-icon";
 
@@ -54,34 +54,6 @@ export function getCollectionItemColumns({
       cell: (info) => <div className="w-full text-right">{currencyFormatter.format(info.getValue())}</div>,
       enableSorting: true,
     }),
-    // columnHelper.accessor((item) => item.product.status, {
-    //   id: "status",
-    //   header: () => <div>Product Status</div>,
-    //   meta: { headerClassName: "w-full justify-center text-center", cellClassName: "text-center" },
-    //   cell: (info) => (
-    //     <div className="flex justify-center">
-    //       <KoaEnumBadge
-    //         labels={productStatusLabels}
-    //         styles={productStatusBadgeStyles}
-    //         value={info.getValue()}
-    //       />
-    //     </div>
-    //   ),
-    //   enableSorting: true,
-    // }),
-    // columnHelper.accessor((item) => item.product.isActive, {
-    //   id: "isActive",
-    //   header: () => <div>Is Active</div>,
-    //   meta: { headerClassName: "w-full justify-center text-center", cellClassName: "text-center" },
-    //   cell: (info) => (
-    //     <div className="flex justify-center">
-    //       <Badge variant={info.getValue() ? "secondary" : "outline"}>
-    //         {info.getValue() ? "Active" : "Inactive"}
-    //       </Badge>
-    //     </div>
-    //   ),
-    //   enableSorting: true,
-    // }),
     columnHelper.accessor((item) => item.createdAt, {
       id: "added",
       header: () => <div>Added Date</div>,
