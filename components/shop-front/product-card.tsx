@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { ImageOff } from "lucide-react";
+import { ImageOff, Sparkles } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
 import { shopHrefs } from "@/lib/configs/page-routes";
@@ -34,9 +34,10 @@ interface ProductCardProps {
 /**
  * One product tile on the shop-front search / catalogue grid.
  *
- * Customer-facing only: cover image, category, name, price, and the two signals
- * that change a buying decision — a live discount and a non-available status.
- * Cost price, descriptions and inventory live on the admin card, not here.
+ * Customer-facing only: cover image, category, name, price, and the signals
+ * that change a buying decision — a live discount, a non-available status, and
+ * whether the piece is featured. Cost price, descriptions and inventory live on
+ * the admin card, not here.
  *
  * `sellingPrice` is the pre-discount price (the same reading as
  * `calculatePriceBreakdown`), so a discounted tile shows the final price in
@@ -82,18 +83,27 @@ export default function ProductCard({ product }: ProductCardProps) {
         )}
 
         <div className="pointer-events-none absolute inset-x-2 top-2 flex items-start justify-between gap-2">
-          {statusLabel ? (
-            <Badge
-              className={cn(
-                "h-5 border-transparent px-2.5 text-[0.65rem] font-semibold uppercase tracking-[0.08em] shadow-sm",
-                statusBadgeClasses[product.status]
-              )}
-            >
-              {statusLabel}
-            </Badge>
-          ) : (
-            <span aria-hidden="true" />
-          )}
+          {/* Left stack: status and curation signals. An empty stack still
+              occupies the left slot, keeping the discount pinned right. */}
+          <div className="flex flex-col items-start gap-1.5">
+            {statusLabel && (
+              <Badge
+                className={cn(
+                  "h-5 border-transparent px-2.5 text-[0.65rem] font-semibold uppercase tracking-[0.08em] shadow-sm",
+                  statusBadgeClasses[product.status]
+                )}
+              >
+                {statusLabel}
+              </Badge>
+            )}
+
+            {product.isFeatured && (
+              <Badge className="h-5 gap-1 border-transparent bg-foreground px-2.5 text-[0.65rem] font-semibold uppercase tracking-[0.08em] text-background shadow-sm">
+                <Sparkles aria-hidden="true" />
+                Featured
+              </Badge>
+            )}
+          </div>
 
           {hasDiscount && (
             <Badge className="h-5 border-transparent bg-white px-2.5 text-[0.65rem] font-semibold tabular-nums text-neutral-950 shadow-sm ring-1 ring-black/10">
@@ -106,14 +116,6 @@ export default function ProductCard({ product }: ProductCardProps) {
       <div className="flex flex-1 flex-col gap-1.5 pt-3 ml-2">
         <div className="flex min-w-0 items-center gap-1.5 text-[0.65rem] font-medium uppercase tracking-[0.18em] text-muted-foreground">
           <span className="truncate">{product.category.name}</span>
-          {product.isFeatured && (
-            <>
-              <span aria-hidden="true" className="text-border">
-                /
-              </span>
-              <span className="shrink-0 text-foreground">Featured</span>
-            </>
-          )}
         </div>
 
         <h3 className="line-clamp-2 text-sm font-medium leading-snug tracking-tight text-foreground decoration-1 underline-offset-4 group-hover:underline">
