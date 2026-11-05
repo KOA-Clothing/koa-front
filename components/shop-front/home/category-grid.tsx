@@ -37,7 +37,7 @@ export default function CategoryGrid() {
     <section
       id={CATEGORY_GRID_SECTION_ID}
       aria-busy={isFetching}
-      className="w-full scroll-mt-24 border-t border-border bg-background py-16 md:py-24"
+      className="w-full scroll-mt-24 border-t border-border bg-background py-8 md:py-12 border"
     >
       <div className="mx-auto max-w-7xl px-4 md:px-8">
         <CategoryGridHeader

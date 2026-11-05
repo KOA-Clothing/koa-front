@@ -74,11 +74,11 @@ export default function BrandStoryBanner() {
 
           {/* Right Column: Visual Frame */}
           <div className="relative flex items-center justify-center">
-            <div className="relative aspect-square w-full max-w-md overflow-hidden rounded-2xl border border-border bg-gradient-to-br from-muted/80 to-muted/20 p-8 flex flex-col items-center justify-center shadow-inner">
+            <div className="relative aspect-square w-full max-w-md overflow-hidden rounded-2xl border border-border bg-linear-to-br from-muted/80 to-muted/20 p-8 flex flex-col items-center justify-center shadow-inner">
               {/* Subtle background radial pattern */}
               <div
                 aria-hidden="true"
-                className="absolute inset-0 bg-[radial-gradient(circle_at_center,var(--color-border)_1px,transparent_1px)] bg-[size:16px_16px] opacity-40"
+                className="absolute inset-0 bg-[radial-gradient(circle_at_center,var(--color-border)_1px,transparent_1px)] bg-size-[16px_16px] opacity-40"
               />
 
               <div className="relative z-10 flex flex-col items-center text-center">

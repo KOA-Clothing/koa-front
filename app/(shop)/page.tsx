@@ -2,7 +2,6 @@ import { Hero } from "@/components/shop-front/hero";
 import ValueTicker from "@/components/shop-front/home/value-ticker";
 import FeaturedProductsFeed from "@/components/shop-front/home/featured-products-feed";
 import DiscountedProductsFeed from "@/components/shop-front/home/discounted-products-feed";
-import CollectionsSpotlight from "@/components/shop-front/home/collections-spotlight";
 import BrandStoryBanner from "@/components/shop-front/home/brand-story-banner";
 import CategoryGrid from "@/components/shop-front/home/category-grid";
 import FeaturesBreakdown from "@/components/shop-front/home/features-breakdown";
@@ -23,9 +22,7 @@ export default function Home() {
 
         <DiscountedProductsFeed /> 
 
-        {/* <CollectionsSpotlight /> */}
-
-        {/* <BrandStoryBanner /> */}
+        <BrandStoryBanner />
 
         {/* <FeaturesBreakdown /> */}
 

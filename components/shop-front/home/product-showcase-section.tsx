@@ -56,7 +56,7 @@ export default function ProductShowcaseSection({
       id={sectionId}
       aria-busy={isFetching}
       className={cn(
-        "w-full scroll-mt-24 py-16 md:py-24",
+        "w-full scroll-mt-24 py-8 md:py-12",
         tone === "muted" && "border-y border-border bg-muted/30"
       )}
     >

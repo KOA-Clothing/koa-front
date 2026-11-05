@@ -27,9 +27,9 @@ export default function NewsletterSection() {
   };
 
   return (
-    <section className="w-full border-t border-border bg-background py-16 md:py-24">
+    <section className="w-full border-t border-border bg-background py-8 md:py-16">
       <div className="mx-auto max-w-7xl px-4 md:px-8">
-        <div className="relative overflow-hidden rounded-3xl border border-border bg-gradient-to-b from-card to-muted/40 p-8 md:p-14 text-center">
+        <div className="relative overflow-hidden rounded-3xl border border-border bg-linear-to-b from-card to-muted/40 p-8 md:p-14 text-center">
           <div className="mx-auto max-w-xl">
             <div className="inline-flex items-center gap-2 rounded-full border border-border bg-background px-3.5 py-1 text-xs font-mono uppercase tracking-[0.2em] text-muted-foreground mb-4">
               <Mail className="size-3.5 text-primary" />
