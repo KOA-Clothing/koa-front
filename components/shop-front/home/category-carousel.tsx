@@ -105,7 +105,6 @@ export default function CategoryCarousel({
                   category.description?.trim() ||
                   `Explore our ${category.name.toLowerCase()} range.`
                 }
-                tag="Shop"
                 className={CARD_SIZING_CLASSES}
               />
             ))}

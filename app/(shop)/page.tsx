@@ -18,20 +18,20 @@ export default function Home() {
         {/* <ValueTicker /> */}
 
         <CategoryGrid />
-        
-        {/* <FeaturedProductsFeed /> */}
 
-        {/* <DiscountedProductsFeed /> */}
+        <FeaturedProductsFeed />
+
+        <DiscountedProductsFeed /> 
 
         {/* <CollectionsSpotlight /> */}
 
         {/* <BrandStoryBanner /> */}
 
-        {/* <FeaturesBreakdown />
+        {/* <FeaturesBreakdown /> */}
 
-        <CommunitySection />
+        {/* <CommunitySection /> */}
 
-        <NewsletterSection /> */}
+        <NewsletterSection /> 
       </div>
     </main>
   );
