@@ -1,19 +1,19 @@
 "use client";
 
-import { Button } from "@/components/ui/button";
-import { KoaSwitch } from "@/components/general/koa-switch";
 import { createDataTableColumnHelper } from "@/lib/configs/table-configs";
 import { CategoryDto } from "@/types/category";
-import { ExternalLink, Pencil, Trash2 } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Pencil, Trash2, ExternalLink } from "lucide-react";
 import Link from "next/link";
+import { KoaSwitch } from "@/components/general/koa-switch";
+
+const columnHelper = createDataTableColumnHelper<CategoryDto>();
 
 interface CategoryColumnActions {
   onEdit: (category: CategoryDto) => void;
   onDelete: (category: CategoryDto) => void;
   toggleActiveStatus: (category: CategoryDto) => void;
 }
-
-const columnHelper = createDataTableColumnHelper<CategoryDto>();
 
 export function getCategoryColumns({
   onEdit,
@@ -24,18 +24,18 @@ export function getCategoryColumns({
   [
     columnHelper.accessor("name", {
       header: () => <div>Name</div>,
-      meta: { headerClassName: "w-full text-left", cellClassName: "text-left" } as any,
+      meta: { headerClassName: "w-full text-left", cellClassName: "text-left" },
       enableSorting: true
     }),
     columnHelper.accessor("description", {
       header: () => <div>Description</div>,
-      meta: { headerClassName: "w-full text-left", cellClassName: "text-left" } as any,
+      meta: { headerClassName: "w-full text-left", cellClassName: "text-left" },
       cell: (info) => <div className="text-left">{info.getValue()}</div>,
       enableSorting: true
     }),
     columnHelper.accessor("sizeGuideUrl", {
       header: () => <div>Size Guide</div>,
-      meta: { headerClassName: "w-full text-center", cellClassName: "text-center" } as any,
+      meta: { headerClassName: "w-full text-center", cellClassName: "text-center" },
       cell: (info) => {
         const url = info.getValue();
 
@@ -58,7 +58,7 @@ export function getCategoryColumns({
     }),
     columnHelper.accessor("isActive", {
       header: () => <div>Active Status</div>,
-      meta: { headerClassName: "w-full items-center justify-center", cellClassName: "text-center" } as any,
+      meta: { headerClassName: "w-full items-center justify-center", cellClassName: "text-center" },
       cell: ({ row, getValue }) => (
         <div className="flex flex-row items-center justify-center">
           <KoaSwitch
@@ -71,14 +71,14 @@ export function getCategoryColumns({
     }),
     columnHelper.accessor("sortOrder", {
       header: () => <div>Sort Order</div>,
-      meta: { headerClassName: "w-full items-center justify-end", cellClassName: "text-right" } as any,
+      meta: { headerClassName: "w-full items-center justify-end", cellClassName: "text-right" },
       cell: (info) => <div className="w-full text-right">{info.getValue()}</div>,
       enableSorting: true
     }),
     columnHelper.display({
       id: "actions",
       header: () => <div>Actions</div>,
-      meta: { headerClassName: "w-full items-center justify-center", cellClassName: "text-center" } as any,
+      meta: { headerClassName: "w-full items-center justify-center", cellClassName: "text-center" },
       cell: ({ row }) => (
         <div className="flex items-center justify-center gap-2">
           <Button

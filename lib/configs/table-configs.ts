@@ -13,6 +13,19 @@ import {
 } from "@tanstack/react-table";
 
 /**
+ * Custom metadata supported on all column definitions in this application.
+ */
+export interface AppColumnMeta {
+  headerClassName?: string;
+  cellClassName?: string;
+}
+
+// Module augmentation: ensures ColumnMeta is typed across all TanStack Table definitions
+declare module "@tanstack/react-table" {
+  interface ColumnMeta<TFeatures, TData, TValue> extends AppColumnMeta {}
+}
+
+/**
  * Central feature registration, shared by every data table in the app.
  *
  * `rowPaginationFeature` is registered without a client-side row model
@@ -45,6 +58,7 @@ export const tableFeatureSet = tableFeatures({
     datetime: sortFn_datetime,
     basic: sortFn_basic,
   },
+  columnMeta: {} as AppColumnMeta,
 });
 
 export type AppTableFeatures = typeof tableFeatureSet;

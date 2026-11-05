@@ -1,8 +1,5 @@
 import { AccountTabs } from "@/components/account/account-tabs";
 import BackButton from "@/components/general/back-button";
-import { Button } from "@/components/ui/button";
-import { ChevronLeft, Settings } from "lucide-react";
-import Link from "next/link";
 
 export default function AccountLayout({ children }: { children: React.ReactNode }) {
   return (

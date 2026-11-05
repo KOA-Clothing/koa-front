@@ -1,11 +1,8 @@
 "use client";
 
-import Link from "next/link";
-import { ArrowLeft } from "lucide-react";
 import { PAGE_ROUTES } from "@/lib/configs/page-routes";
 import ProductDetailsClient from "@/components/shop-front/Product-details/product-details-client";
 import ProductReviews from "@/components/shop-front/Product-details/product-reviews";
-import { Button } from "@/components/ui/button";
 import { useProductDetails } from "@/features/catalogue/hooks/use-product-details";
 import { getErrorMessage } from "@/lib/api/errors";
 import { BackButton } from "@/components/shop-front/back-button";

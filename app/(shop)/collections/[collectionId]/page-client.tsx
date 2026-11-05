@@ -1,9 +1,8 @@
 "use client";
 
 import Link from "next/link";
-import { ArrowLeft, SearchX } from "lucide-react";
+import { SearchX } from "lucide-react";
 import ProductCard from "@/components/shop-front/product-card";
-import { Button } from "@/components/ui/button";
 import { useCollectionItems } from "@/features/catalogue/hooks/use-collection-items";
 import { useCollections } from "@/features/catalogue/hooks/use-collections";
 import { PAGE_ROUTES } from "@/lib/configs/page-routes";

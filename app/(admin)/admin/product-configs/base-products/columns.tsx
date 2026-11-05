@@ -51,16 +51,12 @@ export function getProductColumns({
   return columnHelper.columns([
     columnHelper.accessor("name", {
       header: () => <div>Name</div>,
-      meta: { headerClassName: "w-full text-left", cellClassName: "text-left" } as any,
+      meta: { headerClassName: "w-full text-left", cellClassName: "text-left" },
       enableSorting: true,
     }),
-    // columnHelper.accessor("description", {
-    //   header: () => <div className="text-center">Description</div>,
-    //   enableSorting: false,
-    // }),
     columnHelper.accessor("sizeGuide", {
       header: () => <div>Size Guide</div>,
-      meta: { headerClassName: "w-full text-center", cellClassName: "text-center" } as any,
+      meta: { headerClassName: "w-full text-center", cellClassName: "text-center" },
       cell: (info) => {
         const url = info.getValue();
 
@@ -83,13 +79,13 @@ export function getProductColumns({
     }),
     columnHelper.accessor("category", {
       header: () => <div>Category</div>,
-      meta: { headerClassName: "w-full text-left", cellClassName: "text-left" } as any,
+      meta: { headerClassName: "w-full text-left", cellClassName: "text-left" },
       cell: (info) => <div className="text-left">{info.getValue()?.name}</div>,
       enableSorting: true,
     }),
     columnHelper.accessor("costPrice", {
       header: () => <div>Cost Price</div>,
-      meta: { headerClassName: "w-full text-right justify-end", cellClassName: "text-right" } as any,
+      meta: { headerClassName: "w-full text-right justify-end", cellClassName: "text-right" },
       cell: (info) => (
         <div className="w-full text-right">{currencyFormatter.format(info.getValue())}</div>
       ),
@@ -97,7 +93,7 @@ export function getProductColumns({
     }),
     columnHelper.accessor("sellingPrice", {
       header: () => <div>Selling Price</div>,
-      meta: { headerClassName: "w-full text-right justify-end", cellClassName: "text-right" } as any,
+      meta: { headerClassName: "w-full text-right justify-end", cellClassName: "text-right" },
       cell: (info) => (
         <div className="w-full text-right">{currencyFormatter.format(info.getValue())}</div>
       ),
@@ -105,7 +101,7 @@ export function getProductColumns({
     }),
     columnHelper.accessor("discountPercentage", {
       header: () => <div>Discount %</div>,
-      meta: { headerClassName: "w-full text-right justify-end", cellClassName: "text-right" } as any,
+      meta: { headerClassName: "w-full text-right justify-end", cellClassName: "text-right" },
       cell: (info) => (
         <div className="w-full text-right">{info.getValue()} <span>%</span></div>
       ),
@@ -113,7 +109,7 @@ export function getProductColumns({
     }),
     columnHelper.accessor("gender", {
       header: () => <div>Gender</div>,
-      meta: { headerClassName: "w-full items-center justify-center", cellClassName: "text-center" } as any,
+      meta: { headerClassName: "w-full items-center justify-center", cellClassName: "text-center" },
       cell: ({ row, getValue }) => (
         <div className="flex justify-center">
           <KoaEnumChanger
@@ -128,7 +124,7 @@ export function getProductColumns({
     }),
     columnHelper.accessor("ageGroup", {
       header: () => <div>Age Group</div>,
-      meta: { headerClassName: "w-full items-center justify-center", cellClassName: "text-center" } as any,
+      meta: { headerClassName: "w-full items-center justify-center", cellClassName: "text-center" },
       cell: ({ row, getValue }) => (
         <div className="flex justify-center">
           <KoaEnumChanger
@@ -143,7 +139,7 @@ export function getProductColumns({
     }),
     columnHelper.accessor("status", {
       header: () => <div>Product Status</div>,
-      meta: { headerClassName: "w-full items-center justify-center", cellClassName: "text-center" } as any,
+      meta: { headerClassName: "w-full items-center justify-center", cellClassName: "text-center" },
       cell: ({ row, getValue }) => (
         <div className="flex justify-center">
           <KoaEnumChanger
@@ -158,7 +154,7 @@ export function getProductColumns({
     }),
     columnHelper.accessor("isFeatured", {
       header: () => <div>Is Featured</div>,
-      meta: { headerClassName: "w-full items-center justify-center", cellClassName: "text-center" } as any,
+      meta: { headerClassName: "w-full items-center justify-center", cellClassName: "text-center" },
       cell: ({ row, getValue }) => (
         <div className="flex flex-row items-center justify-center">
           <KoaSwitch
@@ -171,7 +167,7 @@ export function getProductColumns({
     }),
     columnHelper.accessor("isActive", {
       header: () => <div>Is Active</div>,
-      meta: { headerClassName: "w-full items-center justify-center", cellClassName: "text-center" } as any,
+      meta: { headerClassName: "w-full items-center justify-center", cellClassName: "text-center" },
       cell: ({ row, getValue }) => (
         <div className="flex flex-row items-center justify-center">
           <KoaSwitch
@@ -185,7 +181,7 @@ export function getProductColumns({
     columnHelper.display({
       id: "actions",
       header: () => <div>Actions</div>,
-      meta: { headerClassName: "w-full items-center justify-center", cellClassName: "text-center" } as any,
+      meta: { headerClassName: "w-full items-center justify-center", cellClassName: "text-center" },
       cell: ({ row }) => (
         <div className="flex items-center justify-center gap-2">
           <Button

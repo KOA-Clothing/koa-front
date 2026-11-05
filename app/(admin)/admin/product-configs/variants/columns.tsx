@@ -35,20 +35,20 @@ export function getProductVariantColumns({ onView, onCreate, onBaseProductView, 
   return columnHelper.columns([
     columnHelper.accessor("name", {
       header: () => <div>Product Name</div>,
-      meta: { headerClassName: "w-full text-left", cellClassName: "text-left" } as any,
+      meta: { headerClassName: "w-full text-left", cellClassName: "text-left" },
       enableSorting: true,
     }),
     columnHelper.display({
       id: "availableVariantCount",
       header: () => <div>Total Variant Count</div>,
-      meta: { headerClassName: "w-full text-right justify-end", cellClassName: "text-right" } as any,
+      meta: { headerClassName: "w-full text-right justify-end", cellClassName: "text-right" },
       cell: ({ row }) => <div className="w-full text-right">{row.original.variants.length}</div>,
       enableSorting: false,
     }),
     columnHelper.display({
       id: "availableSizes",
       header: () => <div>Available Sizes</div>,
-      meta: { headerClassName: "w-full items-center justify-center", cellClassName: "align-top" } as any,
+      meta: { headerClassName: "w-full items-center justify-center", cellClassName: "align-top" },
       cell: ({ row }) => {
         const sizes = distinctBy(
           row.original.variants.map((variant) => variant.size),
@@ -79,7 +79,7 @@ export function getProductVariantColumns({ onView, onCreate, onBaseProductView, 
     columnHelper.display({
       id: "availableColors",
       header: () => <div>Available Colors</div>,
-      meta: { headerClassName: "w-full items-center justify-center", cellClassName: "align-top" } as any,
+      meta: { headerClassName: "w-full items-center justify-center", cellClassName: "align-top" },
       cell: ({ row }) => {
         const colors = distinctBy(
           row.original.variants.map((variant) => variant.color),
@@ -112,7 +112,7 @@ export function getProductVariantColumns({ onView, onCreate, onBaseProductView, 
     columnHelper.display({
       id: "actions",
       header: () => <div>Actions</div>,
-      meta: { headerClassName: "w-full items-center justify-center", cellClassName: "text-center" } as any,
+      meta: { headerClassName: "w-full items-center justify-center", cellClassName: "text-center" },
       cell: ({ row }) => (
         <div className="flex items-center justify-center gap-2">
           <Button
