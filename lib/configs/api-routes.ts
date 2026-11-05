@@ -68,6 +68,7 @@ export const API_ROUTES = {
     PRODUCT_BY_ID: (productId: string) => `/api/v1/catalogue/products/${productId}`,
     FEATURED_PRODUCTS: "/api/v1/catalogue/products/featured",
     DISCOUNTED_PRODUCTS: "/api/v1/catalogue/products/discounted",
+    CATEGORIES: "/api/v1/catalogue/products/by-categories",
   },
   PRODUCT_VARIANTS: {
     BASE: "/api/v1/product-variants",

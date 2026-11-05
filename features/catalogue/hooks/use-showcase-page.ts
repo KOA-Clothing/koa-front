@@ -2,14 +2,24 @@
 
 import { useCallback, useState } from "react";
 
+interface UseShowcasePageOptions {
+  /**
+   * Whether to scroll the section into view after a page change. Bottom
+   * pagers need it; side-mounted carousel arrows don't.
+   */
+  scroll?: boolean;
+}
+
 /**
- * Page state for a landing-page product showcase.
+ * Page state for a landing-page showcase.
  *
- * Keeps the 1-based index the feed passes to its query, and scrolls the
- * section back into view after a page change — the pager sits below the grid,
- * so without this the next page would load off-screen above the shopper.
+ * Keeps the 1-based index the feed passes to its query, and (optionally)
+ * scrolls the section back into view after a page change.
  */
-export function useShowcasePage(sectionId: string) {
+export function useShowcasePage(
+  sectionId: string,
+  { scroll = true }: UseShowcasePageOptions = {}
+) {
   const [pageIndex, setPageIndex] = useState(1);
 
   const goToPage = useCallback(
@@ -17,6 +27,8 @@ export function useShowcasePage(sectionId: string) {
       if (nextPage === pageIndex) return;
 
       setPageIndex(nextPage);
+
+      if (!scroll) return;
 
       const reduceMotion = window.matchMedia(
         "(prefers-reduced-motion: reduce)"
@@ -27,7 +39,7 @@ export function useShowcasePage(sectionId: string) {
         block: "start",
       });
     },
-    [pageIndex, sectionId]
+    [pageIndex, sectionId, scroll]
   );
 
   return { pageIndex, goToPage };

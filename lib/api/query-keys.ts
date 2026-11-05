@@ -66,6 +66,8 @@ export const queryKeys = {
   },
   catalogue: {
     all: ["catalogue"] as const,
+    categories: (params: Record<string, unknown>) =>
+      ["catalogue", "categories", params] as const,
     products: {
       search: (params: Record<string, unknown>) =>
         ["catalogue", "products", "search", params] as const,

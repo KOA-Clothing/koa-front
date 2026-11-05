@@ -88,6 +88,9 @@ export const adminHrefs = {
  * destination here instead of inlining `/collection/${id}` at each call site.
  */
 export const shopHrefs = {
+  /** Search results pre-filtered to one category. */
+  searchByCategory: (categoryId: string) =>
+    withQuery(PAGE_ROUTES.SHOP.SEARCH, { categoryId }),
   /** One collection's product catalogue, keyed by collection id. */
   collection: (collectionId: string) =>
     `${PAGE_ROUTES.SHOP.COLLECTIONS}/${collectionId}`,
