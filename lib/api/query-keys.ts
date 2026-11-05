@@ -73,6 +73,8 @@ export const queryKeys = {
         ["catalogue", "products", "detail", productId] as const,
       featured: (params: Record<string, unknown>) =>
         ["catalogue", "products", "featured", params] as const,
+      discounted: (params: Record<string, unknown>) =>
+        ["catalogue", "products", "discounted", params] as const,
     },
     collections: {
       all: ["catalogue", "collections"] as const,
