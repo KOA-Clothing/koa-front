@@ -31,27 +31,27 @@ export function getProductImageColumns({
   return columnHelper.columns([
     columnHelper.accessor("name", {
       header: () => <div>Product Name</div>,
-      meta: { headerClassName: "w-full text-left", cellClassName: "text-left" } as any,
+      meta: { headerClassName: "w-full text-left", cellClassName: "text-left" },
       enableSorting: true,
     }),
     columnHelper.display({
       id: "totalImages",
       header: () => <div>Total Image Count</div>,
-      meta: { headerClassName: "w-full text-right justify-end", cellClassName: "text-right" } as any,
+      meta: { headerClassName: "w-full text-right justify-end", cellClassName: "text-right" },
       cell: ({ row }) => <div className="w-full text-right">{row.original.totalImages}</div>,
       enableSorting: false,
     }),
     columnHelper.display({
       id: "totalVariants",
       header: () => <div>Total Variant Count</div>,
-      meta: { headerClassName: "w-full text-right justify-end", cellClassName: "text-right" } as any,
+      meta: { headerClassName: "w-full text-right justify-end", cellClassName: "text-right" },
       cell: ({ row }) => <div className="w-full text-right">{row.original.totalVariants}</div>,
       enableSorting: false,
     }),
     columnHelper.display({
       id: "availableColors",
       header: () => <div>Available Colors</div>,
-      meta: { headerClassName: "w-full items-center justify-center", cellClassName: "align-top" } as any,
+      meta: { headerClassName: "w-full items-center justify-center", cellClassName: "align-top" },
       cell: ({ row }) => {
         const colors = row.original.availableColors;
 
@@ -81,7 +81,7 @@ export function getProductImageColumns({
     columnHelper.display({
       id: "actions",
       header: () => <div>Actions</div>,
-      meta: { headerClassName: "w-full items-center justify-center", cellClassName: "text-center" } as any,
+      meta: { headerClassName: "w-full items-center justify-center", cellClassName: "text-center" },
       cell: ({ row }) => (
         <div className="flex items-center justify-center gap-2">
           <Button

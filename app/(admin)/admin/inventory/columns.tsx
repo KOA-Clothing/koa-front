@@ -39,13 +39,13 @@ export function getInventoryColumns({
   return columnHelper.columns([
     columnHelper.accessor("productName", {
       header: () => <div>Product Name</div>,
-      meta: { headerClassName: "w-full text-left", cellClassName: "text-left" } as any,
+      meta: { headerClassName: "w-full text-left", cellClassName: "text-left" },
       enableSorting: true,
     }),
     columnHelper.display({
       id: "variant",
       header: () => <div>Variant</div>,
-      meta: { headerClassName: "w-full text-left", cellClassName: "text-left" } as any,
+      meta: { headerClassName: "w-full text-left", cellClassName: "text-left" },
       cell: ({ row }) => {
         const { color, size } = row.original.variant;
 
@@ -72,26 +72,26 @@ export function getInventoryColumns({
     }),
     columnHelper.accessor("quantity", {
       header: () => <div>Quantity</div>,
-      meta: { headerClassName: "w-full text-right justify-end", cellClassName: "text-right" } as any,
+      meta: { headerClassName: "w-full text-right justify-end", cellClassName: "text-right" },
       cell: ({ getValue }) => <CountCell value={getValue()} />,
       enableSorting: false,
     }),
     columnHelper.accessor("reservedQuantity", {
       header: () => <div>Reserved Quantity</div>,
-      meta: { headerClassName: "w-full text-right justify-end", cellClassName: "text-right" } as any,
+      meta: { headerClassName: "w-full text-right justify-end", cellClassName: "text-right" },
       cell: ({ getValue }) => <CountCell value={getValue()} />,
       enableSorting: false,
     }),
     columnHelper.accessor("lowStockThreshold", {
       header: () => <div>Low Stock Threshold</div>,
-      meta: { headerClassName: "w-full text-right justify-end", cellClassName: "text-right" } as any,
+      meta: { headerClassName: "w-full text-right justify-end", cellClassName: "text-right" },
       cell: ({ getValue }) => <CountCell value={getValue()} />,
       enableSorting: false,
     }),
     columnHelper.display({
       id: "actions",
       header: () => <div>Actions</div>,
-      meta: { headerClassName: "flex flex-row items-center justify-center", cellClassName: "text-center" } as any,
+      meta: { headerClassName: "flex flex-row items-center justify-center", cellClassName: "text-center" },
       cell: ({ row }) => (
         <div className="flex items-center justify-center gap-2">
           <Button

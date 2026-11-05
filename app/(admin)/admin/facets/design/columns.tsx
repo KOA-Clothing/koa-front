@@ -22,18 +22,18 @@ export function getDesignColumns({
   return columnHelper.columns([
     columnHelper.accessor("name", {
       header: () => <div>Name</div>,
-      meta: { headerClassName: "w-full text-left", cellClassName: "text-left" } as any,
+      meta: { headerClassName: "w-full text-left", cellClassName: "text-left" },
       enableSorting: true,
     }),
     columnHelper.accessor("description", {
       header: () => <div>Description</div>,
-      meta: { headerClassName: "w-full text-left", cellClassName: "text-left" } as any,
+      meta: { headerClassName: "w-full text-left", cellClassName: "text-left" },
       cell: (info) => <div className="text-left">{info.getValue()}</div>,
       enableSorting: true,
     }),
     columnHelper.accessor("isActive", {
       header: () => <div>Active Status</div>,
-      meta: { headerClassName: "w-full items-center justify-center", cellClassName: "text-center" } as any,
+      meta: { headerClassName: "w-full items-center justify-center", cellClassName: "text-center" },
       cell: ({ row, getValue }) => (
         <div className="flex flex-row items-center justify-center">
           <KoaSwitch
@@ -47,7 +47,7 @@ export function getDesignColumns({
     columnHelper.display({
       id: "actions",
       header: () => <div>Actions</div>,
-      meta: { headerClassName: "w-full items-center justify-center", cellClassName: "text-center" } as any,
+      meta: { headerClassName: "w-full items-center justify-center", cellClassName: "text-center" },
       cell: ({ row }) => (
         <div className="flex items-center justify-center gap-2">
           <Button

@@ -38,26 +38,26 @@ export function getCollectionItemColumns({
     columnHelper.accessor((item) => item.product.name, {
       id: "product",
       header: () => <div>Product</div>,
-      meta: { headerClassName: "w-full text-center", cellClassName: "text-center" } as any,
+      meta: { headerClassName: "w-full text-center", cellClassName: "text-center" },
       enableSorting: true,
     }),
     columnHelper.accessor((item) => item.product.category.name, {
       id: "category",
       header: () => <div>Category</div>,
-      meta: { headerClassName: "w-full text-center", cellClassName: "text-left" } as any,
+      meta: { headerClassName: "w-full text-center", cellClassName: "text-left" },
       enableSorting: true,
     }),
     columnHelper.accessor((item) => item.product.sellingPrice, {
       id: "sellingPrice",
       header: () => <div>Selling Price</div>,
-      meta: { headerClassName: "w-full text-right justify-end", cellClassName: "text-right" } as any,
+      meta: { headerClassName: "w-full text-right justify-end", cellClassName: "text-right" },
       cell: (info) => <div className="w-full text-right">{currencyFormatter.format(info.getValue())}</div>,
       enableSorting: true,
     }),
     columnHelper.accessor((item) => item.createdAt, {
       id: "added",
       header: () => <div>Added Date</div>,
-      meta: { headerClassName: "w-full text-right justify-end"} as any,
+      meta: { headerClassName: "w-full text-right justify-end" },
       cell: (info) => (
         <div className="text-muted-foreground w-full text-end"> {new Date(info.getValue()).toLocaleDateString()} </div>
       ),
@@ -66,7 +66,7 @@ export function getCollectionItemColumns({
     columnHelper.display({
       id: "actions",
       header: () => <div className="w-full text-center">Actions</div>,
-      meta: { headerClassName: "w-full text-center", cellClassName: "text-center" } as any,
+      meta: { headerClassName: "w-full text-center", cellClassName: "text-center" },
       cell: ({ row }) => (
         <div className="flex items-center justify-center gap-2">
           <Button

@@ -78,7 +78,7 @@ export function KoaTable<TData extends RowData>({
                         onToggleSort={(event) =>
                           header.column.getToggleSortingHandler()?.(event)
                         }
-                        className={(header.column.columnDef.meta as any)?.headerClassName}
+                        className={header.column.columnDef.meta?.headerClassName}
                       >
                         <table.FlexRender header={header} />
                       </DataTableSortButton>
@@ -86,7 +86,7 @@ export function KoaTable<TData extends RowData>({
                       <div
                         className={cn(
                           "flex items-center",
-                          (header.column.columnDef.meta as any)?.headerClassName
+                          header.column.columnDef.meta?.headerClassName
                         )}
                       >
                         <table.FlexRender header={header} />
@@ -112,7 +112,10 @@ export function KoaTable<TData extends RowData>({
               table.getRowModel().rows.map((row) => (
                 <TableRow key={row.id}>
                   {row.getAllCells().map((cell) => (
-                    <TableCell key={cell.id}>
+                    <TableCell
+                      key={cell.id}
+                      className={cell.column.columnDef.meta?.cellClassName}
+                    >
                       <table.FlexRender cell={cell} />
                     </TableCell>
                   ))}
@@ -150,7 +153,7 @@ export function KoaTable<TData extends RowData>({
         onPreviousPage={() => table.previousPage()}
         onNextPage={() => table.nextPage()}
         onLastPage={() => table.lastPage()}
-        onPageSizeChange={(size) => table.setPageSize(size)}
+        onPageSizeChange={(newSize) => table.setPageSize(newSize)}
         isLoading={isLoading}
         pageSizeOptions={pageSizeOptions}
       />

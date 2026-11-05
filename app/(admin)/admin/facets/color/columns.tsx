@@ -23,12 +23,12 @@ export function getColorColumns({
   return columnHelper.columns([
     columnHelper.accessor("name", {
       header: () => <div>Name</div>,
-      meta: { headerClassName: "w-full text-left", cellClassName: "text-left" } as any,
+      meta: { headerClassName: "w-full text-left", cellClassName: "text-left" },
       enableSorting: true,
     }),
     columnHelper.accessor("hexCode", {
       header: () => <div>Hex Code</div>,
-      meta: { headerClassName: "w-full items-center justify-center", cellClassName: "text-center" } as any,
+      meta: { headerClassName: "w-full items-center justify-center", cellClassName: "text-center" },
       cell: ({ row, getValue }) => {
         const hex = getValue();
 
@@ -50,7 +50,7 @@ export function getColorColumns({
     }),
     columnHelper.accessor("swatchImageUrl", {
       header: () => <div>Swatch Image</div>,
-      meta: { headerClassName: "w-full items-center justify-center", cellClassName: "text-center" } as any,
+      meta: { headerClassName: "w-full items-center justify-center", cellClassName: "text-center" },
       cell: (info) => {
         const url = info.getValue();
 
@@ -73,7 +73,7 @@ export function getColorColumns({
     }),
     columnHelper.accessor("isActive", {
       header: () => <div>Active Status</div>,
-      meta: { headerClassName: "w-full items-center justify-center", cellClassName: "text-center" } as any,
+      meta: { headerClassName: "w-full items-center justify-center", cellClassName: "text-center" },
       cell: ({ row, getValue }) => (
         <div className="flex flex-row items-center justify-center">
           <KoaSwitch
@@ -87,7 +87,7 @@ export function getColorColumns({
     columnHelper.display({
       id: "actions",
       header: () => <div>Actions</div>,
-      meta: { headerClassName: "w-full items-center justify-center", cellClassName: "text-center" } as any,
+      meta: { headerClassName: "w-full items-center justify-center", cellClassName: "text-center" },
       cell: ({ row }) => (
         <div className="flex flex-row items-center justify-center gap-2">
           <Button
