@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import { ChevronLeft, ChevronRight, ImageOff } from "lucide-react";
 import { cn } from "@/lib/utils";
 import type { ProductDetailsImageDto } from "@/types/product";
@@ -25,29 +25,20 @@ export default function ProductGallery({
     });
   }, [images]);
 
-  const [currentIndex, setCurrentIndex] = useState(0);
-  const [hasFailed, setHasFailed] = useState(false);
-
-  useEffect(() => {
+  const [currentIndex, setCurrentIndex] = useState(() => {
     if (selectedColorId) {
       const index = sortedImages.findIndex(
         (img) => img.colorId === selectedColorId
       );
       if (index >= 0) {
-        setCurrentIndex(index);
-        setHasFailed(false);
-        return;
+        return index;
       }
     }
     const primaryIndex = sortedImages.findIndex((img) => img.isPrimary);
-    if (primaryIndex >= 0) {
-      setCurrentIndex(primaryIndex);
-      setHasFailed(false);
-    } else {
-      setCurrentIndex(0);
-      setHasFailed(false);
-    }
-  }, [selectedColorId, sortedImages]);
+    return primaryIndex >= 0 ? primaryIndex : 0;
+  });
+
+  const [hasFailed, setHasFailed] = useState(false);
 
   const currentImage = sortedImages[currentIndex];
 

@@ -1,4 +1,3 @@
-import Image from "next/image";
 import { DotsRing } from "../dots-ring";
 
 export default function LoadingAnimation() {
