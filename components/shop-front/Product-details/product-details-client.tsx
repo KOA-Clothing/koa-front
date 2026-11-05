@@ -27,7 +27,11 @@ export default function ProductDetailsClient({
   return (
     <div className="grid grid-cols-1 gap-8 lg:grid-cols-2 lg:gap-12">
       <div>
-        <ProductGallery images={product.images} selectedColorId={selectedColorId} />
+        <ProductGallery
+          key={selectedColorId ?? "default"}
+          images={product.images}
+          selectedColorId={selectedColorId}
+        />
       </div>
 
       <div className="flex flex-col gap-6">

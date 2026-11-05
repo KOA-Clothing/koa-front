@@ -47,16 +47,8 @@ export function BaseShirtIcon({
 
       {/* Bottom line overlay */}
       <g transform="translate(0, 10)">
-        <Minus size={24} strokeWidth={strokeWidth * 1.3} />
+        <Minus size={24} strokeWidth={strokeWidth} />
       </g>
     </svg>
-  );
-}
-
-export default function App() {
-  return (
-    <div className="app">
-      <BaseShirtIcon size={48} strokeWidth={2} />
-    </div>
   );
 }
