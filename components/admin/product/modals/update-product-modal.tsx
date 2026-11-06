@@ -45,9 +45,13 @@ export default function UpdateProductModal({
 }: UpdateProductModalProps) {
   const { update, requestSizeGuideUpload } = useProductMutations();
 
-  const [form, setForm] = useState<ProductUpdateInput>(emptyProductUpdateForm);
+  const [form, setForm] = useState<ProductUpdateInput>(() =>
+    product ? toProductUpdateForm(product) : emptyProductUpdateForm
+  );
   const [errors, setErrors] = useState<FormErrors>({});
-  const [prevProduct, setPrevProduct] = useState<ProductDto | null>(product);
+  const [prevProductId, setPrevProductId] = useState<string | null>(
+    product?.id ?? null
+  );
   const [file, setFile] = useState<File | null>(null);
   const [blobUrl, setBlobUrl] = useState<string | null>(null);
   const [existingGuideUrl, setExistingGuideUrl] = useState<string | null>(
@@ -57,15 +61,39 @@ export default function UpdateProductModal({
   const [isUploading, setIsUploading] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  if (product && prevProduct !== product) {
-    if (blobUrl) URL.revokeObjectURL(blobUrl);
-    setPrevProduct(product);
-    setForm(toProductUpdateForm(product));
+  const clearFields = (source: ProductDto | null) => {
+    setForm(source ? toProductUpdateForm(source) : emptyProductUpdateForm);
     setErrors({});
     setFile(null);
     setBlobUrl(null);
-    setExistingGuideUrl(product.sizeGuide ?? null);
+    setExistingGuideUrl(source?.sizeGuide ?? null);
     setFileError(null);
+    setIsUploading(false);
+  };
+
+  /**
+   * Full reset, run once the dialog has finished closing. Revokes the preview
+   * blob and clears the native file input, which keeps its own selection
+   * outside React state.
+   */
+  const resetForm = () => {
+    if (blobUrl) URL.revokeObjectURL(blobUrl);
+    clearFields(null);
+    if (fileInputRef.current) fileInputRef.current.value = "";
+  };
+
+  /** Closes through the parent, which owns `product`. */
+  const handleClose = () => onOpenChange(false);
+
+  // Compare by id rather than object. Closing sets `product` to null and
+  // TanStack hands the same cached object back on reopen, so an object
+  // comparison skipped the reseed for exactly the reopen that needs one.
+  // Id comparison also keeps a background refetch of the row being edited
+  // from wiping the admin's input mid-edit.
+  const currentProductId = product?.id ?? null;
+  if (currentProductId !== prevProductId) {
+    setPrevProductId(currentProductId);
+    if (product) clearFields(product);
   }
 
   const handleFieldChange = <K extends keyof ProductUpdateInput>(
@@ -148,8 +176,12 @@ export default function UpdateProductModal({
       {
         onSuccess: () => {
           setIsUploading(false);
-          onOpenChange(false);
+          handleClose();
         },
+        // Upload already finished by the time the request runs, so a failed
+        // update must drop the uploading flag or `isPending` stays true and
+        // the dialog can no longer be cancelled.
+        onError: () => setIsUploading(false),
       }
     );
   };
@@ -157,8 +189,11 @@ export default function UpdateProductModal({
   return (
     <Dialog
       open={!!product}
-      onOpenChange={(nextOpen) => {
-        onOpenChange(nextOpen);
+      onOpenChange={onOpenChange}
+      // Reset after the close animation, so the form never blanks mid-fade.
+      // Covers Escape, backdrop, the close button, Cancel and post-update.
+      onOpenChangeComplete={(nextOpen) => {
+        if (!nextOpen) resetForm();
       }}
     >
       <DialogContent className="max-h-[90vh] overflow-y-auto">
@@ -295,7 +330,7 @@ export default function UpdateProductModal({
 
         <DialogFooter className="border-t">
           <KoaModalCancelButton
-            onClick={() => onOpenChange(false)}
+            onClick={handleClose}
             disabled={isPending}
           />
           <KoaModalSaveButton

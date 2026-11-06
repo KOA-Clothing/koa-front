@@ -61,13 +61,40 @@ export default function CreateProductModal({
   const [isUploading, setIsUploading] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  if (open && prevOpen !== open) {
-    setPrevOpen(open);
+  /**
+   * State-only factory reset. Safe to run while rendering, which is why the
+   * blob URL and the native file input (both side effects) are handled in
+   * `resetForm` below.
+   */
+  const clearFields = () => {
     setForm(emptyProductForm);
     setErrors({});
     setFile(null);
     setBlobUrl(null);
     setFileError(null);
+    setIsUploading(false);
+  };
+
+  /**
+   * Full reset, run once the dialog has finished closing. Revokes the preview
+   * blob and clears the native file input, which keeps its own selection
+   * outside React state.
+   */
+  const resetForm = () => {
+    if (blobUrl) URL.revokeObjectURL(blobUrl);
+    clearFields();
+    if (fileInputRef.current) fileInputRef.current.value = "";
+  };
+
+  /** Closes through the parent, which owns `open`. */
+  const handleClose = () => onOpenChange(false);
+
+  // Reset on the open transition, and record *both* transitions in `prevOpen`:
+  // leaving it on `true` after a close makes this guard false on every later
+  // open, which is what kept the previous product's values in a fresh dialog.
+  if (prevOpen !== open) {
+    setPrevOpen(open);
+    if (open) clearFields();
   }
 
   const handleFieldChange = <K extends keyof ProductFormInput>(
@@ -138,8 +165,12 @@ export default function CreateProductModal({
       {
         onSuccess: () => {
           setIsUploading(false);
-          onOpenChange(false);
+          handleClose();
         },
+        // Upload already finished by the time the request runs, so a failed
+        // create must drop the uploading flag or `isPending` stays true and
+        // the dialog can no longer be cancelled.
+        onError: () => setIsUploading(false),
       }
     );
   };
@@ -147,8 +178,11 @@ export default function CreateProductModal({
   return (
     <Dialog
       open={open}
-      onOpenChange={(nextOpen) => {
-        onOpenChange(nextOpen);
+      onOpenChange={onOpenChange}
+      // Reset after the close animation, so the form never blanks mid-fade.
+      // Covers Escape, backdrop, the close button, Cancel and post-create.
+      onOpenChangeComplete={(nextOpen) => {
+        if (!nextOpen) resetForm();
       }}
     >
       <DialogContent className="max-h-[90vh] overflow-y-auto">
@@ -310,7 +344,7 @@ export default function CreateProductModal({
 
         <DialogFooter className="border-t">
           <KoaModalCancelButton
-            onClick={() => onOpenChange(false)}
+            onClick={handleClose}
             disabled={isPending}
           />
           <KoaModalSaveButton

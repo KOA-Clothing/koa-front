@@ -32,15 +32,30 @@ export default function ManageLinkedDesignsModal({
   const { linkDesign, unlinkDesign } = useProductMutations();
 
   const [selectedDesignId, setSelectedDesignId] = useState("");
-  const [prevProduct, setPrevProduct] = useState<ProductDto | null>(product);
+  const [prevProductId, setPrevProductId] = useState<string | null>(
+    product?.id ?? null
+  );
   const [linkedDesigns, setLinkedDesigns] = useState<DesignDto[]>(
     product?.designs ?? []
   );
 
-  if (product && prevProduct !== product) {
-    setPrevProduct(product);
+  const clearFields = (source: ProductDto | null) => {
     setSelectedDesignId("");
-    setLinkedDesigns(product.designs ?? []);
+    setLinkedDesigns(source?.designs ?? []);
+  };
+
+  /** Closes through the parent, which owns `product`. */
+  const handleClose = () => onOpenChange(false);
+
+  // Compare by id rather than object. Closing sets `product` to null and
+  // TanStack hands the same cached object back on reopen, so an object
+  // comparison skipped the reseed for exactly the reopen that needs one.
+  // Reseeding also discards the previous session's working copy of
+  // `linkedDesigns`.
+  const currentProductId = product?.id ?? null;
+  if (currentProductId !== prevProductId) {
+    setPrevProductId(currentProductId);
+    if (product) clearFields(product);
   }
 
   const linkedIds = useMemo(
@@ -89,8 +104,11 @@ export default function ManageLinkedDesignsModal({
   return (
     <Dialog
       open={!!product}
-      onOpenChange={(nextOpen) => {
-        onOpenChange(nextOpen);
+      onOpenChange={onOpenChange}
+      // Reset after the close animation, so the form never blanks mid-fade.
+      // Covers Escape, backdrop, the close button and Cancel.
+      onOpenChangeComplete={(nextOpen) => {
+        if (!nextOpen) clearFields(null);
       }}
     >
       <DialogContent className="max-h-[90vh] overflow-y-auto">
@@ -141,7 +159,7 @@ export default function ManageLinkedDesignsModal({
         </div>
 
         <DialogFooter className="border-t">
-          <KoaModalCancelButton onClick={() => onOpenChange(false)} />
+          <KoaModalCancelButton onClick={handleClose} />
         </DialogFooter>
       </DialogContent>
     </Dialog>

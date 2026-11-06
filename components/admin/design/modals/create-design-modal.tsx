@@ -37,10 +37,20 @@ export default function CreateDesignModal({
   const [errors, setErrors] = useState<FormErrors>({});
   const [prevOpen, setPrevOpen] = useState(open);
 
-  if (open && prevOpen !== open) {
-    setPrevOpen(open);
+  const clearFields = () => {
     setForm(emptyDesignForm);
     setErrors({});
+  };
+
+  /** Closes through the parent, which owns `open`. */
+  const handleClose = () => onOpenChange(false);
+
+  // Reset on the open transition, and record *both* transitions in `prevOpen`:
+  // leaving it on `true` after a close makes this guard false on every later
+  // open, which is what kept the previous design's values in a fresh dialog.
+  if (prevOpen !== open) {
+    setPrevOpen(open);
+    if (open) clearFields();
   }
 
   const handleFieldChange = <K extends keyof DesignFormInput>(
@@ -67,15 +77,17 @@ export default function CreateDesignModal({
     setErrors({});
 
     create.mutate(result.data, {
-      onSuccess: () => onOpenChange(false),
+      onSuccess: handleClose,
     });
   };
 
   return (
     <Dialog
       open={open}
-      onOpenChange={(nextOpen) => {
-        onOpenChange(nextOpen);
+      onOpenChange={onOpenChange}
+      // Reset after the close animation, so the form never blanks mid-fade.
+      onOpenChangeComplete={(nextOpen) => {
+        if (!nextOpen) clearFields();
       }}
     >
       <DialogContent className="max-h-[90vh] overflow-y-auto">
@@ -109,7 +121,7 @@ export default function CreateDesignModal({
 
         <DialogFooter className="border-t">
           <KoaModalCancelButton
-            onClick={() => onOpenChange(false)}
+            onClick={handleClose}
             disabled={create.isPending}
           />
           <KoaModalSaveButton

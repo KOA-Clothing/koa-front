@@ -49,14 +49,42 @@ export default function CreateCategoryModal({
   const [isUploading, setIsUploading] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  if (open && prevOpen !== open) {
-    if (previewUrl) URL.revokeObjectURL(previewUrl);
-    setPrevOpen(open);
+  /**
+   * State-only factory reset: fields, validation errors, the picked file and
+   * its preview. Safe to run while rendering, which is why the blob URL and the
+   * native file input (both side effects) are handled in `resetForm` below.
+   */
+  const clearFields = () => {
     setForm(emptyCategoryForm);
     setErrors({});
     setFile(null);
     setPreviewUrl(null);
     setFileError(null);
+    setIsUploading(false);
+  };
+
+  /**
+   * Full reset, run once the dialog has finished closing. Revokes the preview
+   * blob rather than just forgetting it (a leaked URL pins the file in memory
+   * for the page's lifetime) and clears the native file input, which keeps its
+   * own selection outside React state.
+   */
+  const resetForm = () => {
+    if (previewUrl) URL.revokeObjectURL(previewUrl);
+    clearFields();
+    if (fileInputRef.current) fileInputRef.current.value = "";
+  };
+
+  /** Closes through the parent, which owns `open`. */
+  const handleClose = () => onOpenChange(false);
+
+  // Reset on the open transition too, so the first frame an admin sees is
+  // already empty. `setPrevOpen` has to run on *both* transitions: leaving it
+  // on `true` after a close made this guard false on every later open, which
+  // is why the previously entered category kept reappearing in a fresh dialog.
+  if (prevOpen !== open) {
+    setPrevOpen(open);
+    if (open) clearFields();
   }
 
   const handleFieldChange = <K extends keyof CategoryFormInput>(
@@ -130,8 +158,12 @@ export default function CreateCategoryModal({
       {
         onSuccess: () => {
           setIsUploading(false);
-          onOpenChange(false);
+          handleClose();
         },
+        // Upload already finished by the time the request runs, so a failed
+        // create must drop the uploading flag or `isPending` stays true and
+        // the dialog can no longer be cancelled.
+        onError: () => setIsUploading(false),
       }
     );
   };
@@ -139,8 +171,12 @@ export default function CreateCategoryModal({
   return (
     <Dialog
       open={open}
-      onOpenChange={(nextOpen) => {
-        onOpenChange(nextOpen);
+      onOpenChange={onOpenChange}
+      // Fires after the close animation, so the form never visibly blanks out
+      // mid-fade. Covers every close path: Escape, backdrop, the close button,
+      // Cancel and the post-create close.
+      onOpenChangeComplete={(nextOpen) => {
+        if (!nextOpen) resetForm();
       }}
     >
       <DialogContent className="max-h-[90vh] overflow-y-auto">
@@ -197,7 +233,7 @@ export default function CreateCategoryModal({
 
         <DialogFooter className="border-t">
           <KoaModalCancelButton 
-            onClick={() => onOpenChange(false)} 
+            onClick={handleClose} 
             disabled={isPending} 
           />
           <KoaModalSaveButton

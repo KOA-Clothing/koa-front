@@ -34,11 +34,13 @@ export default function UpdateUserProfileModal({
   const [errors, setErrors] = useState<FormErrors>({});
   const [prevOpen, setPrevOpen] = useState(open);
 
-  if (open && prevOpen !== open) {
+  if (prevOpen !== open) {
     setPrevOpen(open);
-    setFirstName(profile?.firstName || "");
-    setLastName(profile?.lastName || "");
-    setErrors({});
+    if (open) {
+      setFirstName(profile?.firstName || "");
+      setLastName(profile?.lastName || "");
+      setErrors({});
+    }
   }
 
   const handleSubmit = () => {
@@ -56,10 +58,12 @@ export default function UpdateUserProfileModal({
     }
 
     setErrors({});
-    updateProfile.mutate(result.data, { onSuccess: () => onOpenChange(false) });
+    updateProfile.mutate(result.data, { onSuccess: closeAndReset });
   };
 
   const closeAndReset = () => {
+    setFirstName("");
+    setLastName("");
     setErrors({});
     onOpenChange(false);
   };

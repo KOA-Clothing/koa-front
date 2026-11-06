@@ -47,14 +47,31 @@ export default function PhoneNumberFormModal({
   isPending = false,
   onSubmit,
 }: PhoneNumberFormModalProps) {
-  const [form, setForm] = useState<PhoneNumberFormInput>(initialValue ?? emptyPhoneNumberForm);
+  const [form, setForm] = useState<PhoneNumberFormInput>(
+    initialValue ?? emptyPhoneNumberForm
+  );
   const [errors, setErrors] = useState<FormErrors>({});
   const [prevOpen, setPrevOpen] = useState(open);
 
-  if (open && prevOpen !== open) {
-    setPrevOpen(open);
+  const seedForm = () => {
     setForm(initialValue ?? emptyPhoneNumberForm);
     setErrors({});
+  };
+
+  const clearFields = () => {
+    setForm(emptyPhoneNumberForm);
+    setErrors({});
+  };
+
+  /** Closes through the parent, which owns `open`. */
+  const handleClose = () => onOpenChange(false);
+
+  // Seed on open and record *both* transitions in `prevOpen`: leaving it on
+  // `true` after a close made this guard false on every later open, so
+  // abandoned edits reappeared in a fresh dialog.
+  if (prevOpen !== open) {
+    setPrevOpen(open);
+    if (open) seedForm();
   }
 
   const handleFieldChange = <K extends keyof PhoneNumberFormInput>(
@@ -85,8 +102,10 @@ export default function PhoneNumberFormModal({
   return (
     <Dialog
       open={open}
-      onOpenChange={(nextOpen) => {
-        onOpenChange(nextOpen);
+      onOpenChange={onOpenChange}
+      // Clear after the close animation, so the form never blanks mid-fade.
+      onOpenChangeComplete={(nextOpen) => {
+        if (!nextOpen) clearFields();
       }}
     >
       <DialogContent className="max-h-[90vh] overflow-y-auto">
@@ -155,7 +174,7 @@ export default function PhoneNumberFormModal({
           <Button
             variant="outline"
             type="button"
-            onClick={() => onOpenChange(false)}
+            onClick={handleClose}
             disabled={isPending}
           >
             Cancel

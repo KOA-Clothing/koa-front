@@ -30,10 +30,12 @@ export default function UpdatePasswordModal({
   const [errors, setErrors] = useState<FormErrors>({});
   const [prevOpen, setPrevOpen] = useState(open);
 
-  if (open && prevOpen !== open) {
+  if (prevOpen !== open) {
     setPrevOpen(open);
-    setPassword("");
-    setErrors({});
+    if (open) {
+      setPassword("");
+      setErrors({});
+    }
   }
 
   const handleSubmit = () => {
@@ -47,7 +49,7 @@ export default function UpdatePasswordModal({
     }
 
     setErrors({});
-    updatePassword.mutate({ password }, { onSuccess: () => onOpenChange(false) });
+    updatePassword.mutate({ password }, { onSuccess: closeAndReset });
   };
 
   const closeAndReset = () => {

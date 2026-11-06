@@ -58,15 +58,27 @@ export default function CreateVariantModal({
   const [selectedSize, setSelectedSize] = useState("");
   const [sku, setSku] = useState("");
   const [errors, setErrors] = useState<FormErrors>({});
+  const [prevProductId, setPrevProductId] = useState<string | null>(
+    product?.id ?? null
+  );
 
-  // Reset the form whenever a different product opens the modal.
-  const [prevProduct, setPrevProduct] = useState<ProductVariantsCollectionDto | null>(product);
-  if (product && prevProduct !== product) {
-    setPrevProduct(product);
+  const clearFields = () => {
     setSelectedColorId("");
     setSelectedSize("");
     setSku("");
     setErrors({});
+  };
+
+  /** Closes through the parent, which owns `product`. */
+  const handleClose = () => onOpenChange(false);
+
+  // Compare by id rather than object. Closing sets `product` to null and
+  // TanStack hands the same cached object back on reopen, so an object
+  // comparison skipped the reset for exactly the reopen that needs one.
+  const currentProductId = product?.id ?? null;
+  if (currentProductId !== prevProductId) {
+    setPrevProductId(currentProductId);
+    if (product) clearFields();
   }
 
   const colorOptions = (activeColors ?? []).map((color) => ({
@@ -111,15 +123,18 @@ export default function CreateVariantModal({
     setErrors({});
     create.mutate(
       { productId: product.id, ...result.data },
-      { onSuccess: () => onOpenChange(false) }
+      { onSuccess: handleClose }
     );
   };
 
   return (
     <Dialog
       open={!!product}
-      onOpenChange={(nextOpen) => {
-        onOpenChange(nextOpen);
+      onOpenChange={onOpenChange}
+      // Reset after the close animation, so the form never blanks mid-fade.
+      // Covers Escape, backdrop, the close button and Cancel.
+      onOpenChangeComplete={(nextOpen) => {
+        if (!nextOpen) clearFields();
       }}
     >
       <DialogContent className="max-h-[90vh] overflow-y-auto">
@@ -215,7 +230,7 @@ export default function CreateVariantModal({
 
         <DialogFooter className="border-t">
           <KoaModalCancelButton
-            onClick={() => onOpenChange(false)}
+            onClick={handleClose}
             disabled={create.isPending}
           />
           <KoaModalSaveButton

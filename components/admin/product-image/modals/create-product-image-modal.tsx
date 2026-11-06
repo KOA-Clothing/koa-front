@@ -84,18 +84,40 @@ export default function CreateProductImageModal({
   const [fileError, setFileError] = useState<string | null>(null);
   const [isUploading, setIsUploading] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
-
-  // Reset the form whenever a different product opens the modal.
-  const [prevProduct, setPrevProduct] = useState<CreateProductImageModalProps["product"]>(
-    product
+  const [prevProductId, setPrevProductId] = useState<string | null>(
+    product?.id ?? null
   );
-  if (product && prevProduct !== product) {
-    setPrevProduct(product);
+
+  const clearFields = () => {
     setForm(emptyProductImageForm);
     setErrors({});
     setFile(null);
     setBlobUrl(null);
     setFileError(null);
+    setIsUploading(false);
+  };
+
+  /**
+   * Full reset, run once the dialog has finished closing. Revokes the preview
+   * blob and clears the native file input, which keeps its own selection
+   * outside React state.
+   */
+  const resetForm = () => {
+    if (blobUrl) URL.revokeObjectURL(blobUrl);
+    clearFields();
+    if (fileInputRef.current) fileInputRef.current.value = "";
+  };
+
+  /** Closes through the parent, which owns `product`. */
+  const handleClose = () => onOpenChange(false);
+
+  // Compare by id rather than object. Closing sets `product` to null and
+  // TanStack hands the same cached object back on reopen, so an object
+  // comparison skipped the reset for exactly the reopen that needs one.
+  const currentProductId = product?.id ?? null;
+  if (currentProductId !== prevProductId) {
+    setPrevProductId(currentProductId);
+    if (product) clearFields();
   }
 
   // Only the colors this product is actually stocked in. Offering the global
@@ -184,7 +206,7 @@ export default function CreateProductImageModal({
     create.mutate(result.data, {
       onSuccess: () => {
         setIsUploading(false);
-        onOpenChange(false);
+        handleClose();
       },
       onError: () => setIsUploading(false),
     });
@@ -193,8 +215,11 @@ export default function CreateProductImageModal({
   return (
     <Dialog
       open={!!product}
-      onOpenChange={(nextOpen) => {
-        onOpenChange(nextOpen);
+      onOpenChange={onOpenChange}
+      // Reset after the close animation, so the form never blanks mid-fade.
+      // Covers Escape, backdrop, the close button, Cancel and post-create.
+      onOpenChangeComplete={(nextOpen) => {
+        if (!nextOpen) resetForm();
       }}
     >
       <DialogContent className="max-h-[90vh] overflow-y-auto">
@@ -276,7 +301,7 @@ export default function CreateProductImageModal({
 
         <DialogFooter className="border-t">
           <KoaModalCancelButton
-            onClick={() => onOpenChange(false)}
+            onClick={handleClose}
             disabled={isPending}
           />
           <KoaModalSaveButton

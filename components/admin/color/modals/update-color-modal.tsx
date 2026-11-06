@@ -42,9 +42,13 @@ export default function UpdateColorModal({
 }: UpdateColorModalProps) {
   const { update, requestSwatchImageUpload } = useColorMutations();
 
-  const [form, setForm] = useState<ColorFormInput>(emptyColorForm);
+  const [form, setForm] = useState<ColorFormInput>(() =>
+    color ? toColorForm(color) : emptyColorForm
+  );
   const [errors, setErrors] = useState<FormErrors>({});
-  const [prevColor, setPrevColor] = useState<ColorDto | null>(color);
+  const [prevColorId, setPrevColorId] = useState<string | null>(
+    color?.id ?? null
+  );
   const [file, setFile] = useState<File | null>(null);
   const [blobUrl, setBlobUrl] = useState<string | null>(null);
   const [existingSwatchUrl, setExistingSwatchUrl] = useState<string | null>(
@@ -54,15 +58,39 @@ export default function UpdateColorModal({
   const [isUploading, setIsUploading] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  if (color && prevColor !== color) {
-    if (blobUrl) URL.revokeObjectURL(blobUrl);
-    setPrevColor(color);
-    setForm(toColorForm(color));
+  const clearFields = (source: ColorDto | null) => {
+    setForm(source ? toColorForm(source) : emptyColorForm);
     setErrors({});
     setFile(null);
     setBlobUrl(null);
-    setExistingSwatchUrl(color.swatchImageUrl ?? null);
+    setExistingSwatchUrl(source?.swatchImageUrl ?? null);
     setFileError(null);
+    setIsUploading(false);
+  };
+
+  /**
+   * Full reset, run once the dialog has finished closing. Revokes the preview
+   * blob and clears the native file input, which keeps its own selection
+   * outside React state.
+   */
+  const resetForm = () => {
+    if (blobUrl) URL.revokeObjectURL(blobUrl);
+    clearFields(null);
+    if (fileInputRef.current) fileInputRef.current.value = "";
+  };
+
+  /** Closes through the parent, which owns `color`. */
+  const handleClose = () => onOpenChange(false);
+
+  // Compare by id rather than object. Closing sets `color` to null and
+  // TanStack hands the same cached object back on reopen, so an object
+  // comparison skipped the reseed for exactly the reopen that needs one.
+  // Id comparison also keeps a background refetch of the row being edited
+  // from wiping the admin's input mid-edit.
+  const currentColorId = color?.id ?? null;
+  if (currentColorId !== prevColorId) {
+    setPrevColorId(currentColorId);
+    if (color) clearFields(color);
   }
 
   const handleFieldChange = <K extends keyof ColorFormInput>(
@@ -145,8 +173,12 @@ export default function UpdateColorModal({
       {
         onSuccess: () => {
           setIsUploading(false);
-          onOpenChange(false);
+          handleClose();
         },
+        // Upload already finished by the time the request runs, so a failed
+        // update must drop the uploading flag or `isPending` stays true and
+        // the dialog can no longer be cancelled.
+        onError: () => setIsUploading(false),
       }
     );
   };
@@ -154,8 +186,11 @@ export default function UpdateColorModal({
   return (
     <Dialog
       open={!!color}
-      onOpenChange={(nextOpen) => {
-        onOpenChange(nextOpen);
+      onOpenChange={onOpenChange}
+      // Reset after the close animation, so the form never blanks mid-fade.
+      // Covers Escape, backdrop, the close button, Cancel and post-update.
+      onOpenChangeComplete={(nextOpen) => {
+        if (!nextOpen) resetForm();
       }}
     >
       <DialogContent className="max-h-[90vh] overflow-y-auto">
@@ -197,7 +232,7 @@ export default function UpdateColorModal({
 
         <DialogFooter className="border-t">
           <KoaModalCancelButton
-            onClick={() => onOpenChange(false)}
+            onClick={handleClose}
             disabled={isPending}
           />
           <KoaModalSaveButton

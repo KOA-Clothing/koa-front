@@ -35,14 +35,31 @@ export default function UpdateDesignModal({
 }: UpdateDesignModalProps) {
   const { update } = useDesignMutations();
 
-  const [form, setForm] = useState<DesignFormInput>(emptyDesignForm);
+  const [form, setForm] = useState<DesignFormInput>(() =>
+    design ? toDesignForm(design) : emptyDesignForm
+  );
   const [errors, setErrors] = useState<FormErrors>({});
-  const [prevDesign, setPrevDesign] = useState<DesignDto | null>(design);
+  const [prevDesignId, setPrevDesignId] = useState<string | null>(
+    design?.id ?? null
+  );
 
-  if (design && prevDesign !== design) {
-    setPrevDesign(design);
-    setForm(toDesignForm(design));
+  const clearFields = (source: DesignDto | null) => {
+    setForm(source ? toDesignForm(source) : emptyDesignForm);
     setErrors({});
+  };
+
+  /** Closes through the parent, which owns `design`. */
+  const handleClose = () => onOpenChange(false);
+
+  // Compare by id rather than object. Closing sets `design` to null and
+  // TanStack hands the same cached object back on reopen, so an object
+  // comparison skipped the reseed for exactly the reopen that needs one.
+  // Id comparison also keeps a background refetch of the row being edited
+  // from wiping the admin's input mid-edit.
+  const currentDesignId = design?.id ?? null;
+  if (currentDesignId !== prevDesignId) {
+    setPrevDesignId(currentDesignId);
+    if (design) clearFields(design);
   }
 
   const handleFieldChange = <K extends keyof DesignFormInput>(
@@ -76,7 +93,7 @@ export default function UpdateDesignModal({
         payload: result.data,
       },
       {
-        onSuccess: () => onOpenChange(false),
+        onSuccess: handleClose,
       }
     );
   };
@@ -84,8 +101,10 @@ export default function UpdateDesignModal({
   return (
     <Dialog
       open={!!design}
-      onOpenChange={(nextOpen) => {
-        onOpenChange(nextOpen);
+      onOpenChange={onOpenChange}
+      // Reset after the close animation, so the form never blanks mid-fade.
+      onOpenChangeComplete={(nextOpen) => {
+        if (!nextOpen) clearFields(null);
       }}
     >
       <DialogContent className="max-h-[90vh] overflow-y-auto">
@@ -119,7 +138,7 @@ export default function UpdateDesignModal({
 
         <DialogFooter className="border-t">
           <KoaModalCancelButton
-            onClick={() => onOpenChange(false)}
+            onClick={handleClose}
             disabled={update.isPending}
           />
           <KoaModalSaveButton
