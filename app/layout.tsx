@@ -54,7 +54,7 @@ export const metadata: Metadata = {
     },
   },
   verification: {
-    google: "your-google-site-verification-string", // Get this from Google Search Console
+    google: process.env.NEXT_PUBLIC_GA_ID, // Get this from Google Search Console
   },
 };
 
