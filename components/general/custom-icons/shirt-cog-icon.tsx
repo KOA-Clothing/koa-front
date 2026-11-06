@@ -7,7 +7,7 @@ interface ShirtCogIconProps {
   className?: string;
 }
 
-// 1. Declared outside the component as a static JSX fragment
+// The exact cog wheel paths extracted from Lucide's FileCog, declared as a static JSX fragment outside render
 const COG_PATHS = (
   <>
     <path d="m3.305 19.53.923-.382" />
