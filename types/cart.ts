@@ -1,3 +1,4 @@
+import { clothingSizeLabels } from "./enum-labels";
 import type { ClothingSize } from "./enums";
 import type {
   ProductDetailsDto,
@@ -50,6 +51,18 @@ export function resolveCartItemImage(
     images[0] ??
     null
   );
+}
+
+/**
+ * "Blue · S" — the variant portion of a cart line, shared by the row and the
+ * add/remove toasts so one item is always described the same way.
+ */
+export function describeCartVariant(
+  item: Pick<CartItem, "colorName" | "size">
+): string {
+  return [item.colorName, clothingSizeLabels[item.size]]
+    .filter(Boolean)
+    .join(" · ");
 }
 
 /** Builds the cart line for the variant and quantity the customer selected. */

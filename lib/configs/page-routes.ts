@@ -95,8 +95,8 @@ export const shopHrefs = {
   collection: (collectionId: string) =>
     `${PAGE_ROUTES.SHOP.COLLECTIONS}/${collectionId}`,
   /**
-   * One product's detail page. The detail route is still to be built; product
-   * cards already link here so the grid is navigable the day it lands.
+   * One product's detail page. Product cards, cart rows and search results
+   * all assemble their destination here instead of inlining the path.
    */
   product: (productId: string) =>
     `${PAGE_ROUTES.SHOP.PRODUCTS}/${productId}`,

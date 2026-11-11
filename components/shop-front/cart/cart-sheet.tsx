@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useMemo } from "react";
+import toast from "react-hot-toast";
 import { ShoppingBag } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
@@ -16,6 +17,7 @@ import {
   formatPrice,
 } from "@/components/shop-front/Product-details/product-info";
 import { useCartStore } from "@/stores/cart-store";
+import { describeCartVariant } from "@/types/cart";
 import CartItem from "./cart-item";
 
 /**
@@ -64,6 +66,20 @@ export default function CartSheet() {
     console.log("[cart] Checkout", { items, subtotal, total });
   };
 
+  const handleRemove = (inventoryId: string) => {
+    // Read the line before removing it: the store no longer has it afterwards,
+    // and the toast has to name the exact product/colour/size that went away.
+    const removed = items.find((item) => item.inventoryId === inventoryId);
+
+    removeItem(inventoryId);
+
+    if (removed) {
+      toast(
+        `${removed.productName} (${describeCartVariant(removed)}, Qty ${removed.quantity}) removed from cart`
+      );
+    }
+  };
+
   return (
     <Sheet
       open={isOpen}
@@ -106,7 +122,8 @@ export default function CartSheet() {
               <CartItem
                 key={item.inventoryId}
                 item={item}
-                onRemove={removeItem}
+                onRemove={handleRemove}
+                onNavigate={closeCart}
               />
             ))}
           </ul>

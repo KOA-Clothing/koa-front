@@ -2,8 +2,9 @@
 
 import { Button } from "@/components/ui/button";
 import { ShoppingBag, Zap } from "lucide-react";
+import toast from "react-hot-toast";
 import { useCartStore } from "@/stores/cart-store";
-import { toCartItem } from "@/types/cart";
+import { describeCartVariant, toCartItem } from "@/types/cart";
 import type { ProductDetailsDto, ProductDetailsVariantDto } from "@/types/product";
 
 interface ProductActionsProps {
@@ -22,7 +23,6 @@ export default function ProductActions({
   quantity,
 }: ProductActionsProps) {
   const addItem = useCartStore((state) => state.addItem);
-  const openCart = useCartStore((state) => state.openCart);
 
   const canPurchase =
     inStock && selectedVariant && selectedVariant.inStock && quantity > 0;
@@ -30,10 +30,14 @@ export default function ProductActions({
   const handleAddToCart = () => {
     if (!selectedVariant || quantity <= 0) return;
 
-    addItem(toCartItem(product, selectedVariant, quantity));
-    // Open the drawer so the customer gets immediate feedback and can keep
-    // shopping from the same page.
-    openCart();
+    const item = toCartItem(product, selectedVariant, quantity);
+    addItem(item);
+
+    // Deliberately does not open the drawer: a toast confirms the add without
+    // pulling the customer out of the page they are still shopping on.
+    toast.success(
+      `${item.productName} (${describeCartVariant(item)}, Qty ${item.quantity}) added to cart`
+    );
   };
 
   return (
