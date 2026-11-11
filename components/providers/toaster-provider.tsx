@@ -1,19 +1,14 @@
 'use client';
 
 import { Toaster } from 'react-hot-toast';
+import { StackedDeckToaster } from '../toasts/stacked-deck-toaster';
 
 export const ToasterProvider = () => {
   return (
-    <Toaster
-      position="top-center"
-      reverseOrder={false}
-      toastOptions={{
-        duration: 4000,
-        style: {
-          background: '#363636',
-          color: '#fff',
-        },
-      }}
+    <StackedDeckToaster
+      maxVisible={3}
+      offsetY={12}
+      scaleFactor={0.05}
     />
   );
 };
