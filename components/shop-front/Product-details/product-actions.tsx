@@ -8,14 +8,17 @@ interface ProductActionsProps {
   selectedVariant: ProductDetailsVariantDto | null;
   inStock: boolean;
   totalAvailableQuantity: number;
+  quantity: number;
 }
 
 export default function ProductActions({
   selectedVariant,
   inStock,
   totalAvailableQuantity,
+  quantity,
 }: ProductActionsProps) {
-  const canPurchase = inStock && selectedVariant && selectedVariant.inStock;
+  const canPurchase =
+    inStock && selectedVariant && selectedVariant.inStock && quantity > 0;
 
   return (
     <div className="flex flex-col gap-3">
@@ -32,7 +35,12 @@ export default function ProductActions({
           size="lg"
           className="flex-1"
           disabled={!canPurchase}
-          onClick={() => console.log("inventoryId: ", selectedVariant!.inventoryId)}
+          onClick={() =>
+            console.log(
+              "inventoryId: ", selectedVariant!.inventoryId,
+              "quantity: ", quantity
+            )
+          }
         >
           <Zap className="mr-2 size-4" />
           Buy Now
@@ -42,7 +50,14 @@ export default function ProductActions({
           variant="outline"
           className="flex-1"
           disabled={!canPurchase}
-          onClick={() => console.log("inventoryId: ", selectedVariant!.inventoryId)}
+          onClick={() =>
+            console.log(
+              "inventoryId: ",
+              selectedVariant!.inventoryId,
+              "quantity: ",
+              quantity
+            )
+          }
         >
           <ShoppingBag className="mr-2 size-4" />
           Add to Cart
