@@ -2,9 +2,9 @@
 
 import { Button } from "@/components/ui/button";
 import { ShoppingBag, Zap } from "lucide-react";
-import toast from "react-hot-toast";
 import { useCartStore } from "@/stores/cart-store";
-import { describeCartVariant, toCartItem } from "@/types/cart";
+import { showAddToCartToast } from "@/components/toasts/add-to-cart-toast";
+import { toCartItem } from "@/types/cart";
 import type { ProductDetailsDto, ProductDetailsVariantDto } from "@/types/product";
 
 interface ProductActionsProps {
@@ -33,11 +33,9 @@ export default function ProductActions({
     const item = toCartItem(product, selectedVariant, quantity);
     addItem(item);
 
-    // Deliberately does not open the drawer: a toast confirms the add without
-    // pulling the customer out of the page they are still shopping on.
-    toast.success(
-      `${item.productName} (${describeCartVariant(item)}, Qty ${item.quantity}) added to cart`
-    );
+    // Deliberately does not open the drawer: the toast confirms the add
+    // without pulling the customer out of the page they are still shopping on.
+    showAddToCartToast(item);
   };
 
   return (

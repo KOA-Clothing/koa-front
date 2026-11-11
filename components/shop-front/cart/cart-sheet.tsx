@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect, useMemo } from "react";
-import toast from "react-hot-toast";
 import { ShoppingBag } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
@@ -16,8 +15,8 @@ import {
   calculatePriceBreakdown,
   formatPrice,
 } from "@/components/shop-front/Product-details/product-info";
+import { showRemoveFromCartToast } from "@/components/toasts/remove-from-cart-toast";
 import { useCartStore } from "@/stores/cart-store";
-import { describeCartVariant } from "@/types/cart";
 import CartItem from "./cart-item";
 
 /**
@@ -74,9 +73,7 @@ export default function CartSheet() {
     removeItem(inventoryId);
 
     if (removed) {
-      toast(
-        `${removed.productName} (${describeCartVariant(removed)}, Qty ${removed.quantity}) removed from cart`
-      );
+      showRemoveFromCartToast(removed);
     }
   };
 
