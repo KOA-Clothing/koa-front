@@ -1,6 +1,5 @@
 'use client';
 
-import { Toaster } from 'react-hot-toast';
 import { StackedDeckToaster } from '../toasts/stacked-deck-toaster';
 
 export const ToasterProvider = () => {

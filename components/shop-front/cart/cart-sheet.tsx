@@ -15,6 +15,7 @@ import {
   calculatePriceBreakdown,
   formatPrice,
 } from "@/components/shop-front/Product-details/product-info";
+import { showClearCartToast } from "@/components/toasts/clear-cart-toast";
 import { showRemoveFromCartToast } from "@/components/toasts/remove-from-cart-toast";
 import { useCartStore } from "@/stores/cart-store";
 import CartItem from "./cart-item";
@@ -75,6 +76,15 @@ export default function CartSheet() {
     if (removed) {
       showRemoveFromCartToast(removed);
     }
+  };
+
+  const handleClearCart = () => {
+    // The button is disabled when the cart is empty, but the guard keeps the
+    // "cleared" confirmation from lying if that ever changes.
+    if (items.length === 0) return;
+
+    clearCart();
+    showClearCartToast();
   };
 
   return (
@@ -168,7 +178,7 @@ export default function CartSheet() {
               variant="outline"
               className="w-full"
               disabled={items.length === 0}
-              onClick={clearCart}
+              onClick={handleClearCart}
             >
               Clear All
             </Button>
