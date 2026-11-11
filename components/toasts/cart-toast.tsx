@@ -68,7 +68,7 @@ export default function CartToast({
     <div
       role="status"
       className={cn(
-        "pointer-events-auto flex w-[min(92vw,22rem)] items-start gap-3 rounded-xl border border-border bg-popover p-3 pr-1.5 text-popover-foreground shadow-lg",
+        "pointer-events-auto flex w-[min(92vw,22rem)] items-center gap-5 rounded-xl border border-border bg-popover p-3 pr-1.5 text-popover-foreground shadow-lg",
         visible
           ? "animate-in fade-in-0 zoom-in-95 slide-in-from-top-3 duration-300 ease-out motion-reduce:animate-none"
           : "animate-out fade-out-0 zoom-out-95 slide-out-to-top-3 duration-200 ease-in fill-mode-forwards motion-reduce:animate-none motion-reduce:opacity-0"
