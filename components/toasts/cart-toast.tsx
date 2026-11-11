@@ -34,9 +34,9 @@ function CartActionIcon({ variant }: { variant: CartToastVariant }) {
   const ActionIcon = variant === "added" ? Plus : Minus;
 
   return (
-    <div className="relative flex size-10 shrink-0 items-center justify-center rounded-full bg-muted text-foreground">
+    <div className="relative flex size-10 shrink-0 items-center justify-center rounded-full bg-zinc-800 text-zinc-100">
       <ShoppingCart className="size-5" aria-hidden="true" />
-      <span className="absolute -right-1 -bottom-1 flex size-5 items-center justify-center rounded-full bg-foreground text-background ring-2 ring-popover">
+      <span className="absolute -bottom-1 -right-1 flex size-5 items-center justify-center rounded-full bg-zinc-100 text-zinc-950 ring-2 ring-zinc-900">
         <ActionIcon className="size-3" strokeWidth={3} aria-hidden="true" />
       </span>
     </div>
@@ -68,7 +68,7 @@ export default function CartToast({
     <div
       role="status"
       className={cn(
-        "pointer-events-auto flex w-[min(92vw,22rem)] items-center gap-5 rounded-xl border border-border bg-popover p-3 pr-1.5 text-popover-foreground shadow-lg",
+        "pointer-events-auto flex w-[min(92vw,22rem)] items-center gap-4 rounded-xl border border-zinc-800 bg-zinc-900 p-3 pr-1.5 text-zinc-100 shadow-2xl",
         visible
           ? "animate-in fade-in-0 zoom-in-95 slide-in-from-top-3 duration-300 ease-out motion-reduce:animate-none"
           : "animate-out fade-out-0 zoom-out-95 slide-out-to-top-3 duration-200 ease-in fill-mode-forwards motion-reduce:animate-none motion-reduce:opacity-0"
@@ -77,13 +77,13 @@ export default function CartToast({
       <CartActionIcon variant={variant} />
 
       <div className="flex min-w-0 flex-1 flex-col gap-0.5 py-0.5">
-        <p className="text-sm font-semibold text-foreground">
+        <p className="text-sm font-semibold text-zinc-100">
           {titles[variant]}
         </p>
-        <p className="truncate text-sm text-muted-foreground">
+        <p className="truncate text-sm text-zinc-300">
           {item.productName}
         </p>
-        <p className="truncate text-xs text-muted-foreground">{meta}</p>
+        <p className="truncate text-xs text-zinc-400">{meta}</p>
       </div>
 
       <Button
@@ -92,7 +92,7 @@ export default function CartToast({
         size="icon-xs"
         onClick={onDismiss}
         aria-label="Dismiss notification"
-        className="-mt-0.5 -mr-0.5 shrink-0 text-muted-foreground"
+        className="-mr-0.5 -mt-0.5 shrink-0 text-zinc-400 hover:bg-zinc-800 hover:text-zinc-100"
       >
         <X className="size-3.5" aria-hidden="true" />
       </Button>
