@@ -2,6 +2,7 @@
 
 import { Minus, Plus, ShoppingCart, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
 import { describeCartVariant, type CartItem } from "@/types/cart";
 
 export type CartToastVariant = "added" | "removed";
@@ -9,6 +10,13 @@ export type CartToastVariant = "added" | "removed";
 interface CartToastProps {
   variant: CartToastVariant;
   item: Pick<CartItem, "productName" | "colorName" | "size" | "quantity">;
+  /**
+   * react-hot-toast never animates a `toast.custom` node itself: it mounts it
+   * already visible and removes it outright. It does, however, keep the node
+   * mounted for `removeDelay` after dismissal with `visible: false`, which is
+   * the only signal available for playing an exit animation.
+   */
+  visible?: boolean;
   /** Dismisses this toast (the caller wires `toast.dismiss(t.id)`). */
   onDismiss: () => void;
 }
@@ -37,13 +45,19 @@ function CartActionIcon({ variant }: { variant: CartToastVariant }) {
 
 /**
  * Shared card for the add/remove cart toasts. Rendered through
- * `toast.custom`, so it owns the whole surface — border, background, shadow —
- * and must keep `pointer-events-auto`, because the toaster container disables
- * pointer events.
+ * `toast.custom`, so it owns the whole surface — border, background, shadow,
+ * and its own enter/exit animation — and must keep `pointer-events-auto`,
+ * because the toaster container disables pointer events.
+ *
+ * Animations are keyframes (`animate-in` / `animate-out` from
+ * `tw-animate-css`), not transitions: a transition would never run on mount,
+ * because the node is inserted at its final state and nothing changes
+ * afterwards.
  */
 export default function CartToast({
   variant,
   item,
+  visible = true,
   onDismiss,
 }: CartToastProps) {
   const meta = [describeCartVariant(item), `Qty ${item.quantity}`]
@@ -53,7 +67,12 @@ export default function CartToast({
   return (
     <div
       role="status"
-      className="pointer-events-auto flex w-[min(92vw,22rem)] items-start gap-3 rounded-xl border border-border bg-popover p-3 pr-1.5 text-popover-foreground shadow-lg"
+      className={cn(
+        "pointer-events-auto flex w-[min(92vw,22rem)] items-start gap-3 rounded-xl border border-border bg-popover p-3 pr-1.5 text-popover-foreground shadow-lg",
+        visible
+          ? "animate-in fade-in-0 zoom-in-95 slide-in-from-top-3 duration-300 ease-out motion-reduce:animate-none"
+          : "animate-out fade-out-0 zoom-out-95 slide-out-to-top-3 duration-200 ease-in fill-mode-forwards motion-reduce:animate-none motion-reduce:opacity-0"
+      )}
     >
       <CartActionIcon variant={variant} />
 
