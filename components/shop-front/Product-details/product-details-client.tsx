@@ -65,6 +65,7 @@ export default function ProductDetailsClient({
             />
           )}
           <ProductActions
+            product={product}
             selectedVariant={selectedVariant}
             inStock={product.inStock}
             totalAvailableQuantity={product.totalAvailableQuantity}
