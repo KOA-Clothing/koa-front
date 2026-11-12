@@ -33,9 +33,9 @@ export const metadata: Metadata = {
     siteName: "KOA Clothing",
     images: [
       {
-        url: "/public/logo/black/warrior-face.png",
-        width: 400,
-        height: 400,
+        url: "/logo/black/warrior-face.png",
+        width: 1200,
+        height: 360,
         alt: "KOA Clothing Logo",
       },
     ],
@@ -54,7 +54,7 @@ export const metadata: Metadata = {
     },
   },
   verification: {
-    google: process.env.NEXT_PUBLIC_GA_ID, // Get this from Google Search Console
+    google: process.env.NEXT_PUBLIC_GA_ID,
   },
 };
 

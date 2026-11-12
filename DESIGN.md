@@ -2,9 +2,12 @@
 
 This file is the visual source of truth for the KOA frontend. Read it before changing any user-facing component or route.
 
-The current guidelines capture the styling decisions established in the admin product-configuration experience. Apply them to analogous admin surfaces. Storefront-specific art direction and more detailed design rules may be added later; when they are, they supersede this document.
+It covers two surfaces:
 
-`AGENTS.md` contains architectural and engineering rules. This file contains visual and interaction rules.
+- **Admin** — a restrained, neutral, data-first operational system. Most of the detailed rules below were established there.
+- **Storefront** — a deliberately more editorial commerce experience (hero, product grids, product detail, cart). It uses the same semantic tokens but is allowed the exceptions documented in §1, §2 and §7.
+
+`AGENTS.md` contains architectural and engineering rules. This file contains visual and interaction rules. When the two overlap (for example, table alignment), `docs/table-column-alignment.md` is the authoritative contract.
 
 ## How to use these guidelines
 
@@ -16,7 +19,7 @@ The current guidelines capture the styling decisions established in the admin pr
 
 ## 1. Current design direction
 
-The current interface is a restrained, neutral, data-first admin system.
+The admin interface is a restrained, neutral, data-first system.
 
 1. **Clarity before decoration.** Information hierarchy comes from layout, spacing, typography, borders, and alignment—not ornamental effects.
 2. **Compact but breathable.** Controls are compact for repeated operational work, while sections retain enough whitespace to remain scannable.
@@ -25,7 +28,9 @@ The current interface is a restrained, neutral, data-first admin system.
 5. **Progressive detail.** Show supporting information when it helps the current task, without turning routine views into dense summaries.
 6. **Accessible by default.** Every state and action must remain understandable without relying on color alone.
 
-Avoid one-off gradients, oversized headings, excessive shadows, and highly saturated surfaces. This is an operational interface, not a marketing page.
+For admin, avoid one-off gradients, oversized headings, excessive shadows, and highly saturated surfaces. An admin page is an operational interface, not a marketing page.
+
+**Storefront is the documented exception.** It is intentionally editorial and may use large display type, full-bleed imagery, motion, and image overlays where they serve the shopping experience. It must still use the shared semantic tokens, keep the same accessibility contract, and reuse the storefront primitives in §7 rather than inventing per-page art direction. The restraint rules above apply to admin, not to the storefront hero or landing sections.
 
 ## 2. Foundations
 
@@ -33,7 +38,7 @@ Avoid one-off gradients, oversized headings, excessive shadows, and highly satur
 
 The palette is defined with semantic CSS variables in `app/globals.css` and exposed through Tailwind v4's `@theme inline` mapping. Use semantic utilities such as `bg-background`, `bg-card`, `text-foreground`, `text-muted-foreground`, and `border-border` in components.
 
-Do not add raw OKLCH, HEX, or RGB UI colors in page or feature components. Dynamic product data colors, such as a user-defined color swatch, are the exception.
+Do not add raw OKLCH, HEX, or RGB UI colors in page or feature components. Dynamic product data colors, such as a user-defined color swatch, are the exception; the fixed storefront footer accent documented below is the other.
 
 Current light and dark foundations follow these roles:
 
@@ -58,6 +63,15 @@ Additional rules:
 - Status badge colors use a restrained pattern: approximately 10% tinted background, 20% tinted border, and a readable foreground.
 - Never use color as the only indicator. Pair it with text, an icon, a switch state, or another semantic cue.
 - New reusable colors must be added as semantic tokens in `app/globals.css` and must work in both light and dark themes.
+
+Admin shell note: the current shell canvas is `bg-gray-50`. That is a deliberate neutral canvas but uses a raw Tailwind palette class rather than a semantic token; if you touch the shell, prefer migrating it to a semantic surface token rather than spreading `gray-*` into feature components.
+
+Documented storefront color exceptions (fixed brand decisions, not general UI chrome):
+
+- **Footer** — `bg-neutral-900` surface with white text, `text-gray-400` secondary text, `border-gray-700` rules, and `hover:text-[#3D79BE]` on links. Treat those as the footer's palette; do not substitute other accents.
+- **Toast deck** — cart toasts are a dark `zinc` card (`bg-zinc-900`, `border-zinc-800`, `text-zinc-100`/`zinc-300`/`zinc-400`). They live above every route including admin, so the zinc palette is intentional, not a stray admin color.
+- **Product status badge** — `OutOfStock` uses amber (`bg-amber-400` / `text-amber-950`) on storefront cards. Status is data, not chrome; keep it consistent with the storefront card, not the admin enum badge styles.
+- **Product card overlays** — badges stamped on imagery use high-contrast solids (`bg-foreground`, `bg-white`, `bg-destructive`) with shadows so they stay readable over photography.
 
 ### 2.2 Typography
 
@@ -87,6 +101,15 @@ Typography rules:
 - Do not add a display font or arbitrary font size without a documented design decision.
 - Do not use color alone to create a text hierarchy.
 
+Storefront typography rhythm (editorial exception):
+
+- Hero display type is intentionally large: `text-5xl` → `text-9xl` across breakpoints, always `font-bold` with tight tracking and white text over the darkened hero image.
+- Landing section titles use `text-3xl md:text-4xl lg:text-5xl`, `font-bold`, `tracking-tight`, with a muted second line for a two-part statement.
+- Eyebrows/overlines use `text-xs font-mono uppercase tracking-[0.18em]` (or `[0.25em]` in the hero) in `text-muted-foreground`; they introduce a section, they are not headings.
+- Product card text is compact and scannable: `text-[0.65rem]` uppercase category, `text-sm font-medium` two-line product name, `text-sm font-semibold tabular-nums` price.
+- Prices are always `tabular-nums`; discount amounts use `line-through` on the original price and a solid pill for the percentage.
+- Prose on long-form storefront pages stays `text-base leading-relaxed text-muted-foreground`, as described in §7.5.
+
 ### 2.3 Spacing, radii, borders, and elevation
 
 Use Tailwind's spacing scale consistently. The main rhythm is:
@@ -105,6 +128,14 @@ Radius rules:
 - Use `rounded-xl` for tables, dialogs, outlined information panels, and prominent item cards.
 - Use a fully rounded shape for badges and color swatches.
 - Avoid unrelated radius changes on a single child or route.
+
+Storefront spacing and radius additions:
+
+- Full editorial sections (brand story) use `py-16 md:py-24`; product showcases and the category strip use the compact `py-8 md:py-12`, and the newsletter band uses `py-8 md:py-16`.
+- Product grids are `grid-cols-2 gap-x-4 gap-y-10 md:grid-cols-3 md:gap-x-6 lg:grid-cols-4`; do not switch to fixed card widths.
+- Product cards use `rounded-xl` media plus `aspect-4/5`, a transparent border that becomes `border-border` on hover, and a `1.03` image scale on hover.
+- Editorial feature panels may use `rounded-2xl` for a single large visual frame (see the brand-story panel); ordinary product cards stay `rounded-xl`.
+- Section content is always inside `mx-auto max-w-7xl px-4 md:px-8`.
 
 Borders and elevation:
 
@@ -183,6 +214,28 @@ Descriptions should explain scope or grouping, not repeat the title.
 - Do not introduce fixed desktop-only widths for dialogs or content sections.
 - Check that actions remain reachable and that dialog footers behave correctly on small screens.
 
+### 3.5 Storefront shell
+
+The shop layout (`app/(shop)/layout.tsx`) is a full-height column: `Header`, page content, `Footer`. Do not add page-specific headers or footers.
+
+Header (`components/shop-front/header.tsx`):
+
+- Full-width, `z-50`, with an inner `max-w-7xl px-4` row at `h-20`.
+- On the homepage it is `fixed` and starts transparent; after `scrollY > 20` or on hover it becomes solid: `bg-background/95 backdrop-blur-sm border-b border-border shadow-sm`. On every other route it is `sticky` and always solid.
+- The logo is absolutely centered at all widths. On the transparent state it is inverted to white; on the solid state it returns to its normal treatment.
+- Desktop nav sits left (`Home`, `Shop`, `Collections`, `About`), search/cart/account sit right. Keep the nav hidden below `md` and the logo centered.
+- Cart controls read live counts from the cart store. The badge caps the displayed count at `99+`.
+- `CartSheet` is mounted once by the header, not by pages.
+
+Footer (`components/shop-front/footer.tsx`):
+
+- Dark `bg-neutral-900` band, `max-w-7xl px-4`, `pt-16 pb-40`.
+- Brand card on the left; three link groups (`Shop`, `Company`, `Support`) on the right; bottom bar separated by `border-gray-700`.
+- Oversized decorative "KOA" wordmark is `aria-hidden`, absolutely positioned, `opacity-[0.035]` — never make it meaningful content.
+- Use the documented footer palette from §2.1; do not add gradients or new accent colors.
+
+Storefront page containers use `mx-auto max-w-7xl px-4 py-8 md:px-8 md:py-12` for detail pages and `... px-4 py-10 md:px-8 md:py-14` for the search/catalogue grid. Sections that can be deep-linked carry an `id` and `scroll-mt-24` to clear the sticky `h-20` header.
+
 ## 4. Component patterns
 
 ### 4.1 Surfaces and grouped content
@@ -206,8 +259,10 @@ Current table treatment:
 - Loading uses row skeletons that preserve the table structure.
 - Empty states are centered, vertically spacious, and `text-sm text-muted-foreground`.
 - Pagination follows the table and remains outside the bordered table container.
-- Table columns should have clear alignment: center compact values, badges, switches, and actions; use left alignment for prose-like fields.
-- Use a muted em dash for absent scalar values.
+- Column alignment follows `docs/table-column-alignment.md` exactly: **text left, numerics and dates right, badges/status/actions centered.** Declare it on `columnDef.meta.headerClassName` / `meta.cellClassName`, not ad hoc on the page.
+- Absent numeric values render as a muted em dash (`—`) inside the same right-aligned cell. Do not leave the cell empty.
+- Sorting is client-side over the currently loaded page (there is no server sorting). Mark only meaningful columns `enableSorting: true`; `KoaTable` renders the asc → desc → off header control and the indicator icon automatically. Do not build a custom sort header.
+- Cells that wrap (size/color chip groups) stay centered and keep a small `gap`; do not left-align them just because the content wraps.
 
 Row actions:
 
@@ -379,7 +434,76 @@ Availability feedback:
 - Keep hover treatments subtle and preserve the same hierarchy at touch and keyboard widths.
 - Do not disable browser zoom, reduce focus visibility, or introduce content that requires hover to understand.
 
-## 7. Storefront long-form pages
+## 7. Storefront composition
+
+Storefront surfaces are editorial, but they are assembled from a small set of shared primitives. Reuse the section/shell components below instead of writing a new one-off layout.
+
+### 7.1 Landing page sections
+
+`app/(shop)/page.tsx` mounts sections in this order:
+
+1. `Hero` — full `h-screen` Embla image carousel, `bg-black/55` overlay, animated display copy, two pill CTAs, and a scroll cue that scrolls to `#shop-sections`.
+2. `CategoryGrid` — "Shop By Category" carousel, four tiles per page, paging through side arrows rather than a pager.
+3. `FeaturedProductsFeed` — paginated product showcase.
+4. `DiscountedProductsFeed` — the same showcase shell with `tone="muted"` (`border-y border-border bg-muted/30`) so adjacent showcases read as separate bands.
+5. `BrandStoryBanner` — two-column narrative with a large framed logo panel.
+6. `NewsletterSection` — centered gradient card with an email form and an emerald success state.
+
+Rules:
+
+- Product showcases reuse `ProductShowcaseSection` + `HomeSectionHeader` + `ProductShowcaseGrid` + `SectionPager`; a new showcase only supplies its copy (`ShowcaseSectionContent`) and tone.
+- Feeds hide themselves when the backend returns zero records — never render an empty "Featured Products" heading. Keep that decision in the feed container, not the presentational section.
+- Sections that can be paged or deep-linked carry `id` and `scroll-mt-24`; the pager scrolls back to that id.
+- `ValueTicker`, `FeaturesBreakdown` and `CommunitySection` exist in `components/shop-front/home/` but are **not mounted** on the current landing page. Do not assume they render, and do not re-enable one without a design decision.
+- Hero copy and CTAs are the only place to use the largest type scale; keep the rest of the page at §2.2 sizes.
+- Newsletter/validation uses `toast.success` / `toast.error`, which land in the shared deck described in §7.4.
+
+### 7.2 Product grids and cards
+
+`ProductCard` is the shared tile for the catalogue and search results.
+
+- Media is `aspect-4/5`, `rounded-xl`, `bg-muted`; the cover is a plain `<img>` (storage hosts are not in `images.remotePatterns`) with `object-cover` and a `1.03` hover scale.
+- A failed image becomes an explicit `ImageOff` + "Image unavailable" state. Never ship a broken-image icon.
+- Overlay stack: status and `Featured` badges top-left, discount pill top-right. `Available` intentionally shows no badge — a badge on every card is noise.
+- Copy block: uppercase category (`text-[0.65rem]`, `text-muted-foreground`), two-line product name (`text-sm font-medium`, underline on hover), then price. Discounted cards show the final price in semibold with the original struck through.
+- The whole card is one link; use `shopHrefs.product(id)` rather than composing the URL.
+- Grids: `grid-cols-2` → `md:grid-cols-3` → `lg:grid-cols-4`, `gap-x-4 gap-y-10` (`md:gap-x-6`).
+- Storefront grids page with `SHOP_PAGE_SIZE_OPTIONS` (12/24/36/48), never the admin sizes.
+
+### 7.3 Product detail
+
+`ProductDetailsClient` composes the page:
+
+- Container `mx-auto max-w-7xl px-4 py-8 md:px-8 md:py-12`; two columns at `lg` with `gap-12`.
+- Left: `ProductGallery`, keyed by the selected color so switching color resets the gallery.
+- Right, in order: `ProductInfo`, `ProductPricing`, then the purchase block (variant selector → quantity → actions), then `SizeGuide`.
+- `ProductPricing` shows the final price at `text-3xl font-bold tabular-nums`, the struck original at `text-lg`, and the discount as a rounded foreground pill.
+- `VariantSelector` offers only `isActive && inStock` variants and disables colors/sizes that have no matching variant. Selecting a color clears a size that is no longer available.
+- `QuantitySelector` appears only once a variant is selected, defaults to `min(1, availableQuantity)`, and is capped by that variant's stock.
+- `ProductActions` order is "Buy Now" (primary) then "Add to Cart" (outline). Both stay disabled until there is a purchasable variant and quantity.
+- Adding to cart confirms with a toast and deliberately does **not** open the drawer, so the customer stays on the page.
+- Availability copy is plain `text-sm text-muted-foreground`; true out-of-stock uses `text-destructive`.
+- Pricing and formatting must come from `calculatePriceBreakdown` / `formatPrice` in `product-info.tsx` — do not recompute discounts locally.
+
+### 7.4 Cart drawer and toasts
+
+Cart drawer (`components/shop-front/cart/cart-sheet.tsx`):
+
+- Right-side `SheetContent`, `w-full sm:max-w-md`, `gap-0 p-0`.
+- Header `border-b border-border p-4 pr-12` with "Your Cart" and a tabular item count; description changes between empty and filled states.
+- Empty state is centered: muted circle with `ShoppingBag`, a short title, and one guiding sentence.
+- Items are a `divide-y divide-border` list; each row shows its stored snapshot (product, color, size, quantity, price). Never re-fetch a product to render a line.
+- Footer `border-t border-border p-4`: subtotal, optional discount, then a bold total separated by a rule. Actions are a full-width `Checkout` (primary) and `Clear All` (outline), both disabled when empty.
+- Remove and clear actions fire the matching toast. Read the line before removing it so the toast can name it.
+
+Toasts:
+
+- The app mounts one `StackedDeckToaster` via `ToasterProvider` — a centered, top-anchored deck showing up to three cards, newest in front, scaled and offset behind.
+- Cart confirmations use `toast.custom` through the `show*Toast` helpers and the dark zinc `CartToast` card from §2.1. `toast.custom` does not inherit the default toast styling, so the card owns its surface and its enter/exit keyframes.
+- Never mount a second toaster, and never style a one-off toast outside `components/toasts/`.
+- Duration is 3–3.5 s for cart confirmations (add 3.5 s, remove/clear 3 s); `removeDelay` must sit just past the exit animation so the next toast doesn't feel laggy.
+
+### 7.5 Long-form storefront pages
 
 The storefront legal pages (`/privacy-policy`, `/terms-of-service`) and the About page share one long-form composition. Reuse it for any new prose-heavy storefront route instead of inventing a new one.
 
@@ -404,4 +528,8 @@ Before completing a user-facing UI change, verify that:
 - [ ] Loading, empty, success, error, disabled, and destructive states are intentional.
 - [ ] Icon-only controls have accessible names and keyboard focus remains visible.
 - [ ] The change did not introduce a route-specific design system.
+- [ ] Table alignment matches `docs/table-column-alignment.md`, and sortable columns are explicitly opted in rather than hand-built.
+- [ ] Storefront pages reuse the existing shell, section, card, and cart primitives instead of new one-off layouts.
+- [ ] Cart/route confirmations use the existing toast helpers and the single stacked-deck toaster.
+- [ ] Cart surfaces render the stored line snapshot and never re-fetch a product to display it.
 - [ ] Any new reusable styling decision was added to this file.
