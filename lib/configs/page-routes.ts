@@ -8,6 +8,11 @@ export const PAGE_ROUTES = {
     COLLECTIONS: "/collections",
     SEARCH: "/products/search",
     PRODUCTS: "/products",
+    CHECKOUT: "/checkout",
+  },
+  AUTH: {
+    SIGN_IN: "/auth/signin",
+    SIGN_UP: "/auth/signup",
   },
   ADMIN: {
     BASE_PRODUCTS: "/admin/product-configs/base-products",
@@ -79,6 +84,20 @@ export const adminHrefs = {
    */
   collectionDetail: (collectionId: string) =>
     `${PAGE_ROUTES.ADMIN.COLLECTIONS}/${collectionId}`,
+};
+
+/**
+ * Builders for the Clerk auth routes.
+ *
+ * `redirect_url` is the query param Clerk preserves across its own sign-in /
+ * sign-up navigation, so a customer who is sent to authenticate mid-checkout
+ * lands back on the route they were trying to reach.
+ */
+export const authHrefs = {
+  signIn: (redirectTo?: string) =>
+    withQuery(PAGE_ROUTES.AUTH.SIGN_IN, { redirect_url: redirectTo }),
+  signUp: (redirectTo?: string) =>
+    withQuery(PAGE_ROUTES.AUTH.SIGN_UP, { redirect_url: redirectTo }),
 };
 
 /**

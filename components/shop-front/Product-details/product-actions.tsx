@@ -1,9 +1,13 @@
 "use client";
 
+import { useAuth } from "@clerk/nextjs";
+import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { ShoppingBag, Zap } from "lucide-react";
 import { useCartStore } from "@/stores/cart-store";
+import { useCheckoutStore } from "@/stores/checkout-store";
 import { showAddToCartToast } from "@/components/toasts/add-to-cart-toast";
+import { authHrefs, PAGE_ROUTES } from "@/lib/configs/page-routes";
 import { toCartItem } from "@/types/cart";
 import type { ProductDetailsDto, ProductDetailsVariantDto } from "@/types/product";
 
@@ -22,7 +26,12 @@ export default function ProductActions({
   totalAvailableQuantity,
   quantity,
 }: ProductActionsProps) {
+  const router = useRouter();
+  const { isLoaded, isSignedIn } = useAuth();
   const addItem = useCartStore((state) => state.addItem);
+  const startBuyNowCheckout = useCheckoutStore(
+    (state) => state.startBuyNowCheckout
+  );
 
   const canPurchase =
     inStock && selectedVariant && selectedVariant.inStock && quantity > 0;
@@ -36,6 +45,22 @@ export default function ProductActions({
     // Deliberately does not open the drawer: the toast confirms the add
     // without pulling the customer out of the page they are still shopping on.
     showAddToCartToast(item);
+  };
+
+  const handleBuyNow = () => {
+    if (!selectedVariant || quantity <= 0) return;
+
+    // Buy Now deliberately does not touch the cart: it checks out this single
+    // selection only, and the checkout store carries it across the auth detour.
+    const item = toCartItem(product, selectedVariant, quantity);
+    startBuyNowCheckout(item);
+
+    if (isLoaded && !isSignedIn) {
+      router.push(authHrefs.signIn(PAGE_ROUTES.SHOP.CHECKOUT));
+      return;
+    }
+
+    router.push(PAGE_ROUTES.SHOP.CHECKOUT);
   };
 
   return (
@@ -53,12 +78,7 @@ export default function ProductActions({
           size="lg"
           className="flex-1"
           disabled={!canPurchase}
-          onClick={() =>
-            console.log(
-              "inventoryId: ", selectedVariant!.inventoryId,
-              "quantity: ", quantity
-            )
-          }
+          onClick={handleBuyNow}
         >
           <Zap className="mr-2 size-4" />
           Buy Now

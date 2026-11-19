@@ -11,9 +11,10 @@ export function calculatePriceBreakdown(sellingPrice: number, discountPercentage
 }
 
 export function formatPrice(price: number) {
-  return new Intl.NumberFormat("en-US", {
+  return new Intl.NumberFormat("en-LK", {
     style: "currency",
-    currency: "USD",
+    currency: "LKR",
+    currencyDisplay: "code",
   }).format(price);
 }
 

@@ -5,6 +5,9 @@
  */
 export const queryKeys = {
   userProfile: ["user-profile"] as const,
+  addresses: {
+    all: ["addresses", "all"] as const,
+  },
   categories: {
     all: ["categories"] as const,
     list: (params: Record<string, unknown>) => ["categories", "list", params] as const,

@@ -515,6 +515,20 @@ The storefront legal pages (`/privacy-policy`, `/terms-of-service`) and the Abou
 - Contact blocks are a quiet `rounded-xl border border-border bg-muted/30 p-4` panel with an uppercase label — no shadow, no new color.
 - Sections carry `id` + `scroll-mt-24` so contents links land below the sticky `h-20` header; smooth scrolling uses `motion-safe:scroll-smooth` on `<main>`.
 
+### 7.6 Checkout
+
+`app/(shop)/checkout/page.tsx` is a server component that renders `CheckoutPageClient` from `components/shop-front/checkout/`.
+
+- Gate order is fixed: `CheckoutSkeleton` while the persisted stores/Clerk load → `CheckoutEmptyState` when there is nothing to order → `CheckoutSignInRequired` for a signed-out deep link → the checkout content. The empty state comes before the sign-in gate so a signed-out visitor with an empty cart is not asked to authenticate for nothing.
+- Container: `mx-auto max-w-7xl px-4 py-8 md:px-8 md:py-12`; two columns at `lg` with `gap-12`, content left and a `380px` sticky summary right.
+- Header: ghost "Back" button, uppercase mono eyebrow, `text-3xl md:text-4xl font-bold tracking-tight` title, and one muted sentence.
+- `CheckoutSection` owns the numbered-step card (`rounded-xl border border-border bg-card p-4 sm:p-5`, foreground step badge). Delivery address is step 1, payment is step 2.
+- Saved addresses render as selectable cards: the whole card is a `<label>` wrapping a visually hidden native `<input type="radio">`, with a `RadioIndicator` dot and `has-[:focus-visible]` ring. Selected is `border-foreground bg-muted/40`; unselected is `border-border bg-card`. The default address is preselected once, without overriding a later customer choice.
+- "Add a new address" is the last radio option, styled with a dashed border, and reveals an inline `NewAddressForm` below the cards — never a dialog, because the summary must stay visible. A customer with no saved addresses lands directly in the form.
+- The summary is `OrderSummary`: stored line snapshots, subtotal, optional discount, bold total, then a full-width `Place order` primary button. It is sticky on desktop so the total and action stay in view while the address form is filled.
+- Totals and line prices reuse `calculatePriceBreakdown` / `formatPrice`; checkout never re-fetches a product to render a line.
+- "Place order" validates the inline address with the checkout Zod schema and logs the `PlaceOrderCommand` payload; it does not call the order endpoint yet. Do not show a success toast or clear the order until that call exists.
+
 ## 8. Agent implementation checklist
 
 Before completing a user-facing UI change, verify that:

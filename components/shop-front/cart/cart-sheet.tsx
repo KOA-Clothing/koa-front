@@ -1,6 +1,8 @@
 "use client";
 
 import { useEffect, useMemo } from "react";
+import { useAuth } from "@clerk/nextjs";
+import { useRouter } from "next/navigation";
 import { ShoppingBag } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
@@ -17,7 +19,9 @@ import {
 } from "@/components/shop-front/Product-details/product-info";
 import { showClearCartToast } from "@/components/toasts/clear-cart-toast";
 import { showRemoveFromCartToast } from "@/components/toasts/remove-from-cart-toast";
+import { authHrefs, PAGE_ROUTES } from "@/lib/configs/page-routes";
 import { useCartStore } from "@/stores/cart-store";
+import { useCheckoutStore } from "@/stores/checkout-store";
 import CartItem from "./cart-item";
 
 /**
@@ -25,12 +29,18 @@ import CartItem from "./cart-item";
  * through the store (`openCart`) without a navigation or a refresh.
  */
 export default function CartSheet() {
+  const router = useRouter();
+  const { isLoaded, isSignedIn } = useAuth();
+
   const items = useCartStore((state) => state.items);
   const isOpen = useCartStore((state) => state.isOpen);
   const openCart = useCartStore((state) => state.openCart);
   const closeCart = useCartStore((state) => state.closeCart);
   const removeItem = useCartStore((state) => state.removeItem);
   const clearCart = useCartStore((state) => state.clearCart);
+  const startCartCheckout = useCheckoutStore(
+    (state) => state.startCartCheckout
+  );
 
   // localStorage does not exist on the server. `skipHydration` keeps the server
   // HTML and the first client render identical (an empty cart), and the
@@ -61,9 +71,19 @@ export default function CartSheet() {
   const savings = subtotal - total;
 
   const handleCheckout = () => {
-    // No checkout flow yet — log the snapshot the order API will eventually
-    // receive, including the totals shown to the customer.
-    console.log("[cart] Checkout", { items, subtotal, total });
+    // The checkout store is persisted, so it survives the Clerk detour and the
+    // full page load that follows it. Seed it before navigating.
+    startCartCheckout();
+    closeCart();
+
+    // Only decide once Clerk has loaded; before that the checkout page's own
+    // gate takes over and sends the customer to sign-in from there.
+    if (isLoaded && !isSignedIn) {
+      router.push(authHrefs.signIn(PAGE_ROUTES.SHOP.CHECKOUT));
+      return;
+    }
+
+    router.push(PAGE_ROUTES.SHOP.CHECKOUT);
   };
 
   const handleRemove = (inventoryId: string) => {

@@ -87,6 +87,9 @@ export const API_ROUTES = {
     BY_ID: (inventoryId: string) => `/api/v1/inventory/${inventoryId}`,
     ADD: (inventoryId: string) => `/api/v1/inventory/${inventoryId}/add`,
   },
+  ORDERS: {
+    BASE: "/api/v1/orders",
+  },
   STORAGE: {
     UPLOAD_REQUESTS: "/api/v1/storage/upload-url",
   }
