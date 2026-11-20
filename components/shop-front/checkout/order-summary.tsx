@@ -1,7 +1,11 @@
 "use client";
 
 import { useMemo } from "react";
-import { CircleCheckBig, LockKeyhole, Package, ShieldCheck } from "lucide-react";
+import {
+  CircleCheckBig,
+  Loader2,
+  ShieldCheck,
+} from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
@@ -16,6 +20,10 @@ interface OrderSummaryProps {
   onPlaceOrder: () => void;
   canPlaceOrder: boolean;
   isBuyNow: boolean;
+  /** An order is being created / the PayHere modal is open. */
+  isProcessing: boolean;
+  /** `window.payhere` has loaded. Place Order stays disabled until it has. */
+  isSdkReady: boolean;
 }
 
 /**
@@ -27,11 +35,9 @@ export default function OrderSummary({
   onPlaceOrder,
   canPlaceOrder,
   isBuyNow,
+  isProcessing,
+  isSdkReady,
 }: OrderSummaryProps) {
-
-  // flat delivery charge rates
-  const deliveryCharges = 350;
-
   const { subtotal, itemsTotal, itemCount } = useMemo(() => {
     return items.reduce(
       (acc, item) => {
@@ -51,6 +57,11 @@ export default function OrderSummary({
   }, [items]);
 
   const savings = subtotal - itemsTotal;
+
+  // Mirrors `PlaceOrderHandler`: free delivery above LKR 10,000, otherwise a
+  // flat LKR 350. This must match the server's `TotalAmount`, because PayHere
+  // charges the server-calculated amount, not this display value.
+  const deliveryCharges = itemsTotal > 10000 ? 0 : 350;
   const grandTotal = itemsTotal + deliveryCharges;
 
   return (
@@ -112,15 +123,28 @@ export default function OrderSummary({
             size="lg"
             className="w-full"
             onClick={onPlaceOrder}
-            disabled={!canPlaceOrder}
+            disabled={!canPlaceOrder || isProcessing || !isSdkReady}
           >
-            <CircleCheckBig className="mr-2 size-4" aria-hidden="true" />
-            Place order
+            {isProcessing ? (
+              <Loader2
+                className="mr-2 size-4 animate-spin"
+                aria-hidden="true"
+              />
+            ) : (
+              <CircleCheckBig className="mr-2 size-4" aria-hidden="true" />
+            )}
+            {isProcessing
+              ? "Opening PayHere…"
+              : !isSdkReady
+                ? "Preparing secure payment…"
+                : "Place order"}
           </Button>
 
           <p className="flex items-center justify-center gap-1.5 text-xs text-muted-foreground">
             <ShieldCheck className="size-3.5 shrink-0" aria-hidden="true" color="green" />
-            Secure checkout - your details are encrypted.
+            {isSdkReady
+              ? "Secure checkout - card details are entered in PayHere."
+              : "Loading PayHere secure checkout…"}
           </p>
         </div>
       </div>

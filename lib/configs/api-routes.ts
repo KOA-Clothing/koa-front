@@ -89,6 +89,11 @@ export const API_ROUTES = {
   },
   ORDERS: {
     BASE: "/api/v1/orders",
+    BY_ID: (orderId: string) => `/api/v1/orders/${orderId}`,
+    CANCEL: (orderId: string) => `/api/v1/orders/${orderId}/cancel`,
+  },
+  PAYMENTS: {
+    CHECKOUT_HASH: (orderId: string) => `/api/v1/payments/checkout-hash/${orderId}`,
   },
   STORAGE: {
     UPLOAD_REQUESTS: "/api/v1/storage/upload-url",

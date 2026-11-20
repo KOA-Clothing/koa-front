@@ -67,3 +67,32 @@ export enum ClothingSizeEnum {
 }
 export const ClothingSizeSchema = z.enum(ClothingSizeEnum);
 export type ClothingSize = z.infer<typeof ClothingSizeSchema>;
+
+/**
+ * Mirrors `Domain.Enums.OrderStatus`. The API serializes enums as numbers (no
+ * `JsonStringEnumConverter`), so these values must stay in sync with the
+ * backend enum rather than with PayHere's string status codes.
+ */
+export enum OrderStatusEnum {
+  PENDING = 1,
+  CONFIRMED = 2,
+  PROCESSING = 3,
+  SHIPPED = 4,
+  DELIVERED = 5,
+  CANCELLED = 6,
+  RETURNED = 7,
+  REFUNDED = 8,
+}
+export const OrderStatusSchema = z.enum(OrderStatusEnum);
+export type OrderStatus = z.infer<typeof OrderStatusSchema>;
+
+/** Mirrors `Domain.Enums.PaymentStatus`. */
+export enum PaymentStatusEnum {
+  PENDING = 1,
+  COMPLETED = 2,
+  FAILED = 3,
+  REFUNDED = 4,
+  PARTIALLY_REFUNDED = 5,
+}
+export const PaymentStatusSchema = z.enum(PaymentStatusEnum);
+export type PaymentStatus = z.infer<typeof PaymentStatusSchema>;

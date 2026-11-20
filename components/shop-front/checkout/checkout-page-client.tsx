@@ -1,20 +1,32 @@
 "use client";
 
-import { useState } from "react";
+import { useCallback, useState } from "react";
 import { useAuth } from "@clerk/nextjs";
 import { useRouter } from "next/navigation";
 import { ArrowLeft, Lock } from "lucide-react";
+import { showErrorToast } from "@/components/toasts/message-toast";
 import { Button } from "@/components/ui/button";
-import { authHrefs, PAGE_ROUTES } from "@/lib/configs/page-routes";
 import { useAddresses } from "@/features/checkout/hooks/use-addresses";
+import { useCheckoutCustomer } from "@/features/checkout/hooks/use-checkout-customer";
 import { useCheckoutItems } from "@/features/checkout/hooks/use-checkout-items";
+import { usePayHereCheckout } from "@/features/checkout/hooks/use-payhere-checkout";
+import { usePayHereSdk } from "@/features/checkout/hooks/use-payhere-sdk";
+import { useCheckoutStore } from "@/stores/checkout-store";
+import {
+  authHrefs,
+  PAGE_ROUTES,
+  shopHrefs,
+} from "@/lib/configs/page-routes";
 import {
   CheckoutAddressFormSchema,
+  CheckoutPhoneSchema,
   emptyCheckoutAddress,
+  isValidCheckoutPhone,
   toNewDeliveryAddress,
   toPlaceOrderItems,
   toSavedDeliveryAddress,
   type CheckoutAddressForm,
+  type CheckoutPaymentAddress,
   type DeliveryAddressPayload,
   type PaymentMethod,
   type PlaceOrderCommand,
@@ -24,11 +36,29 @@ import {
   CheckoutSignInRequired,
   CheckoutSkeleton,
 } from "./checkout-states";
+import ContactDetailsSection from "./contact-details-section";
 import DeliveryAddressSection from "./delivery-address-section";
 import OrderSummary from "./order-summary";
 import PaymentMethodSection from "./payment-method-section";
+import PayHereScript from "./payhere-script";
 
 type AddressFieldErrors = Partial<Record<keyof CheckoutAddressForm, string>>;
+
+function toPaymentAddress(address: {
+  houseNo: string;
+  addressLine1: string;
+  addressLine2?: string | null;
+  city: string;
+  country: string;
+}): CheckoutPaymentAddress {
+  return {
+    line1: [address.houseNo, address.addressLine1, address.addressLine2]
+      .filter(Boolean)
+      .join(", "),
+    city: address.city,
+    country: address.country,
+  };
+}
 
 /**
  * The checkout page.
@@ -47,6 +77,11 @@ export default function CheckoutPageClient() {
   const router = useRouter();
   const { isLoaded, isSignedIn } = useAuth();
   const { items, mode, isReady } = useCheckoutItems();
+  const { customer, primaryPhone, isLoaded: isCustomerLoaded } = useCheckoutCustomer();
+  const { isReady: isSdkReady, handleReady } = usePayHereSdk();
+
+  const setContactPhone = useCheckoutStore((state) => state.setContactPhone);
+  const setPendingOrder = useCheckoutStore((state) => state.setPendingOrder);
 
   const addressesQuery = useAddresses(isLoaded && isSignedIn === true);
   const addresses = addressesQuery.data ?? [];
@@ -56,6 +91,23 @@ export default function CheckoutPageClient() {
   const [newAddress, setNewAddress] = useState<CheckoutAddressForm>(emptyCheckoutAddress);
   const [newAddressErrors, setNewAddressErrors] = useState<AddressFieldErrors>({});
   const [paymentMethod, setPaymentMethod] = useState<PaymentMethod>("card");
+  const [manualPhone, setManualPhone] = useState("");
+  const [phoneError, setPhoneError] = useState<string | undefined>();
+
+  // PayHere closes the modal for approved *and* declined cards, so completion
+  // only means "go and verify". The status page polls until the webhook has
+  // settled the order and only then clears the cart.
+  const handlePaymentCompleted = useCallback(
+    (orderId: string) => {
+      // Remember which order this modal belongs to, so the status page clears
+      // the cart for this purchase only — not for any older completed order.
+      setPendingOrder(orderId, mode);
+      router.push(shopHrefs.checkoutStatus(orderId));
+    },
+    [mode, router, setPendingOrder]
+  );
+
+  const { placeOrderAndPay, isProcessing } = usePayHereCheckout({ onCompleted: handlePaymentCompleted });
 
   // Selection is derived, not stored, so the default address can appear as soon
   // as the list arrives without a setState-in-effect. `selectedAddressId` only
@@ -63,13 +115,17 @@ export default function CheckoutPageClient() {
   // address wins. A customer with no saved addresses lands in the new-address
   // form automatically instead of on an empty picker.
   const defaultAddress = addresses.find((address) => address.isDefault) ?? addresses[0] ?? null;
-  const explicitAddress = selectedAddressId
-    ? addresses.find((address) => address.id === selectedAddressId) ?? null
-    : null;
+  const explicitAddress = selectedAddressId ? addresses.find((address) => address.id === selectedAddressId) ?? null : null;
   const usingNewAddress = showNewAddressForm || (addressesQuery.isSuccess && addresses.length === 0);
   const effectiveAddressId = usingNewAddress ? null : explicitAddress?.id ?? defaultAddress?.id ?? null;
+  const selectedSavedAddress = usingNewAddress ? null : addresses.find((address) => address.id === effectiveAddressId) ?? null;
 
-  if (!isReady || !isLoaded) {
+  // Clerk's phone is used when it is valid; otherwise the inline input supplies it.
+  const hasValidProfilePhone = isValidCheckoutPhone(primaryPhone);
+  const effectivePhone = hasValidProfilePhone ? primaryPhone : manualPhone;
+  const showPhoneInput = !hasValidProfilePhone;
+
+  if (!isReady || !isLoaded || !isCustomerLoaded) {
     return <CheckoutSkeleton />;
   }
 
@@ -114,8 +170,14 @@ export default function CheckoutPageClient() {
     });
   };
 
+  const handlePhoneChange = (value: string) => {
+    setManualPhone(value);
+    if (phoneError) setPhoneError(undefined);
+  };
+
   const handlePlaceOrder = () => {
     let deliveryAddress: DeliveryAddressPayload;
+    let paymentAddress: CheckoutPaymentAddress;
 
     if (usingNewAddress) {
       const result = CheckoutAddressFormSchema.safeParse(newAddress);
@@ -135,9 +197,19 @@ export default function CheckoutPageClient() {
       }
 
       deliveryAddress = toNewDeliveryAddress(result.data);
+      paymentAddress = toPaymentAddress(result.data);
     } else {
-      if (!effectiveAddressId) return;
+      if (!effectiveAddressId || !selectedSavedAddress) return;
       deliveryAddress = toSavedDeliveryAddress(effectiveAddressId);
+      paymentAddress = toPaymentAddress(selectedSavedAddress);
+    }
+
+    const phoneResult = CheckoutPhoneSchema.safeParse(effectivePhone);
+    if (!phoneResult.success) {
+      setPhoneError(
+        phoneResult.error.issues[0]?.message ?? "Enter a valid phone number"
+      );
+      return;
     }
 
     // No `notes` key: the backend command accepts one, but the storefront does
@@ -147,12 +219,20 @@ export default function CheckoutPageClient() {
       items: toPlaceOrderItems(items),
     };
 
-    // TODO: POST the payload to API_ROUTES.ORDERS.BASE once the order endpoint
-    // is wired up. Until then the order is only logged for inspection.
-    console.log("[checkout] Place order", {
-      ...payload,
-      paymentMethod,
-      mode,
+    // Keep the phone for the status page: a retry after a reload must not have
+    // to ask for it again when Clerk has none.
+    setContactPhone(phoneResult.data);
+
+    const itemsDescription = items
+      .map((item) => `${item.productName} x${item.quantity}`)
+      .join(", ")
+      .slice(0, 250);
+
+    void placeOrderAndPay({
+      payload,
+      itemsDescription,
+      customer: { ...customer, phone: phoneResult.data },
+      address: paymentAddress,
     });
   };
 
@@ -160,6 +240,15 @@ export default function CheckoutPageClient() {
 
   return (
     <div className="mx-auto flex w-full max-w-7xl flex-col gap-8 px-4 py-8 md:px-8 md:py-12">
+      <PayHereScript
+        onReady={handleReady}
+        onError={() =>
+          showErrorToast(
+            "Could not load PayHere. Check your connection and refresh the page."
+          )
+        }
+      />
+
       <header className="flex flex-col gap-3">
         <Button
           type="button"
@@ -202,6 +291,13 @@ export default function CheckoutPageClient() {
             canCancelNewAddress={addresses.length > 0}
           />
 
+          <ContactDetailsSection
+            phone={effectivePhone}
+            phoneError={phoneError}
+            onPhoneChange={handlePhoneChange}
+            showPhoneInput={showPhoneInput}
+          />
+
           <PaymentMethodSection
             value={paymentMethod}
             onChange={setPaymentMethod}
@@ -209,7 +305,7 @@ export default function CheckoutPageClient() {
 
           <p className="flex items-center justify-center gap-1.5 text-xs text-muted-foreground lg:justify-start">
             <Lock className="size-3.5 shrink-0" aria-hidden="true" />
-            You won&apos;t be charged until the order is confirmed.
+            You won&apos;t be charged until you confirm the payment in PayHere.
           </p>
         </div>
 
@@ -218,6 +314,8 @@ export default function CheckoutPageClient() {
           onPlaceOrder={handlePlaceOrder}
           canPlaceOrder={canPlaceOrder}
           isBuyNow={mode === "buy-now"}
+          isProcessing={isProcessing}
+          isSdkReady={isSdkReady}
         />
       </div>
     </div>

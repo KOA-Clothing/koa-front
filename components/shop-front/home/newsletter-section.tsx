@@ -2,7 +2,10 @@
 
 import { useState } from "react";
 import { Mail, CheckCircle2 } from "lucide-react";
-import toast from "react-hot-toast";
+import {
+  showErrorToast,
+  showSuccessToast,
+} from "@/components/toasts/message-toast";
 
 export default function NewsletterSection() {
   const [email, setEmail] = useState("");
@@ -13,7 +16,7 @@ export default function NewsletterSection() {
     e.preventDefault();
     const trimmed = email.trim();
     if (!trimmed || !trimmed.includes("@")) {
-      toast.error("Please enter a valid email address");
+      showErrorToast("Please enter a valid email address");
       return;
     }
 
@@ -22,7 +25,9 @@ export default function NewsletterSection() {
     setTimeout(() => {
       setIsLoading(false);
       setIsSubmitted(true);
-      toast.success("Welcome to the KOA Tribe. Check your inbox for your 10% code.");
+      showSuccessToast(
+        "Welcome to the KOA Tribe. Check your inbox for your 10% code."
+      );
     }, 600);
   };
 

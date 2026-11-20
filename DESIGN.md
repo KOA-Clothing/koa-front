@@ -456,7 +456,7 @@ Rules:
 - Sections that can be paged or deep-linked carry `id` and `scroll-mt-24`; the pager scrolls back to that id.
 - `ValueTicker`, `FeaturesBreakdown` and `CommunitySection` exist in `components/shop-front/home/` but are **not mounted** on the current landing page. Do not assume they render, and do not re-enable one without a design decision.
 - Hero copy and CTAs are the only place to use the largest type scale; keep the rest of the page at §2.2 sizes.
-- Newsletter/validation uses `toast.success` / `toast.error`, which land in the shared deck described in §7.4.
+- Newsletter/validation uses the general `showSuccessToast` / `showErrorToast` helpers from §7.4, so it lands in the shared deck with the same card styling as the rest of the app.
 
 ### 7.2 Product grids and cards
 
@@ -500,6 +500,7 @@ Toasts:
 
 - The app mounts one `StackedDeckToaster` via `ToasterProvider` — a centered, top-anchored deck showing up to three cards, newest in front, scaled and offset behind.
 - Cart confirmations use `toast.custom` through the `show*Toast` helpers and the dark zinc `CartToast` card from §2.1. `toast.custom` does not inherit the default toast styling, so the card owns its surface and its enter/exit keyframes.
+- General feedback uses `showSuccessToast` / `showErrorToast` from `components/toasts/message-toast.tsx` — the same zinc card and keyframes as the cart toasts, with an emerald/red icon, a title, and the right ARIA role (`status` for success, `alert` for error). Reach for these instead of raw `toast.success` / `toast.error`: a bare string lands in the deck unstyled. Colour is never the only cue — the glyph and title carry the meaning too.
 - Never mount a second toaster, and never style a one-off toast outside `components/toasts/`.
 - Duration is 3–3.5 s for cart confirmations (add 3.5 s, remove/clear 3 s); `removeDelay` must sit just past the exit animation so the next toast doesn't feel laggy.
 
@@ -522,12 +523,22 @@ The storefront legal pages (`/privacy-policy`, `/terms-of-service`) and the Abou
 - Gate order is fixed: `CheckoutSkeleton` while the persisted stores/Clerk load → `CheckoutEmptyState` when there is nothing to order → `CheckoutSignInRequired` for a signed-out deep link → the checkout content. The empty state comes before the sign-in gate so a signed-out visitor with an empty cart is not asked to authenticate for nothing.
 - Container: `mx-auto max-w-7xl px-4 py-8 md:px-8 md:py-12`; two columns at `lg` with `gap-12`, content left and a `380px` sticky summary right.
 - Header: ghost "Back" button, uppercase mono eyebrow, `text-3xl md:text-4xl font-bold tracking-tight` title, and one muted sentence.
-- `CheckoutSection` owns the numbered-step card (`rounded-xl border border-border bg-card p-4 sm:p-5`, foreground step badge). Delivery address is step 1, payment is step 2.
+- `CheckoutSection` owns the numbered-step card (`rounded-xl border border-border bg-card p-4 sm:p-5`, foreground step badge). Delivery address is step 1, contact details step 2, payment method step 3.
 - Saved addresses render as selectable cards: the whole card is a `<label>` wrapping a visually hidden native `<input type="radio">`, with a `RadioIndicator` dot and `has-[:focus-visible]` ring. Selected is `border-foreground bg-muted/40`; unselected is `border-border bg-card`. The default address is preselected once, without overriding a later customer choice.
 - "Add a new address" is the last radio option, styled with a dashed border, and reveals an inline `NewAddressForm` below the cards — never a dialog, because the summary must stay visible. A customer with no saved addresses lands directly in the form.
+- Contact details show the Clerk phone as a read-only confirmation. When the profile has no valid phone, the same card reveals an inline phone input instead of sending the customer to account settings mid-checkout — PayHere requires the number on the payment object.
 - The summary is `OrderSummary`: stored line snapshots, subtotal, optional discount, bold total, then a full-width `Place order` primary button. It is sticky on desktop so the total and action stay in view while the address form is filled.
-- Totals and line prices reuse `calculatePriceBreakdown` / `formatPrice`; checkout never re-fetches a product to render a line.
-- "Place order" validates the inline address with the checkout Zod schema and logs the `PlaceOrderCommand` payload; it does not call the order endpoint yet. Do not show a success toast or clear the order until that call exists.
+- Totals and line prices reuse `calculatePriceBreakdown` / `formatPrice`; checkout never re-fetches a product to render a line. Delivery is free above LKR 10,000, otherwise LKR 350, mirroring `PlaceOrderHandler`.
+- "Place order" validates the inline address and phone, creates the order, fetches its PayHere hash, and opens the PayHere onsite modal. Card details are never collected on our page. The button stays disabled until `window.payhere` has loaded and while an order is processing.
+
+#### PayHere status page (`/checkout/status`)
+
+`onCompleted` fires for declined cards too, so it only navigates to `shopHrefs.checkoutStatus(orderId)`; it never shows success or clears the cart.
+
+- The page polls `GET /api/v1/orders/{orderId}` every 2.5s for up to 30s and stops as soon as the order reaches a terminal state. The URL keeps `orderId`, so a refresh resumes the same confirmation.
+- `COMPLETED` shows the order number, total and delivery address, and only then clears the cart (cart mode) or the buy-now selection. Clearing is scoped to the order checkout actually placed (the persisted `pendingOrderId`), so revisiting an older completed order cannot wipe a cart the customer has since refilled.
+- `FAILED` offers "Try payment again", which reopens PayHere for the **same** order so stock is not reserved twice. `CANCELLED` and timeout states link back to checkout or let the customer check again; the timeout copy warns against paying twice.
+- Dismissing the PayHere modal cancels the pending order and leaves the cart intact. The shell reuses `CheckoutSkeleton`/`CheckoutSignInRequired` and the same centered status layout as the empty state.
 
 ## 8. Agent implementation checklist
 

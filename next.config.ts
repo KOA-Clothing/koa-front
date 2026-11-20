@@ -17,6 +17,22 @@ const nextConfig: NextConfig = {
       },
     ],
   },
+  async headers() {
+    return [
+      {
+        source: "/:path*",
+        headers: [
+          {
+            // PayHere's checkout SDK refuses to run behind `no-referrer`.
+            // This is the browser default, set explicitly so a future
+            // security-header pass cannot silently break payments.
+            key: "Referrer-Policy",
+            value: "strict-origin-when-cross-origin",
+          },
+        ],
+      },
+    ];
+  },
   async redirects() {
     return [
       {

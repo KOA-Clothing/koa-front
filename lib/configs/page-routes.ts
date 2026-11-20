@@ -9,6 +9,7 @@ export const PAGE_ROUTES = {
     SEARCH: "/products/search",
     PRODUCTS: "/products",
     CHECKOUT: "/checkout",
+    CHECKOUT_STATUS: "/checkout/status",
   },
   AUTH: {
     SIGN_IN: "/auth/signin",
@@ -113,6 +114,12 @@ export const shopHrefs = {
   /** One collection's product catalogue, keyed by collection id. */
   collection: (collectionId: string) =>
     `${PAGE_ROUTES.SHOP.COLLECTIONS}/${collectionId}`,
+  /**
+   * Post-payment status page for one order. PayHere's `onCompleted` fires for
+   * declined cards too, so it navigates here instead of assuming success.
+   */
+  checkoutStatus: (orderId: string) =>
+    withQuery(PAGE_ROUTES.SHOP.CHECKOUT_STATUS, { orderId }),
   /**
    * One product's detail page. Product cards, cart rows and search results
    * all assemble their destination here instead of inlining the path.

@@ -4,9 +4,15 @@ import type { CartItem } from "./cart";
 /**
  * Checkout is the only place that turns the client-side cart snapshot into the
  * backend's `PlaceOrderCommand` shape. These types mirror
- * `Application.Orders.Commands.PlaceOrder` so the payload can be logged today
- * and sent unchanged once the order endpoint is wired up.
+ * `Application.Orders.Commands.PlaceOrder` so checkout can post it unchanged.
  */
+
+/**
+ * How a checkout was seeded. "cart" checks out every line in `useCartStore`;
+ * "buy-now" checks out only the single item captured from the product page.
+ * Shared by the persisted checkout store and the hook that resolves the items.
+ */
+export type CheckoutMode = "cart" | "buy-now";
 
 /**
  * A delivery address typed in on the checkout page. This deliberately does not
@@ -26,6 +32,20 @@ export const CheckoutAddressFormSchema = z.object({
 });
 
 export type CheckoutAddressForm = z.infer<typeof CheckoutAddressFormSchema>;
+
+/**
+ * PayHere requires a contact phone on the payment object. Clerk profiles often
+ * have one, but customers who signed up with email may not — checkout falls
+ * back to this schema and asks for it inline.
+ */
+export const CheckoutPhoneSchema = z
+  .string()
+  .trim()
+  .regex(/^\+?[0-9]{9,15}$/, "Enter a valid phone number");
+
+export function isValidCheckoutPhone(value: string): boolean {
+  return CheckoutPhoneSchema.safeParse(value).success;
+}
 
 export const emptyCheckoutAddress: CheckoutAddressForm = {
   label: "",
@@ -51,6 +71,21 @@ export interface DeliveryAddressPayload {
   country?: string | null;
 }
 
+/** The PayHere customer block: Clerk identity plus the contact phone. */
+export interface CheckoutCustomer {
+  firstName: string;
+  lastName: string;
+  email: string;
+  phone: string;
+}
+
+/** The flattened address PayHere receives for both billing and delivery. */
+export interface CheckoutPaymentAddress {
+  line1: string;
+  city: string;
+  country: string;
+}
+
 /** `PlaceOrderItemRequest`. */
 export interface PlaceOrderItemRequest {
   inventoryId: string;
@@ -70,6 +105,23 @@ export interface PlaceOrderCommand {
  * change.
  */
 export type PaymentMethod = "card";
+
+/** Arguments for opening the PayHere modal for an existing order. */
+export interface StartPaymentArgs {
+  orderId: string;
+  /** Free-text line shown in the PayHere modal, e.g. "KOA Tee x2, KOA Shorts x1". */
+  itemsDescription: string;
+  customer: CheckoutCustomer;
+  address: CheckoutPaymentAddress;
+}
+
+/** Arguments for creating a new order and immediately opening PayHere for it. */
+export interface PlaceOrderAndPayArgs {
+  payload: PlaceOrderCommand;
+  itemsDescription: string;
+  customer: CheckoutCustomer;
+  address: CheckoutPaymentAddress;
+}
 
 /** A saved address is sent by id only; the backend resolves the rest. */
 export function toSavedDeliveryAddress(addressId: string): DeliveryAddressPayload {

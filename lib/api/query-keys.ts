@@ -8,6 +8,10 @@ export const queryKeys = {
   addresses: {
     all: ["addresses", "all"] as const,
   },
+  orders: {
+    all: ["orders"] as const,
+    detail: (orderId: string) => ["orders", "detail", orderId] as const,
+  },
   categories: {
     all: ["categories"] as const,
     list: (params: Record<string, unknown>) => ["categories", "list", params] as const,

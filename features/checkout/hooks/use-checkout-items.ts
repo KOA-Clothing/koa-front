@@ -2,8 +2,9 @@
 
 import { useEffect, useState } from "react";
 import { useCartStore } from "@/stores/cart-store";
-import { useCheckoutStore, type CheckoutMode } from "@/stores/checkout-store";
+import { useCheckoutStore } from "@/stores/checkout-store";
 import type { CartItem } from "@/types/cart";
+import type { CheckoutMode } from "@/types/checkout";
 
 interface CheckoutItems {
   items: CartItem[];

@@ -21,7 +21,7 @@ export default function PaymentMethodSection({
 }: PaymentMethodSectionProps) {
   return (
     <CheckoutSection
-      step={2}
+      step={3}
       title="Payment method"
       description="Choose how you'd like to pay for this order."
     >
